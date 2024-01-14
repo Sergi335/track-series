@@ -21,7 +21,7 @@ export default async function MoviePage ({ params }: { params: { id: string } })
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlNzNhYTIzMmFjNzhkYmIxOGY2ODM4M2YxODBjZDQ0ZSIsInN1YiI6IjY0YzkyZTNlZjJjZjI1MDEzYWFjNWU4YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._o-bjsxI8MKyqvE2LYpzchOXYcFWtrTCFUazvSmr5OQ'
+      Authorization: process.env.AUTH ?? ''
     }
   }
 

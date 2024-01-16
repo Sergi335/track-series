@@ -1,23 +1,27 @@
-import type { Movies } from '@/types'
+import type { SearchResultsType } from '@/types'
 import Link from 'next/link'
-export default async function SearchResults ({ query }: { query: string }) {
-  const url = `https://api.themoviedb.org/3/search/tv?query=${query}&include_adult=false&language=es-ES&page=1`
+import Pagination from './Pagination'
+export default async function SearchResults ({ query, page }: { query: string, page: string }) {
+  const url = `https://api.themoviedb.org/3/search/tv?query=${query}&include_adult=false&language=es-ES&page=${page}`
   const options = {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlNzNhYTIzMmFjNzhkYmIxOGY2ODM4M2YxODBjZDQ0ZSIsInN1YiI6IjY0YzkyZTNlZjJjZjI1MDEzYWFjNWU4YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._o-bjsxI8MKyqvE2LYpzchOXYcFWtrTCFUazvSmr5OQ'
+      Authorization: process.env.AUTH ?? ''
     }
   }
   const searchMovies = async () => {
     const res = await fetch(url, options)
     const json = await res.json()
     console.log(json)
-    return json.results
+    return json
   }
-  const results: Movies[] = await searchMovies()
+  const { results, total_pages: totalPages, total_results: totalResults }: SearchResultsType = await searchMovies()
+  console.log(totalPages, totalResults)
+
   return (
-      <section className='grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4 mt-28 w-[1400px]'>
+        <>
+          <section className='grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4 mx-auto w-3/4'>
             {results.map(movie => {
               return (
                 <div key={movie.id} className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -40,5 +44,9 @@ export default async function SearchResults ({ query }: { query: string }) {
               )
             })}
           </section>
+          <div className='w-full mt-5 flex justify-center'>
+            <Pagination totalPages={totalPages} />
+          </div>
+        </>
   )
 }

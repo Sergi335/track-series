@@ -14,6 +14,12 @@ export interface Movies {
   vote_average: number
   vote_count: number
 }
+export interface SearchResultsType {
+  page: number
+  results: Movies[]
+  total_pages: number
+  total_results: number
+}
 export interface MovieInfo {
   adult: boolean
   backdrop_path: string

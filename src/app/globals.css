@@ -27,7 +27,9 @@ body {
     )
     rgb(var(--background-start-rgb)); */
 }
-
+h1 {
+  line-height: normal;
+}
 .mainContent {
   background-image: linear-gradient(to right, #ffffff00 0% 20%, #000000b8 20% 100%);
   display: grid;

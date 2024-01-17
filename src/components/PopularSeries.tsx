@@ -1,27 +1,27 @@
 import type { SearchResultsType } from '@/types'
 import Link from 'next/link'
 import Pagination from './Pagination'
-export default async function SearchResults ({ query, page }: { query: string, page: string }) {
-  const url = `https://api.themoviedb.org/3/search/tv?query=${query}&include_adult=false&language=es-ES&page=${page}`
+export default async function PopularSeries ({ page }: { page: string }) {
+  console.log(page)
+
+  const url = `https://api.themoviedb.org/3/tv/popular?language=en-US&page=${page}` // Page, se comparte con searchResults ... ¿?
   const options = {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: process.env.AUTH ?? ''
+      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZTc4MzQ5YTc1YTkzMjZhMjMzYWFmNDU5Mjg1ODcyMiIsInN1YiI6IjY0YzkyZTNlZjJjZjI1MDEzYWFjNWU4YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.pyvhvAKMqJk1HtVM5GSzYziXMfa1l_kFTwFQfsggG7Y'
     }
   }
-  const searchMovies = async () => {
+  const getPopularSeries = async () => {
     const res = await fetch(url, options)
     const json = await res.json()
-    console.log(json)
     return json
   }
-  const { results, total_pages: totalPages, total_results: totalResults }: SearchResultsType = await searchMovies()
+  const { results, total_pages: totalPages, total_results: totalResults }: SearchResultsType = await getPopularSeries()
   console.log(totalPages, totalResults)
-
   return (
-        <>
-          <section className='grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4 w-3/4'>
+    <>
+        <section className='grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4 w-3/4'>
         {results.map(movie => {
           return (
             <div key={movie.id} className="flex flex-col">
@@ -45,9 +45,9 @@ export default async function SearchResults ({ query, page }: { query: string, p
           )
         })}
         </section>
-          <div className='w-full mt-5 flex justify-center'>
+        <div className='w-full mt-5 flex justify-center'>
             <Pagination totalPages={totalPages} />
-          </div>
-        </>
+        </div>
+    </>
   )
 }

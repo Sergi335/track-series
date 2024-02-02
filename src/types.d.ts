@@ -16,11 +16,11 @@ export interface Movies {
 }
 export interface SearchResultsType {
   page: number
-  results: Movies[]
+  results: MovieInfo[]
   total_pages: number
   total_results: number
 }
-export interface MovieInfo {
+export interface MovieInfo extends Movies {
   adult: boolean
   backdrop_path: string
   created_by: CreatedBy[]

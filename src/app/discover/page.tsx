@@ -1,8 +1,8 @@
 import Header from '@/components/Header'
-import Nav from '@/components/Nav'
 import SearchResults from '@/components/SearchResults'
-
-export default function Home ({
+import PopularSeries from '@/components/PopularSeries'
+import Nav from '@/components/Nav'
+export default function Discover ({
   searchParams
 }: {
   searchParams?: {
@@ -16,9 +16,13 @@ export default function Home ({
         <Header />
         <main className="flex flex-col items-center">
         <Nav />
-        {query.length > 0 && (
+        {query.length > 0
+          ? (
             <SearchResults query={query} page={page} />
-        )}
+            )
+          : (
+            <PopularSeries page={page}/>
+            )}
       </main>
     </>
   )

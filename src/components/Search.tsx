@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
 import { useDebouncedCallback } from 'use-debounce'
 import { CloseIcon } from './icons/icons'
+
 export default function Search () {
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -36,6 +37,7 @@ export default function Search () {
     console.log(params.toString())
     replace(`${pathname}?${params.toString()}`)
   }, 500)
+
   return (
         <form className="flex w-full" onSubmit={handleSubmit}>
           <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>

@@ -44,7 +44,7 @@ React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      'ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 data-[state=active]:flex data-[state=active]:flex-col mt-[60px] w-full min-h-screen items-center',
+      'ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 data-[state=active]:flex data-[state=active]:flex-col w-full min-h-screen items-center',
       className
     )}
     {...props}

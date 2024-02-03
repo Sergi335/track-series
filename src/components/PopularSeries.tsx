@@ -6,12 +6,12 @@ import MovieGrid from './MovieGrid'
 export default async function PopularSeries ({ page }: { page: string }) {
   console.log(page)
 
-  const url = `https://api.themoviedb.org/3/tv/popular?language=en-US&page=${page}` // Page, se comparte con searchResults ... ¿?
+  const url = `https://api.themoviedb.org/3/tv/popular?language=es-ES&page=${page}` // Page, se comparte con searchResults ... ¿?
   const options = {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZTc4MzQ5YTc1YTkzMjZhMjMzYWFmNDU5Mjg1ODcyMiIsInN1YiI6IjY0YzkyZTNlZjJjZjI1MDEzYWFjNWU4YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.pyvhvAKMqJk1HtVM5GSzYziXMfa1l_kFTwFQfsggG7Y'
+      Authorization: process.env.AUTH ?? ''
     }
   }
   const getPopularSeries = async () => {

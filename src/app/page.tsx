@@ -11,15 +11,16 @@ export default function Home ({
   } }) {
   const query = searchParams?.query ?? ''
   const page = searchParams?.page ?? '1'
+
   return (
     <>
         <Header />
         <main className="flex flex-col items-center">
-        <Nav />
-        {query.length > 0 && (
-            <SearchResults query={query} page={page} />
-        )}
-      </main>
+            <Nav />
+            {query.length > 0 && (
+                <SearchResults query={query} page={page} />
+            )}
+        </main>
     </>
   )
 }

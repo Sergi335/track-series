@@ -10,6 +10,7 @@ export default function Pagination ({ totalPages }: { totalPages: number }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const currentPage = isNaN(Number(searchParams.get('page'))) || Number(searchParams.get('page')) === 0 ? 1 : Number(searchParams.get('page'))
+  console.log(totalPages, currentPage, pathname) // cuando se pone a mano o se clica en un numero alto se pinta en el servidor tambien ?¿?
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams)
@@ -38,7 +39,7 @@ export default function Pagination ({ totalPages }: { totalPages: number }) {
 
           return (
             <PaginationNumber
-              key={page}
+              key={page.toString() + Math.random()} // original key={page}
               href={createPageURL(page)}
               page={page}
               position={position}
@@ -69,12 +70,12 @@ function PaginationNumber ({
   isActive: boolean
 }) {
   const className = clsx(
-    'flex h-10 w-10 items-center justify-center text-sm border',
+    'flex h-10 w-10 items-center justify-center text-sm text-white',
     {
       'rounded-l-md': position === 'first' || position === 'single',
       'rounded-r-md': position === 'last' || position === 'single',
-      'z-10 bg-blue-600 border-blue-600 text-white': isActive,
-      'hover:bg-gray-100': !isActive && position !== 'middle',
+      'z-10 bg-blue-600 text-white': isActive,
+      'hover:bg-gray-100 hover:text-black': !isActive && position !== 'middle',
       'text-gray-300': position === 'middle'
     }
   )
@@ -100,10 +101,10 @@ function PaginationArrow ({
   isDisabled?: boolean
 }) {
   const className = clsx(
-    'flex h-10 w-10 items-center justify-center rounded-md border',
+    'flex h-10 w-10 items-center justify-center rounded-md text-white',
     {
       'pointer-events-none text-gray-300': isDisabled,
-      'hover:bg-gray-100': !(isDisabled ?? false),
+      'hover:bg-gray-100 hover:text-black': !(isDisabled ?? false),
       'mr-2 md:mr-4': direction === 'left',
       'ml-2 md:ml-4': direction === 'right'
     }

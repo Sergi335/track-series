@@ -12,9 +12,12 @@ export default function MovieGrid ({ series }: { series: MovieInfo[] }) {
 //     //   info?.classList.toggle('translate-y-[-120px]')
 //     // }
 //   }
+  // console.log(series)
+
   return (
         <section className='grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-12 py-14 w-3/4'>
-            {series.map(movie => {
+            {series === undefined && <h1 className='text-white'>No series in watchlist</h1>}
+            {series?.map(movie => {
               return (
                 <div key={movie.id} className="flex flex-col">
                 <Link href={`/movies/${movie.id}`} className='flex flex-col'>

@@ -15,6 +15,10 @@ export default function SeriesList () {
   }, [])
 
   return (
-    <MovieGrid series={series} />
+    <>
+        {
+            series.length > 0 ? <MovieGrid series={series} /> : <h1 className='text-white'>No series in your series</h1>
+        }
+    </>
   )
 }

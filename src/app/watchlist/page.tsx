@@ -13,7 +13,7 @@ export default function Watchlist ({
   const query = searchParams?.query ?? ''
   const page = searchParams?.page ?? '1'
   return (
-    <>
+    <div className='app flex flex-col'>
         <Header />
         <main className="flex flex-col items-center">
         <Nav />
@@ -26,6 +26,6 @@ export default function Watchlist ({
             )}
       </main>
 
-    </>
+    </div>
   )
 }

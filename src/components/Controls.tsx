@@ -2,21 +2,23 @@
 import { type MovieInfo } from '@/types'
 import { Button } from '@/components/ui/button'
 import { useState, useEffect } from 'react'
+import { CheckIcon, WatchingIcon } from './icons/icons'
+import SetChapterControl from './SetChapterControl'
 
 export default function Controls ({ data }: { data: MovieInfo }) {
   const [isFollowing, setIsFollowing] = useState(false)
   const [isInWatchlist, setIsInWatchlist] = useState(false)
-  if (localStorage.getItem('series') === null) localStorage.setItem('series', JSON.stringify([]))
-  if (localStorage.getItem('watchlist') === null) localStorage.setItem('watchlist', JSON.stringify([]))
-  const storedMySeriesData = JSON.parse(localStorage.getItem('series') ?? '') ?? [] as MovieInfo[]
-  const storedWatchlistData = JSON.parse(localStorage.getItem('watchlist') ?? '') ?? [] as MovieInfo[]
+  if (window.localStorage.getItem('series') === null) window.localStorage.setItem('series', JSON.stringify([]))
+  if (window.localStorage.getItem('watchlist') === null) window.localStorage.setItem('watchlist', JSON.stringify([]))
+  const storedMySeriesData = JSON.parse(window.localStorage.getItem('series') ?? '') ?? [] as MovieInfo[]
+  const storedWatchlistData = JSON.parse(window.localStorage.getItem('watchlist') ?? '') ?? [] as MovieInfo[]
   const mySeriesIndex = storedMySeriesData.findIndex((item: MovieInfo) => item.id === data.id)
   const watchlistIndex = storedWatchlistData.findIndex((item: MovieInfo) => item.id === data.id)
   useEffect(() => {
     if (mySeriesIndex !== -1) setIsFollowing(true)
     if (watchlistIndex !== -1) setIsInWatchlist(true)
   }, [])
-  console.log(storedMySeriesData)
+  console.log(data)
   const storeMySeriesData = () => {
     if (storedMySeriesData !== null) {
       if (mySeriesIndex === -1) {
@@ -27,7 +29,7 @@ export default function Controls ({ data }: { data: MovieInfo }) {
         setIsFollowing(false)
       }
     }
-    localStorage.setItem('series', JSON.stringify(storedMySeriesData))
+    window.localStorage.setItem('series', JSON.stringify(storedMySeriesData))
   }
   const storeWatchlistData = () => {
     if (storedWatchlistData !== null) {
@@ -39,20 +41,30 @@ export default function Controls ({ data }: { data: MovieInfo }) {
         setIsInWatchlist(false)
       }
     }
-    localStorage.setItem('watchlist', JSON.stringify(storedWatchlistData))
+    window.localStorage.setItem('watchlist', JSON.stringify(storedWatchlistData))
   }
   return (
-        <div className="p-5 w-2/4 flex items-center gap-3">
-            <Button className='text-white' onClick={storeMySeriesData}>{
-                isFollowing ? 'Following' : 'Follow'
-            }</Button>
-            <Button className='text-white' onClick={storeWatchlistData}>{
-                isInWatchlist ? 'InWatchList' : 'SetInWatchList'
-            }</Button>
-            <svg width="24" height="24" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M12.01 2.011a3.2 3.2 0 0 1 2.113.797l.154.145.698.698c.192.19.442.31.71.341L15.82 4h1a3.2 3.2 0 0 1 3.195 3.018l.005.182v1c0 .27.092.533.258.743l.09.1.697.698a3.2 3.2 0 0 1 .147 4.382l-.145.154-.698.698a1.2 1.2 0 0 0-.341.71l-.008.135v1a3.2 3.2 0 0 1-3.018 3.195l-.182.005h-1a1.2 1.2 0 0 0-.743.258l-.1.09-.698.697a3.2 3.2 0 0 1-4.382.147l-.154-.145-.698-.698a1.2 1.2 0 0 0-.71-.341L8.2 20.02h-1a3.2 3.2 0 0 1-3.195-3.018L4 16.82v-1a1.2 1.2 0 0 0-.258-.743l-.09-.1-.697-.698a3.2 3.2 0 0 1-.147-4.382l.145-.154.698-.698a1.2 1.2 0 0 0 .341-.71L4 8.2v-1l.005-.182a3.2 3.2 0 0 1 3.013-3.013L7.2 4h1a1.2 1.2 0 0 0 .743-.258l.1-.09.698-.697a3.2 3.2 0 0 1 2.269-.944Zm3.697 7.282a1 1 0 0 0-1.414 0L11 12.585l-1.293-1.292-.094-.083a1 1 0 0 0-1.32 1.497l2 2 .094.083a1 1 0 0 0 1.32-.083l4-4 .083-.094a1 1 0 0 0-.083-1.32Z"/></svg>
-            <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="#9B4CFF"><path d="M10 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/><path d="M11.102 17.957C7.898 17.65 5.198 15.663 3 12c2.4-4 5.4-6 9-6 3.6 0 6.6 2 9 6-.21.35-.431.695-.663 1.032M15 19l2 2 4-4"/></g></svg>
-            <p className='text-white'>S.1 Ep.12</p>
-            <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16 8 8 0 0 0 0-16Z" fill="#9B4CFF"/><path fillRule="evenodd" clipRule="evenodd" d="M13 7a1 1 0 0 0-2 0v4H7a1 1 0 0 0 0 2h4v4a1 1 0 0 0 2 0v-4h4a1 1 0 0 0 0-2h-4V7Z" fill="#9B4CFF"/></svg>
+        <div className="p-5 flex items-center gap-3 flex-wrap">
+            <Button className={`${isFollowing ? 'bg-red-600 hover:bg-red-400' : 'bg-blue-600 hover:bg-blue-400'} text-white flex gap-2`} onClick={storeMySeriesData}>
+              {
+                isFollowing
+                  ? (<><CheckIcon /> Following</>)
+                  : 'Follow'
+              }
+            </Button>
+            <Button className={`${isInWatchlist ? 'bg-red-600 hover:bg-red-400' : 'bg-blue-600 hover:bg-blue-400'} text-white flex gap-2`} onClick={storeWatchlistData}>
+              {
+                isInWatchlist
+                  ? (<><WatchingIcon /> InWatchList</>)
+                  : 'SetInWatchList'
+              }
+            </Button>
+            {
+              isFollowing
+                ? (<SetChapterControl data={data} />)
+                : ''
+            }
+
         </div>
   )
 }

@@ -2,11 +2,12 @@ import type { SearchResultsType } from '@/types'
 // import Link from 'next/link'
 import Pagination from './Pagination'
 import MovieGrid from './MovieGrid'
+// import Filters from './Filters'
 
 export default async function PopularSeries ({ page }: { page: string }) {
   console.log(page)
 
-  const url = `https://api.themoviedb.org/3/tv/popular?language=es-ES&page=${page}` // Page, se comparte con searchResults ... ¿?
+  const url = `https://api.themoviedb.org/3/tv/top_rated?language=es-ES&page=${page}` // Page, se comparte con searchResults ... ¿?
   const options = {
     method: 'GET',
     headers: {
@@ -23,8 +24,9 @@ export default async function PopularSeries ({ page }: { page: string }) {
   console.log(totalPages, totalResults)
   return (
     <>
+        {/* <Filters /> */}
         <MovieGrid series={results} />
-        <Pagination totalPages={totalPages} />
+        <Pagination totalPages={totalPages > 500 ? 500 : totalPages} />
     </>
   )
 }

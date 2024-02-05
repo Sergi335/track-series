@@ -31,20 +31,29 @@ h1 {
   line-height: normal;
 }
 .mainContent {
-  background-image: linear-gradient(to right, #ffffff00 0% 20%, #000000b8 20% 100%);
+  background: #000000b8;
   display: grid;
-  grid-template-columns: 15% 1fr;
-  grid-template-rows: 15% 1fr;
-  grid-template-areas: "header header"
-  "sidebar content";
+  /* grid-template-columns: 1fr; */
+  /* grid-template-rows: 20% 1fr; */
+  grid-template-areas: "sidebar" "content";
   background-repeat: no-repeat;
 }
 .header {
   grid-area: header;
+  /* grid-template-columns: 12% 1fr; */
 }
 .sidebar {
   grid-area: sidebar;
 }
-.content {
+.mainSection {
   grid-area: content;
+  /* grid-template-columns: 12% 1fr; */
+}
+@media (min-width: 1536px) {
+  .mainContent {
+    background: none;
+    background-image: linear-gradient(to right, #ffffffd6 0% 20%, #000000b8 20% 100%);
+    grid-template-columns: 20% 1fr;
+    grid-template-areas: "sidebar content" "sidebar content";
+  }
 }

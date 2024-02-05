@@ -14,7 +14,7 @@ export default async function MySeries ({
   const page = searchParams?.page ?? '1'
 
   return (
-    <>
+    <div className='app flex flex-col'>
       <Header />
       <main className="flex flex-col items-center">
       <Nav />
@@ -23,9 +23,9 @@ export default async function MySeries ({
             <SearchResults query={query} page={page} />
           )
         : (
-            <SeriesList />
+            <SeriesList page={page}/>
           )}
       </main>
-    </>
+    </div>
   )
 }

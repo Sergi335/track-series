@@ -13,7 +13,7 @@ export default function Home ({
   const page = searchParams?.page ?? '1'
 
   return (
-    <>
+    <div className='app flex flex-col'>
         <Header />
         <main className="flex flex-col items-center">
             <Nav />
@@ -21,6 +21,6 @@ export default function Home ({
                 <SearchResults query={query} page={page} />
             )}
         </main>
-    </>
+    </div>
   )
 }

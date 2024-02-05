@@ -25,13 +25,13 @@ export interface MovieInfo extends Movies {
   backdrop_path: string
   created_by: CreatedBy[]
   episode_run_time: any[]
-  first_air_date: Date
+  first_air_date: string
   genres: Genre[]
   homepage: string
   id: number
   in_production: boolean
   languages: string[]
-  last_air_date: Date
+  last_air_date: string
   last_episode_to_air: LastEpisodeToAir
   name: string
   next_episode_to_air: null
@@ -53,6 +53,8 @@ export interface MovieInfo extends Movies {
   type: string
   vote_average: number
   vote_count: number
+  watched_season?: number
+  watched_episode?: number
 }
 export interface PopularMoviesInfo {
   adult: boolean

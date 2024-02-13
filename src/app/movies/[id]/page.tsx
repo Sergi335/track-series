@@ -13,8 +13,8 @@ export function ActorInfo ({ actor }: { actor: CastElement }) {
         </div>
   )
 }
-export default async function MoviePage ({ params }: { params: { id: string } }) {
-  const { id } = params
+export default async function MoviePage ({ searchParams }: { searchParams: { id: string } }) {
+  const { id } = searchParams
   const dataurl = `https://api.themoviedb.org/3/tv/${id}?language=es-ES`
   const creditsurl = `https://api.themoviedb.org/3/tv/${id}/credits?language=es-ES`
   const options = {

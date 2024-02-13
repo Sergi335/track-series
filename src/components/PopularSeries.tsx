@@ -1,10 +1,9 @@
-'use server'
 import type { SearchResultsType } from '@/types'
 // import Link from 'next/link'
 import Pagination from './Pagination'
 import MovieGrid from './MovieGrid'
 // import Filters from './Filters'
-
+export const dynamic = 'force-dynamic'
 export default async function PopularSeries ({ page }: { page: string }) {
   console.log(page)
 

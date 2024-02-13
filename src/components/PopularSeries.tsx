@@ -1,3 +1,4 @@
+'use server'
 import type { SearchResultsType } from '@/types'
 // import Link from 'next/link'
 import Pagination from './Pagination'
@@ -21,7 +22,7 @@ export default async function PopularSeries ({ page }: { page: string }) {
     return json
   }
   const { results, total_pages: totalPages, total_results: totalResults }: SearchResultsType = await getPopularSeries()
-  console.log(results, totalResults)
+  console.log(totalPages, totalResults)
   return (
     <>
         {/* <Filters /> */}

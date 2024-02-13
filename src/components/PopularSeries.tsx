@@ -21,7 +21,7 @@ export default async function PopularSeries ({ page }: { page: string }) {
     return json
   }
   const { results, total_pages: totalPages, total_results: totalResults }: SearchResultsType = await getPopularSeries()
-  console.log(totalPages, totalResults)
+  console.log(results, totalResults)
   return (
     <>
         {/* <Filters /> */}

@@ -1,20 +1,12 @@
-import type { MovieInfo, Credits, CastElement } from '@/types'
+import type { MovieInfo, Credits } from '@/types'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import Controls from '@/components/Controls'
 import HistoryBackButton from '@/components/HistoryBackButton'
+import { ActorInfo } from '@/components/ActorInfo'
 
-export function ActorInfo ({ actor }: { actor: CastElement }) {
-  return (
-        <div>
-            <p className="transition text-sm text-center leading-normal text-white dark:text-gray-200"><span>{actor.name}</span> as <span>{actor.character}</span></p>
-            <p className="transition text-sm text-center leading-normal text-white dark:text-gray-200">Rating: {actor.popularity}</p>
-            <p className="transition text-sm text-center leading-normal text-white dark:text-gray-200">{actor.id}</p>
-        </div>
-  )
-}
-export default async function MoviePage ({ searchParams }: { searchParams: { id: string } }) {
-  const { id } = searchParams
+export default async function MoviePage ({ params }: { params: { id: string } }) {
+  const { id } = params
   const dataurl = `https://api.themoviedb.org/3/tv/${id}?language=es-ES`
   const creditsurl = `https://api.themoviedb.org/3/tv/${id}/credits?language=es-ES`
   const options = {

@@ -1,5 +1,7 @@
 import { type MovieInfo } from '@/types'
 import Link from 'next/link'
+import SetChapterControl from './SetChapterControl'
+
 export default function MovieGrid ({ series }: { series: MovieInfo[] }) {
 //   const showInfo = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 //     // e.stopPropagation()
@@ -34,6 +36,7 @@ export default function MovieGrid ({ series }: { series: MovieInfo[] }) {
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
                       </svg>
                     </Link>
+                    <SetChapterControl data={movie} />
                   </div>
                 </div>
               )

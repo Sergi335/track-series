@@ -55,6 +55,7 @@ export interface MovieInfo extends Movies {
   vote_count: number
   watched_season?: number
   watched_episode?: number
+  complete?: boolean
 }
 export interface PopularMoviesInfo {
   adult: boolean

@@ -3,9 +3,10 @@ import type { SearchResultsType } from '@/types'
 import Pagination from './Pagination'
 import MovieGrid from './MovieGrid'
 // import Filters from './Filters'
-export const dynamic = 'force-dynamic'
+import { unstable_noStore as noStore } from 'next/cache'
 export default async function PopularSeries ({ page }: { page: string }) {
   console.log(page)
+  noStore()
 
   const url = `https://api.themoviedb.org/3/tv/top_rated?language=es-ES&page=${page}` // Page, se comparte con searchResults ... ¿?
   const options = {

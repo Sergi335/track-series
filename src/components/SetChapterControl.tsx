@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 
 export default function SetChapterControl ({ data }: { data: MovieInfo }) {
-  const storedData = JSON.parse(localStorage.getItem('series') ?? '') as MovieInfo[] ?? {}
+  const storedData = JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? {}
   const id = data.id
   const movie = storedData?.find(mov => mov.id === id)
   const { seasons, watched_season: storedSeason, watched_episode: storedEpisode, complete: storedComplete } = movie ?? { seasons: [], watched_season: undefined, watched_episode: undefined }
@@ -19,20 +19,20 @@ export default function SetChapterControl ({ data }: { data: MovieInfo }) {
 
   const saveData = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const series = JSON.parse(localStorage.getItem('series') ?? '') as MovieInfo[] ?? []
+    const series = JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? []
     const seriesIndex = series.findIndex((item: MovieInfo) => item.id === id)
     series[seriesIndex] = { ...series[seriesIndex], watched_season: seasonWatched, watched_episode: episodeWatched }
     console.log(series[seriesIndex])
-    localStorage.setItem('series', JSON.stringify(series))
+    window.localStorage.setItem('series', JSON.stringify(series))
     setEditMode(false)
   }
   const handleComplete = () => {
     setComplete(!complete)
-    const series = JSON.parse(localStorage.getItem('series') ?? '') as MovieInfo[] ?? []
+    const series = JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? []
     const seriesIndex = series.findIndex((item: MovieInfo) => item.id === id)
     series[seriesIndex] = { ...series[seriesIndex], complete: !complete }
     console.log(series[seriesIndex])
-    localStorage.setItem('series', JSON.stringify(series))
+    window.localStorage.setItem('series', JSON.stringify(series))
   }
   const getSeasonEpisodes = (e?: React.FormEvent<HTMLSelectElement>) => {
     console.log(e?.currentTarget?.id)

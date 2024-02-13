@@ -17,7 +17,7 @@ export default function Controls ({ data }: { data: MovieInfo }) {
   useEffect(() => {
     if (mySeriesIndex !== -1) setIsFollowing(true)
     if (watchlistIndex !== -1) setIsInWatchlist(true)
-  }, [])
+  }, [mySeriesIndex, watchlistIndex])
   console.log(data)
   const storeMySeriesData = () => {
     if (storedMySeriesData !== null) {

@@ -6,7 +6,8 @@
     },
     "extends": [
         "standard-with-typescript",
-        "plugin:react/recommended"
+        "plugin:react/recommended",
+        "eslint:recommended", "next"
     ],
     "parserOptions": {
         "ecmaVersion": "latest",
@@ -20,6 +21,7 @@
         "react/react-in-jsx-scope": "off",
         "@typescript-eslint/no-misused-promises": "off",
         "react/prop-types": "off",
-        "@typescript-eslint/unbound-method": "off"
+        "@typescript-eslint/unbound-method": "off",
+        "@next/next/no-img-element": "off"
     }
 }

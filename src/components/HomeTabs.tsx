@@ -1,6 +1,6 @@
 'use client'
 import { Tabs } from '@/components/ui/tabs'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 export default function HomeTabs ({ query, page, children }: { query: string, page: string, children: React.ReactNode }) {
   const [value, setValue] = useState('serieslist')

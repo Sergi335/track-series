@@ -1,5 +1,5 @@
 'use client'
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
 import { useDebouncedCallback } from 'use-debounce'
 import { CloseIcon } from './icons/icons'

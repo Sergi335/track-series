@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 export default function Filters () {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.id)

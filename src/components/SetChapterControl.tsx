@@ -1,6 +1,6 @@
 'use client'
 import { type MovieInfo } from '@/types'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 
 export default function SetChapterControl ({ data }: { data: MovieInfo }) {
@@ -45,13 +45,13 @@ export default function SetChapterControl ({ data }: { data: MovieInfo }) {
   }
   useEffect(() => {
     setTotalEpisodes(seasons[seasonWatched - startingSeasonNumber]?.episode_count)
-  }, [seasonWatched])
+  }, [seasons, startingSeasonNumber, seasonWatched])
 
   useEffect(() => {
     if (seasons.length === seasonWatched + limitNumber && seasons[seasonWatched - startingSeasonNumber].episode_count === episodeWatched) {
       setComplete(true)
     }
-  }, [seasonWatched, episodeWatched])
+  }, [seasonWatched, episodeWatched, limitNumber, seasons, startingSeasonNumber])
   const increaseEpisode = () => {
     if (seasons.length === seasonWatched + limitNumber && seasons[seasonWatched - startingSeasonNumber].episode_count === episodeWatched) return
     if (seasonWatched !== undefined && episodeWatched !== undefined) {

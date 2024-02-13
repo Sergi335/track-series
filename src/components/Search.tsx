@@ -34,8 +34,8 @@ export default function Search () {
     }
     params.set('page', '1')
     // setQuery(term)
-    console.log(params.toString())
-    replace(`${pathname}?${params.toString()}`)
+    // console.log(params.toString())
+    replace(`${pathname}?${params?.toString()}`)
   }, 500)
 
   return (

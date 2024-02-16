@@ -2,8 +2,9 @@
 import { type MovieInfo } from '@/types'
 import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button'
+import { MinusIcon, PlusIcon } from './icons/icons'
 
-export default function SetChapterControl ({ data }: { data: MovieInfo }) {
+export default function SetChapterControl ({ data, isInList }: { data: MovieInfo, isInList?: boolean }) {
   const storedData = JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? {}
   const id = data.id
   const movie = storedData?.find(mov => mov.id === id)
@@ -79,14 +80,19 @@ export default function SetChapterControl ({ data }: { data: MovieInfo }) {
       setTotalEpisodes(seasons[seasonWatched - startingSeasonNumber].episode_count)
     }
   }
-
+  let formListClass
+  if (isInList !== undefined && isInList) {
+    formListClass = 'flex flex-col items-start gap-2'
+  } else {
+    formListClass = 'flex items-center gap-2'
+  }
   return (
         <>
             <div className='flex gap-4 flex-wrap'>
                 {
                     editMode
                       ? (
-                        <form action="" className='flex gap-2 items-center' onSubmit={saveData}>
+                        <form action="" className={`${formListClass}`} onSubmit={saveData}>
                             <label className='text-white' htmlFor="season">Temporada:</label>
                             <select name="" id="season" onChange={getSeasonEpisodes} defaultValue={seasonWatched}>
                                 {
@@ -109,30 +115,34 @@ export default function SetChapterControl ({ data }: { data: MovieInfo }) {
                                       : null
                                 }
                             </select>
-                            <Button type='submit' className='bg-blue-600 hover:bg-blue-400 text-white'>Save</Button>
+                            {isInList !== null && isInList !== undefined && !isInList && <Button type='submit' className='bg-blue-600 hover:bg-blue-400 text-white'>Save</Button>}
                         </form>
                         )
                       : (
-                        <form action="" className='flex gap-2 items-center' onSubmit={saveData}>
+                        <form action="" className={`${formListClass}`} onSubmit={saveData}>
                           <div className='flex gap-2 flex-wrap'>
                               <p className='text-white text-sm'>Temporada: {seasonWatched}</p>
                               <p className='text-white text-sm'>Capítulo: {episodeWatched}</p>
                           </div>
-                          <button onClick={decreaseEpisode}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill='none'><path d="M0 0h24v24H0z" /><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" stroke="#9B4CFF"/><path d="M9 12l6 0" stroke="#9B4CFF"/></svg>
-                          </button>
-                          <button onClick={increaseEpisode}>
-                              <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16 8 8 0 0 0 0-16Z" fill="#9B4CFF"/><path fillRule="evenodd" clipRule="evenodd" d="M13 7a1 1 0 0 0-2 0v4H7a1 1 0 0 0 0 2h4v4a1 1 0 0 0 2 0v-4h4a1 1 0 0 0 0-2h-4V7Z" fill="#9B4CFF"/></svg>
-                          </button>
-                          <Button type='submit' className='bg-blue-600 hover:bg-blue-400 text-white'>Save</Button>
+                          <div className='flex flex-col gap-1'>
+                            <button onClick={increaseEpisode}>
+                              <PlusIcon className='w-4 h-4'/>
+                            </button>
+                            <button onClick={decreaseEpisode}>
+                              <MinusIcon className='w-4 h-4'/>
+                            </button>
+                          </div>
+                          {isInList !== null && isInList !== undefined && !isInList && <Button type='submit' className='bg-blue-600 hover:bg-blue-400 text-white'>Save</Button>}
                           <Button type='button' onClick={() => { handleComplete() }} className={complete ? 'bg-red-600 hover:bg-red-400 text-white' : 'bg-blue-600 hover:bg-blue-400 text-white'}>{complete ? 'Completada' : 'Completar'}</Button>
                         </form>
                         )
                 }
 
-              <button onClick={() => { setEditMode(!editMode) }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="#9B4CFF" fill="none" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
-              </button>
+              {
+                isInList !== null && isInList !== undefined && !isInList
+                  ? <Button className='bg-red-600 hover:bg-red-400 text-white' onClick={() => { setEditMode(!editMode) }}>{editMode ? 'Cancel' : 'Edit'}</Button>
+                  : ''
+              }
             </div>
         </>
   )

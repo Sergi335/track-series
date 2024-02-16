@@ -87,7 +87,7 @@ export default async function MoviePage ({ params }: { params: { id: string } })
                           <div className="p-5 lg:w-2/4 leading-6">
                               <p className="text-sm leading-6 text-slate-200 dark:text-gray-200 text-pretty">{data.overview}</p>
                           </div>
-                          <Controls data={data} />
+                          <Controls data={data} isInList={false}/>
                           <div className="flex flex-col p-5">
                               <h5 className="mb-2 text-sm font-medium text-white dark:text-white">Reparto</h5>
                               <div className='flex flex-wrap gap-2'>

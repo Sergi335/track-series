@@ -34,7 +34,7 @@ export default function SeriesList ({ page }: { page: string }) {
               ? (
                   <>
                     <MovieGrid series={slicedSeries} />
-                    <Pagination totalPages={totalPages} />
+                    {totalPages > 1 && <Pagination totalPages={totalPages} />}
                   </>
                 )
               : <h1 className='text-white'>No series in your series</h1>

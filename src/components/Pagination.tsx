@@ -11,6 +11,7 @@ export default function Pagination ({ totalPages }: { totalPages: number }) {
   const searchParams = useSearchParams()
   const currentPage = isNaN(Number(searchParams.get('page'))) || Number(searchParams.get('page')) === 0 ? 1 : Number(searchParams.get('page'))
   console.log(totalPages, currentPage, pathname) // cuando se pone a mano o se clica en un numero alto se pinta en el servidor tambien ?¿?
+  console.log(typeof totalPages, typeof currentPage, typeof pathname, typeof searchParams)
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams)

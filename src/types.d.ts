@@ -16,9 +16,10 @@ export interface Movies {
 }
 export interface SearchResultsType {
   page: number
-  results: MovieInfo[]
+  results: Movies[]
   total_pages: number
   total_results: number
+  error?: boolean
 }
 export interface MovieInfo extends Movies {
   adult: boolean

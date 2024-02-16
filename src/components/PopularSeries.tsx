@@ -1,13 +1,8 @@
 import type { SearchResultsType } from '@/types'
-// import Link from 'next/link'
 import Pagination from './Pagination'
 import MovieGrid from './MovieGrid'
-// import Filters from './Filters'
-import { unstable_noStore as noStore } from 'next/cache'
-export default async function PopularSeries ({ page }: { page: string }) {
-  console.log(page)
-  noStore()
 
+export default async function PopularSeries ({ page }: { page: string }) {
   const url = `https://api.themoviedb.org/3/tv/top_rated?language=es-ES&page=${page}` // Page, se comparte con searchResults ... ¿?
   const options = {
     method: 'GET',
@@ -17,17 +12,34 @@ export default async function PopularSeries ({ page }: { page: string }) {
     }
   }
   const getPopularSeries = async () => {
-    const res = await fetch(url, options)
-    const json = await res.json()
-    return json
+    try {
+      const res = await fetch(url, options)
+      if (!res.ok) {
+        return { results: [], total_pages: 0, total_results: 0 }
+      } else {
+        const json = await res.json()
+        return json
+      }
+    } catch (error) {
+      console.log(error)
+      return { results: [], total_pages: 0, total_results: 0 }
+    }
   }
   const { results, total_pages: totalPages, total_results: totalResults }: SearchResultsType = await getPopularSeries()
-  console.log(totalPages, totalResults)
+  const LIMIT_API_RESULTS = 500
+  console.log(totalPages, totalResults, results) // TODO: Hacer algo con toralResults
   return (
     <>
         {/* <Filters /> */}
-        <MovieGrid series={results} />
-        <Pagination totalPages={totalPages > 500 ? 500 : totalPages} />
+        {
+          results.length > 0
+            ? <>
+                <MovieGrid series={results} />
+                {totalPages > 1 && <Pagination totalPages={totalPages > LIMIT_API_RESULTS ? LIMIT_API_RESULTS : totalPages} />}
+              </>
+            : <h1 className='text-white'>Error al recuperar los datos</h1>
+
+        }
     </>
   )
 }

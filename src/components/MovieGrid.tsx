@@ -1,28 +1,15 @@
-import { type MovieInfo } from '@/types'
+import { type MovieInfo, type Movies } from '@/types'
 import Link from 'next/link'
-import SetChapterControl from './SetChapterControl'
+import Controls from './Controls'
 
-export default function MovieGrid ({ series }: { series: MovieInfo[] }) {
-//   const showInfo = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-//     // e.stopPropagation()
-//     // const target = e.target as HTMLElement
-//     // const info = target.parentElement?.querySelector('div')
-//     // // console.log('🚀 ~ showInfo ~ info:', info)
-//     // if (info !== null && info !== undefined) {
-//     //   info?.classList.toggle('invisible')
-//     //   info?.classList.toggle('opacity-0')
-//     //   info?.classList.toggle('translate-y-[-120px]')
-//     // }
-//   }
-  // console.log(series)
-  // no se puede importar el componente setchaptercontrol el tipo de dato es distinto es tipo Movies[] en realidad faltan campos
+export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] }) {
   return (
         <section className='grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-12 py-14 w-3/4'>
             {series === undefined && <h1 className='text-white'>No series in watchlist</h1>}
             {series?.map(movie => {
               return (
-                <div key={movie.id} className="flex flex-col relative group">
-                  <Link href={`/movies/${movie.id}`} className='flex flex-col'>
+                <article key={movie.id} className="flex flex-col relative group">
+                  <Link href={`/movies/${movie.id}`}>
                       <img className="rounded-2xl border-[5px] border-white shadow-xl aspect-[9/13] object-cover" src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} alt={`cover image for ${movie.name}`} />
                   </Link>
                   <div className="absolute py-3 px-2 bg-[#1e293bd4] backdrop-blur-sm w-[calc(100%-9.6px)] ml-[4.8px] rounded-b-[8px] overflow-hidden invisible opacity-0 transition duration-300 bottom-[4.8px] group-hover:visible group-hover:opacity-100">
@@ -36,9 +23,9 @@ export default function MovieGrid ({ series }: { series: MovieInfo[] }) {
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
                       </svg>
                     </Link>
-                    <SetChapterControl data={movie} />
+                    <Controls data={movie} isInList={true} />
                   </div>
-                </div>
+                </article>
               )
             })}
         </section>

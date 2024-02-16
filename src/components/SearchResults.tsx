@@ -12,18 +12,35 @@ export default async function SearchResults ({ query, page }: { query: string, p
     }
   }
   const searchMovies = async () => {
-    const res = await fetch(url, options)
-    const json = await res.json()
-    console.log(json)
-    return json
+    try {
+      const res = await fetch(url, options)
+      if (!res.ok) {
+        return { results: [], total_pages: 0, total_results: 0, error: true }
+      } else {
+        const json = await res.json()
+        return json
+      }
+    } catch (error) {
+      console.log(error)
+      return { results: [], total_pages: 0, total_results: 0, error: true }
+    }
   }
-  const { results, total_pages: totalPages, total_results: totalResults }: SearchResultsType = await searchMovies()
-  console.log(totalPages, totalResults)
+
+  const { results, total_pages: totalPages, total_results: totalResults, error }: SearchResultsType = await searchMovies()
+  console.log(totalPages, totalResults, results)
 
   return (
+    <>
+      {results.length > 0
+        ? (
         <>
           <MovieGrid series={results} />
-          <Pagination totalPages={totalPages} />
+          {totalPages > 1 && <Pagination totalPages={totalPages} />}
         </>
+          )
+        : (
+            error !== undefined ? <h1 className='text-white'>Error al recuperar los datos</h1> : <h1 className='text-white'>No results found</h1>
+          )}
+    </>
   )
 }

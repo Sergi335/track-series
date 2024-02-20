@@ -1,10 +1,10 @@
 'use client'
-import { type Movies, type MovieInfo } from '@/types'
 import { Button } from '@/components/ui/button'
-import { useState, useEffect } from 'react'
-import { CheckIcon, WatchingIcon } from './icons/icons'
-import SetChapterControl from './SetChapterControl'
 import { fetchMovieInfo } from '@/lib/data'
+import { type MovieInfo, type Movies } from '@/types'
+import { useEffect, useState } from 'react'
+import SetChapterControl from './SetChapterControl'
+import { CheckIcon, WatchingIcon } from './icons/icons'
 
 export default function Controls ({ data, isInList }: { data: Movies | MovieInfo, isInList?: boolean }) {
   const [isFollowing, setIsFollowing] = useState(false)
@@ -55,6 +55,10 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
     buttonListClass = 'h-auto px-2 py-2 text-xs'
     buttonContainerListClass = 'px-0'
     iconsClass = 'w-4 h-4'
+  } else {
+    buttonListClass = ''
+    buttonContainerListClass = ''
+    iconsClass = ''
   }
   // Si le damos a follow desde la lista peta por que le pasamos un objeto que no tiene la propiedad seasons, if isFollowing hacer un fetch para traer la info de la serie
   return (

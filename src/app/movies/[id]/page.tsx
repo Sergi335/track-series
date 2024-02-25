@@ -1,9 +1,9 @@
-import type { MovieInfo, Credits } from '@/types'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { ActorInfo } from '@/components/ActorInfo'
 import Controls from '@/components/Controls'
 import HistoryBackButton from '@/components/HistoryBackButton'
-import { ActorInfo } from '@/components/ActorInfo'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import type { Credits, MovieInfo } from '@/types'
 
 export default async function MoviePage ({ params }: { params: { id: string } }) {
   const { id } = params
@@ -16,7 +16,7 @@ export default async function MoviePage ({ params }: { params: { id: string } })
       Authorization: process.env.AUTH ?? ''
     }
   }
-
+  // promise.all
   const fetchMovieInfo = async () => {
     const res = await fetch(dataurl, options)
     const json = await res.json()

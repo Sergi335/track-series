@@ -35,6 +35,8 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
       }
     }
     window.localStorage.setItem('series', JSON.stringify(storedMySeriesData))
+    const storeEvent = new Event('storageEvent')
+    window.dispatchEvent(storeEvent)
   }
 
   const storeWatchlistData = () => {

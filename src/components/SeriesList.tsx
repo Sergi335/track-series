@@ -1,6 +1,6 @@
 'use client'
 import { type MovieInfo } from '@/types'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import MovieGrid from './MovieGrid'
 import Pagination from './Pagination'
 
@@ -11,10 +11,27 @@ export default function SeriesList ({ page }: { page: string }) {
   const [totalPages, setTotalPages] = useState<number>(0)
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Your client-side code that uses window goes here
-      if (window.localStorage.getItem('series') === null) window.localStorage.setItem('series', JSON.stringify([]))
-      setSeries(JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? [])
+    const updateSeries = () => {
+      if (typeof window !== 'undefined') {
+        // Your client-side code that uses window goes here
+        if (window.localStorage.getItem('series') === null) window.localStorage.setItem('series', JSON.stringify([]))
+        const rawSeries = JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? []
+        setSeries(rawSeries.toSorted((a, b) => {
+          const aComplete = a.complete ?? false
+          const bComplete = b.complete ?? false
+
+          if (aComplete === bComplete) return 0 // Si ambos son iguales, no cambia el orden
+          if (aComplete) return 1 // Si a.complete es true, a va después de b
+          if (bComplete) return -1 // Si b.complete es true, a va antes de b
+
+          return 0 // Default value when the return value is undefined
+        }))
+      }
+    }
+    updateSeries()
+    window.addEventListener('storageEvent', updateSeries)
+    return () => {
+      window.removeEventListener('storageEvent', updateSeries)
     }
   }, [])
 
@@ -25,7 +42,7 @@ export default function SeriesList ({ page }: { page: string }) {
     setSlicedSeries(series.slice(start, end))
   }, [series, page])
 
-  console.log(series.length)
+  // console.log(series.length)
 
   return (
     <>

@@ -1,4 +1,5 @@
 import Header from '@/components/Header'
+import HomeButtons from '@/components/HomeButtons'
 import Nav from '@/components/Nav'
 import SearchResults from '@/components/SearchResults'
 
@@ -17,9 +18,10 @@ export default function Home ({
         <Header />
         <main className="flex flex-col items-center">
             <Nav />
-            {query.length > 0 && (
-                <SearchResults query={query} page={page} />
-            )}
+            {query.length > 0
+              ? (<SearchResults query={query} page={page} />)
+              : <HomeButtons />
+            }
         </main>
     </div>
   )

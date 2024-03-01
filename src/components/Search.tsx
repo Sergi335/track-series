@@ -1,6 +1,6 @@
 'use client'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useRef } from 'react'
-import { useSearchParams, usePathname, useRouter } from 'next/navigation'
 import { useDebouncedCallback } from 'use-debounce'
 import { CloseIcon } from './icons/icons'
 
@@ -44,7 +44,7 @@ export default function Search () {
           <div className="relative w-full">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 cursor-pointer text-gray-500" onClick={clearSearch}>
                 {
-                  searchParams.toString().length > 0
+                  inputRef.current?.value !== undefined && inputRef.current?.value !== ''
                     ? <CloseIcon/>
                     : (
                       <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">

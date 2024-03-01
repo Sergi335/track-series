@@ -33,7 +33,7 @@ export default async function FeaturedSeries ({ searchParams, params }: { search
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZjE4MWM2MDRjY2U5ZTJlODViNGRhMDBmM2ZiZjBiZiIsInN1YiI6IjY0YzkyZTNlZjJjZjI1MDEzYWFjNWU4YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.vEtC1rtc1710_h2zhocjUb4GN8kDqlJqzpM-dowTIfI'
+      Authorization: process.env.AUTH ?? ''
     }
   }
   const fetchMovies = async () => {

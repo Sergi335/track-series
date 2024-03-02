@@ -62,7 +62,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
                   <Link href={`/movies/${movie.id}`}>
                       <img className={`rounded-2xl border-[5px] ${className[index]} shadow-xl aspect-[9/13] object-cover`} src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} alt={`cover image for ${movie.name}`} />
                   </Link>
-                  <div className="absolute py-3 px-2 bg-[#1e293bd4] backdrop-blur-sm w-[calc(100%-9.6px)] ml-[4.8px] rounded-b-[8px] overflow-hidden invisible opacity-0 transition duration-300 bottom-[4.8px] group-hover:visible group-hover:opacity-100">
+                  <div className="absolute py-3 px-2 bg-[#1e293bd4] backdrop-blur-sm w-[calc(100%-9.6px)] ml-[4.8px] rounded-b-[8px] overflow-hidden invisible opacity-0 transition-all duration-500 bottom-[4.8px] group-hover:visible group-hover:opacity-100">
                     <Link className='flex' href={`/movies/${movie.id}`}>
                       <h5 className="mb-2 text-xl text-balance font-bold text-zinc-200">{movie.name}</h5>
                     </Link>

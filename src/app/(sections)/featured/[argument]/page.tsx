@@ -1,6 +1,4 @@
-import Header from '@/components/Header'
 import MovieGrid from '@/components/MovieGrid'
-import Nav from '@/components/Nav'
 import Pagination from '@/components/Pagination'
 import SearchResults from '@/components/SearchResults'
 import { type SearchResultsType } from '@/types'
@@ -47,9 +45,7 @@ export default async function FeaturedSeries ({ searchParams, params }: { search
 
   return (
     <div className='app flex flex-col'>
-        <Header />
         <main className="flex flex-col items-center">
-        <Nav />
         {query.length > 0
           ? (
             <SearchResults query={query} page={page} />

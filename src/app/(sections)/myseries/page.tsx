@@ -1,7 +1,5 @@
-import SeriesList from '@/components/SeriesList'
 import SearchResults from '@/components/SearchResults'
-import Header from '@/components/Header'
-import Nav from '@/components/Nav'
+import SeriesList from '@/components/SeriesList'
 
 export default async function MySeries ({
   searchParams
@@ -15,9 +13,7 @@ export default async function MySeries ({
 
   return (
     <div className='app flex flex-col'>
-      <Header />
       <main className="flex flex-col items-center">
-      <Nav />
       {query.length > 0
         ? (
             <SearchResults query={query} page={page} />

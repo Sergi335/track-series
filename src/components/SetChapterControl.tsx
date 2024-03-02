@@ -108,10 +108,10 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
         <>
             <div className='flex gap-4 flex-wrap items-center'>
               <form action="" className={`${formListClass}`}>
-                <Button type='button' onClick={() => { handleComplete() }} className={complete ? 'bg-red-600 hover:bg-red-400 text-white' : 'bg-blue-600 hover:bg-blue-400 text-white'}>{complete ? 'Completada' : 'Completar'}</Button>
+                <Button type='button' onClick={() => { handleComplete() }} className={complete ? 'bg-red-700 hover:bg-red-800 text-white transition-colors duration-500' : 'bg-blue-700 hover:bg-blue-800 transition-colors duration-500 text-white'}>{complete ? 'Completada' : 'Completar'}</Button>
                 {
                   isInList !== null && isInList !== undefined && !isInList
-                    ? <Button type='button' className='bg-red-600 hover:bg-red-400 text-white' onClick={() => { setEditMode(!editMode) }}>{editMode ? 'Save' : 'Edit'}</Button>
+                    ? <Button type='button' className='bg-red-700 hover:bg-red-800 text-white transition-colors duration-500' onClick={() => { setEditMode(!editMode) }}>{editMode ? 'Save' : 'Edit'}</Button>
                     : ''
                 }
 
@@ -152,10 +152,10 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
                               <p className='text-white text-sm'>Capítulo: {episodeWatched}</p>
                           </div>
                           <div className='flex flex-col gap-1'>
-                            <button type='button' onClick={increaseEpisode} className='p-1 bg-blue-600 rounded-[3px]'>
+                            <button type='button' onClick={increaseEpisode} className='p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white'>
                               <ChevronUp className='w-4 h-4'/>
                             </button>
-                            <button type='button' onClick={decreaseEpisode} className='p-1 bg-blue-600 rounded-[3px]'>
+                            <button type='button' onClick={decreaseEpisode} className='p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white'>
                               <ChevronDown className='w-4 h-4'/>
                             </button>
                           </div>

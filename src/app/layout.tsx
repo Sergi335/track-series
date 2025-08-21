@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import 'overlayscrollbars/overlayscrollbars.css'
 import React from 'react'
+import ClerkWrapper from '@/components/ClerkWrapper'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import './globals.css'
 
@@ -15,14 +16,16 @@ export default function RootLayout ({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="font-sans min-h-screen transition-colors duration-300">
-        <ThemeProvider>
-          <div className="bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 dark:from-gray-700 dark:via-gray-900 dark:to-black min-h-screen">
-            {children}
-          </div>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ClerkWrapper>
+      <html lang="en" suppressHydrationWarning>
+        <body className="font-sans min-h-screen transition-colors duration-300">
+          <ThemeProvider>
+            <div className="bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 dark:from-gray-700 dark:via-gray-900 dark:to-black min-h-screen">
+              {children}
+            </div>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkWrapper>
   )
 }

@@ -1,8 +1,39 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Features
+
+Track My Series is a web application for discovering and tracking TV series. It includes:
+
+- **Public Access**: Browse the homepage and discover new series without authentication
+- **Authentication**: Secure login system powered by [Clerk](https://clerk.com/)
+- **Protected Features**: Personal series tracking and watchlist management (requires authentication)
+
+## Authentication Setup
+
+This project uses Clerk for authentication. To set up authentication:
+
+1. **Create a Clerk account** at [https://clerk.com/](https://clerk.com/)
+2. **Create a new application** in your Clerk dashboard
+3. **Copy your API keys** from the Clerk dashboard
+4. **Set up environment variables**:
+   ```bash
+   cp .env.example .env.local
+   ```
+   Then edit `.env.local` and replace the placeholder values with your actual Clerk keys:
+   ```bash
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_actual_key_here
+   CLERK_SECRET_KEY=sk_test_your_actual_key_here
+   ```
+
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
+
+```bash
+npm install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -15,6 +46,18 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Route Protection
+
+- **Public routes**: `/` (homepage), `/discover` - accessible without authentication
+- **Protected routes**: `/myseries`, `/watchlist` - require user authentication
+
+## Project Structure
+
+- `/src/app/` - Next.js app router pages
+- `/src/components/` - Reusable React components
+- `/src/middleware.ts` - Route protection middleware
+- `/src/contexts/` - React contexts (theme, etc.)
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

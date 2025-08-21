@@ -5,8 +5,8 @@ import { ThemeProvider } from '@/contexts/ThemeContext'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Track My Series',
-  description: 'Track your favorite TV series and movies'
+  title: 'Track My Series - Descubre y Sigue tus Series Favoritas',
+  description: 'Descubre series de televisión por género, mantén un registro de lo que has visto y encuentra tu próxima serie favorita. Explora ciencia ficción, comedia, misterio y más.'
 }
 
 export default function RootLayout ({

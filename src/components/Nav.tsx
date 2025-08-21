@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import ThemeToggle from './ThemeToggle'
 
 export default function Nav () {
@@ -22,11 +22,11 @@ export default function Nav () {
 
                 {/* Authentication buttons */}
                 <SignedOut>
-                  <SignInButton mode="modal">
+                  <Link href="/sign-in">
                     <button className="px-8 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors duration-500">
                       Sign In
                     </button>
-                  </SignInButton>
+                  </Link>
                 </SignedOut>
                 <SignedIn>
                   <UserButton afterSignOutUrl="/" />

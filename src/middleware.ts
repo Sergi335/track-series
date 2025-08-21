@@ -14,7 +14,7 @@ export default clerkMiddleware((auth, req) => {
     if (isProtectedRoute(req)) {
       return Response.redirect(new URL('/', req.url))
     }
-    // Allow access to other routes
+    // Allow access to public routes
     return
   }
 

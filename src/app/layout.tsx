@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import 'overlayscrollbars/overlayscrollbars.css'
 import React from 'react'
+import { ThemeProvider } from '@/contexts/ThemeContext'
 import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Track My Series - Descubre y Sigue tus Series Favoritas',
@@ -17,9 +15,13 @@ export default function RootLayout ({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black bg-no-repeat min-h-screen`}>
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans min-h-screen transition-colors duration-300">
+        <ThemeProvider>
+          <div className="bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 dark:from-gray-700 dark:via-gray-900 dark:to-black min-h-screen">
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   )

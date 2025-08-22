@@ -13,6 +13,11 @@ export interface Movies {
   name: string
   vote_average: number
   vote_count: number
+
+  // --- CAMPOS AÑADIDOS PARA LA LÓGICA DEL FILTRO ---
+  network_id?: number // Asumiendo que una serie pertenece a una network principal
+  status?: 'returning' | 'ended' | 'planned' | string // Para el filtro de status
+  company_ids?: number[] // Asumiendo que puede tener varias productoras
 }
 export interface SearchResultsType {
   page: number
@@ -163,4 +168,37 @@ export enum Department {
   Directing = 'Directing',
   Production = 'Production',
   Writing = 'Writing',
+}
+
+// Opciones para los campos de tipo 'select'
+export interface SelectOption {
+  value: string | number
+  label: string
+}
+
+// Estado que contendrá los valores de nuestros filtros
+export interface FilterState {
+  genre: string
+  language: 'en' | 'es' | '' // Limitado a los valores especificados
+  country: string
+  popularity_min: number
+  popularity_max: number
+  year_min: number
+  year_max: number
+  network: string
+  status: string
+  company: string
+}
+
+// Props que recibirá el componente de filtro
+export interface FilterProps {
+  // Datos para poblar los selects y radios
+  genres: SelectOption[]
+  countries: SelectOption[]
+  networks: SelectOption[]
+  statuses: SelectOption[]
+  companies: SelectOption[]
+
+  // Función para notificar al componente padre de los cambios
+  onFilterChange: (filters: Partial<FilterState>) => void
 }

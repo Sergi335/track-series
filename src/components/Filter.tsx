@@ -83,15 +83,15 @@ const FilterComponent = () => {
     genre: searchParams.get('genre') ?? '',
     language: (searchParams.get('language') as '' | 'en' | 'es') ?? '',
     country: searchParams.get('country') ?? '',
-    popularity_min: Number(searchParams.get('popularity_min') ?? 0),
-    popularity_max: Number(searchParams.get('popularity_max') ?? 10000),
+    // popularity_min: Number(searchParams.get('popularity_min') ?? 0),
+    // popularity_max: Number(searchParams.get('popularity_max') ?? 100000),
     year: searchParams.get('year') ?? '',
     network: searchParams.get('network') ?? '',
     status: searchParams.get('status') ?? '',
     company: searchParams.get('company') ?? ''
   })
 
-  const { genres, countries, networks, statuses, companies } = filterTypes
+  const { genres, countries, networks, companies } = filterTypes
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -102,7 +102,7 @@ const FilterComponent = () => {
     setFilters(newFilters)
     const params = new URLSearchParams()
     Object.entries(newFilters).forEach(([key, val]) => {
-      if (val !== '' && val !== 0) params.set(key, String(val))
+      if (val !== '') params.set(key, String(val))
     })
     router.push(`?${params.toString()}`)
   }
@@ -124,7 +124,9 @@ const FilterComponent = () => {
       </select>
     </div>
   )
-
+  const years = Array.from({ length: currentYear - 1950 + 1 }, (_, i) => 1950 + i).toReversed().map(year => (
+    { value: year.toString(), label: year.toString() }
+  ))
   return (
     <div className="p-4 rounded-lg shadow text-white mt-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 bg-gray-700 p-6 rounded-lg">
@@ -136,15 +138,16 @@ const FilterComponent = () => {
         {renderSelect('country', 'País', countries)}
         {renderSelect('network', 'Network', networks)}
         {renderSelect('company', 'Compañías', companies)}
-        <div>
+        {renderSelect('year', 'Año', years)}
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700">Popularidad</label>
           <div className="flex items-center space-x-2 mt-1">
             <input type="number" name="popularity_min" value={filters.popularity_min} onChange={handleChange} className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm bg-gray-900" placeholder="Min"/>
             <span className="text-gray-500">-</span>
             <input type="number" name="popularity_max" value={filters.popularity_max} onChange={handleChange} className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm bg-gray-900" placeholder="Max"/>
           </div>
-        </div>
-        <div>
+        </div> */}
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700">Año</label>
           <div className="mt-1">
             <select
@@ -154,13 +157,13 @@ const FilterComponent = () => {
               className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm bg-gray-900"
             >
               <option value="">Todos</option>
-              {Array.from({ length: currentYear - 1950 + 1 }, (_, i) => 1950 + i).map(year => (
+              {Array.from({ length: currentYear - 1950 + 1 }, (_, i) => 1950 + i).toReversed().map(year => (
                 <option key={year} value={year}>{year}</option>
               ))}
             </select>
           </div>
-        </div>
-        <div>
+        </div> */}
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700">Status</label>
           <div className="mt-2 flex items-center space-x-4">
             {statuses.map(status => (
@@ -178,7 +181,7 @@ const FilterComponent = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

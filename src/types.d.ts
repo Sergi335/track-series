@@ -181,8 +181,8 @@ export interface FilterState {
   genre: string
   language: 'en' | 'es' | '' // Limitado a los valores especificados
   country: string
-  popularity_min: number
-  popularity_max: number
+  // popularity_min: number
+  // popularity_max: number
   year: string // Año seleccionado (de first_air_date)
   network: string
   status: string

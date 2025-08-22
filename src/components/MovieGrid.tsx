@@ -43,7 +43,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
   }, [storedData, series])
 
   return (
-        <section className='grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 py-14 mx-auto'>
+        <section className='grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 py-14 mx-auto w-3/4'>
           {series === undefined && <h1 className='text-white'>No series in watchlist</h1>}
           {series?.map((movie, index) => {
             return (

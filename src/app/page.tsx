@@ -1,8 +1,8 @@
+import FeaturesSection from '@/components/FeaturesSection'
+import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import HomeButtons from '@/components/HomeButtons'
 import SearchResults from '@/components/SearchResults'
-import FeaturesSection from '@/components/FeaturesSection'
-import Footer from '@/components/Footer'
 
 export default function Home ({
   searchParams
@@ -19,7 +19,7 @@ export default function Home ({
         <Header />
         <main className="flex flex-col items-center flex-1">
             {query.length > 0
-              ? (<SearchResults query={query} page={page} />)
+              ? (<SearchResults results={[]} query={query} page={page} />)
               : (
                   <>
                     <HomeButtons />

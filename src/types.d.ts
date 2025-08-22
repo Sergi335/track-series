@@ -183,8 +183,7 @@ export interface FilterState {
   country: string
   popularity_min: number
   popularity_max: number
-  year_min: number
-  year_max: number
+  year: string // Año seleccionado (de first_air_date)
   network: string
   status: string
   company: string

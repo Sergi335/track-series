@@ -1,33 +1,9 @@
-import type { SearchResultsType } from '@/types'
-import Pagination from './Pagination'
+'use client'
 import MovieGrid from './MovieGrid'
+import Pagination from './Pagination'
 
-export default async function PopularSeries ({ page }: { page: string }) {
-  const url = `https://api.themoviedb.org/3/tv/top_rated?language=es-ES&page=${page}` // Page, se comparte con searchResults ... ¿?
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: process.env.AUTH ?? ''
-    }
-  }
-  const getPopularSeries = async () => {
-    try {
-      const res = await fetch(url, options)
-      if (!res.ok) {
-        return { results: [], total_pages: 0, total_results: 0 }
-      } else {
-        const json = await res.json()
-        return json
-      }
-    } catch (error) {
-      console.log(error)
-      return { results: [], total_pages: 0, total_results: 0 }
-    }
-  }
-  const { results, total_pages: totalPages, total_results: totalResults }: SearchResultsType = await getPopularSeries()
+export default function PopularSeries ({ results, totalPages }: { results: any[], totalPages: number }) {
   const LIMIT_API_RESULTS = 500
-  console.log(totalPages, totalResults, results) // TODO: Hacer algo con toralResults
   return (
     <>
         {/* <Filters /> */}

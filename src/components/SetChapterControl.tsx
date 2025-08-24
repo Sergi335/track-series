@@ -1,146 +1,141 @@
 'use client'
+import { toggleSerieComplete, updateSerieProgress } from '@/lib/actions'
 import { type MovieInfo } from '@/types'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { ChevronDown, ChevronUp } from './icons/icons'
 import { Button } from './ui/button'
 
 export default function SetChapterControl ({ data, isInList }: { data: MovieInfo, isInList?: boolean }) {
-  // Recuperar la información del localStorage, buscarla de entre todas las series y recuperar la info que necesitamos
-  const storedData = JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? {}
-  const id = data.id
-  const movie = storedData?.find(mov => mov.id === data.id)
-  const { seasons, watched_season: storedSeason, watched_episode: storedEpisode, complete: storedComplete } = movie ?? { seasons: [], watched_season: undefined, watched_episode: undefined }
-  // Declaramos los estados que vamos a necesitar
-  const [episodeWatched, setEpisodeWatched] = useState<number>(storedEpisode ?? 1) // Ojo si no empieza en 1
-  const [seasonWatched, setSeasonWatched] = useState<number>(storedSeason ?? Number(seasons[0]?.season_number))
-  const [totalEpisodes, setTotalEpisodes] = useState<number>(seasons[seasonWatched]?.episode_count)
+  const { id, seasons, watched_season: storedSeason, watched_episode: storedEpisode, complete: storedComplete } = data
+
+  const [episodeWatched, setEpisodeWatched] = useState<number>(storedEpisode ?? 1)
+  const [seasonWatched, setSeasonWatched] = useState<number>(storedSeason ?? seasons[0]?.season_number ?? 1)
+  const [totalEpisodes, setTotalEpisodes] = useState<number>(0)
   const [editMode, setEditMode] = useState<boolean>(false)
   const [complete, setComplete] = useState<boolean>(storedComplete ?? false)
-  // Variables auxiliares para el cálculo de episodios
-  // Esto es por si una serie empieza en la temporada 0 que es especiales no cuente como una temporada normal
-  const startingSeasonNumber = seasons[0]?.name === 'Especiales' ? 0 : 1 // tal vez deba ser season_number solo
+  const [isPending, startTransition] = useTransition()
+
+  const startingSeasonNumber = seasons.find(s => s.season_number > 0)?.season_number ?? 1
   const limitNumber = startingSeasonNumber === 0 ? 1 : 0
-  // console.log({ movie, seasons, limitNumber, startingSeasonNumber, seasonWatched, episodeWatched, seasonEpisodes: seasons[seasonWatched - startingSeasonNumber].episode_count, complete, totalEpisodes })
 
-  // Guardar en localStorage los cambios en el estado de los episodios
   useEffect(() => {
-    const series = JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? []
-    const seriesIndex = series.findIndex((item: MovieInfo) => item.id === id)
-    series[seriesIndex] = { ...series[seriesIndex], watched_season: seasonWatched, watched_episode: episodeWatched, complete }
-    window.localStorage.setItem('series', JSON.stringify(series))
-    const storeEvent = new Event('storageEvent')
-    window.dispatchEvent(storeEvent)
-  }, [complete, episodeWatched, id, seasonWatched])
+    if (seasons && seasons.length > 0) {
+      const currentSeason = seasons.find(s => s.season_number === seasonWatched)
+      setTotalEpisodes(currentSeason?.episode_count ?? 0)
+    }
+  }, [seasonWatched, seasons])
 
-  // Función para marcar la serie como completa
+  useEffect(() => {
+    // Debounce the update to avoid too many requests
+    const handler = setTimeout(() => {
+      if (storedEpisode !== episodeWatched || storedSeason !== seasonWatched) {
+        startTransition(async () => {
+          await updateSerieProgress(id, seasonWatched, episodeWatched)
+        })
+      }
+    }, 1000) // 1 second debounce
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [episodeWatched, seasonWatched, id, storedEpisode, storedSeason])
+
+  useEffect(() => {
+    if (storedComplete !== complete) {
+      startTransition(async () => {
+        await toggleSerieComplete(id, complete)
+      })
+    }
+  }, [complete, id, storedComplete])
+
   const handleComplete = () => {
+    const lastSeason = seasons[seasons.length - 1]
     setComplete(true)
-    setSeasonWatched(seasons.length - limitNumber)
-    setEpisodeWatched(seasons[seasons.length - 1].episode_count)
+    setSeasonWatched(lastSeason.season_number)
+    setEpisodeWatched(lastSeason.episode_count)
   }
 
-  // Función para obtener los episodios de la temporada seleccionada en el select
   const getSeasonEpisodes = (e?: React.FormEvent<HTMLSelectElement>) => {
-    e?.currentTarget?.id === 'season'
-      ? setSeasonWatched(Number(e?.currentTarget?.value))
-      : setEpisodeWatched(Number(e?.currentTarget?.value))
-    if (e?.currentTarget?.id === 'season') {
-      setTotalEpisodes(seasons[Number(e?.currentTarget?.value) - startingSeasonNumber].episode_count)
+    if (e?.currentTarget.id === 'season') {
+      setSeasonWatched(Number(e.currentTarget.value))
+    } else if (e?.currentTarget.id === 'chapters') {
+      setEpisodeWatched(Number(e.currentTarget.value))
     }
   }
 
-  // Actualizar el número total de episodios cuando se cambie de temporada
   useEffect(() => {
-    setTotalEpisodes(seasons[seasonWatched - startingSeasonNumber]?.episode_count)
-    // console.log('Cambiando de temporada', totalEpisodes)
-  }, [seasons, startingSeasonNumber, seasonWatched, totalEpisodes])
-
-  // Actualizar el estado de la serie a completa si se llega al último episodio de la última temporada
-  useEffect(() => {
-    if (seasons.length === seasonWatched + limitNumber && seasons[seasonWatched - startingSeasonNumber].episode_count === episodeWatched) {
-      setComplete(true)
-    } else {
-      setComplete(false)
+    if (seasons.length > 0) {
+      const lastSeason = seasons[seasons.length - 1]
+      if (seasonWatched === lastSeason.season_number && episodeWatched === lastSeason.episode_count) {
+        setComplete(true)
+      } else {
+        setComplete(false)
+      }
     }
-  }, [seasonWatched, episodeWatched, limitNumber, seasons, startingSeasonNumber])
+  }, [seasonWatched, episodeWatched, seasons])
 
-  // Caso especial para cuando el episode_count de una temporada es 0
   const increaseEpisode = () => {
-    // Si el número total de temporadas coincide con el número de temporada que estamos viendo más el limitNumber* y el número total de episodios de la temporada que es la última coincide con el episodio que estamos viendo, no aumentar el episodio
-    if (seasons.length === seasonWatched + limitNumber && seasons[seasonWatched - startingSeasonNumber].episode_count === episodeWatched) return
-    if (seasonWatched !== undefined && episodeWatched !== undefined) {
-      setEpisodeWatched((prevEpisode) => {
-        return prevEpisode >= totalEpisodes ? seasons[seasonWatched].episode_count === 0 ? 0 : 1 : prevEpisode + 1
-      })
-      setSeasonWatched(prevSeason => {
-        return episodeWatched >= totalEpisodes ? prevSeason + 1 : prevSeason
-      })
-      // setTotalEpisodes(seasons[seasonWatched - startingSeasonNumber].episode_count)
+    if (complete) return
+    const currentSeasonIndex = seasons.findIndex(s => s.season_number === seasonWatched)
+    if (currentSeasonIndex === -1) return
+
+    if (episodeWatched >= totalEpisodes) {
+      const nextSeason = seasons[currentSeasonIndex + 1]
+      if (nextSeason) {
+        setSeasonWatched(nextSeason.season_number)
+        setEpisodeWatched(1)
+      }
+    } else {
+      setEpisodeWatched(prev => prev + 1)
     }
   }
-  const getTotalEpisodes = () => {
-    // console.log({ seasonWatched, seasons, season: seasons[seasonWatched - 1], episodeCount: seasons[0]?.episode_count })
 
-    return seasons[seasonWatched - startingSeasonNumber - 1]?.episode_count
-  }
-  // No llega a calcular el total de episodios de la temporada anterior cuando se cambia de temporada, en el anterior pasa lo mismo pero no se nota porque se corrije en los sucesivos cambios
   const decreaseEpisode = () => {
     if (seasonWatched === startingSeasonNumber && episodeWatched === 1) return
-    if (seasonWatched !== undefined && episodeWatched !== undefined) {
-      setEpisodeWatched((prevEpisode) => {
-        // console.log(getTotalEpisodes())
-        return prevEpisode <= 1 ? getTotalEpisodes() : prevEpisode - 1 // todavia no ha cambiado la temporada luego totalEpisodes es el de la temporada anterior, hacer otra funcion getSeasonEpisodes para corregirlo y llamarla en totalEpisodes
-      })
-      setSeasonWatched(prevSeason => {
-        // console.log(prevSeason)
-        return episodeWatched <= 1 ? prevSeason - 1 : prevSeason
-      })
+    if (episodeWatched <= 1) {
+      const currentSeasonIndex = seasons.findIndex(s => s.season_number === seasonWatched)
+      const prevSeason = seasons[currentSeasonIndex - 1]
+      if (prevSeason) {
+        setSeasonWatched(prevSeason.season_number)
+        setEpisodeWatched(prevSeason.episode_count)
+      }
+    } else {
+      setEpisodeWatched(prev => prev - 1)
     }
   }
 
-  let formListClass
-  if (isInList !== undefined && isInList) {
-    formListClass = 'flex flex-col items-start gap-2'
-  } else {
-    formListClass = 'flex items-center gap-2'
-  }
+  const formListClass = isInList ? 'flex flex-col items-start gap-2' : 'flex items-center gap-2'
+
+  const currentSeasonName = seasons.find(s => s.season_number === seasonWatched)?.name ?? `Season ${seasonWatched}`
+
   return (
         <>
             <div className='flex gap-4 flex-wrap items-center'>
               <form action="" className={`${formListClass}`}>
-                <Button type='button' onClick={() => { handleComplete() }} className={complete ? 'bg-red-700 hover:bg-red-800 text-white transition-colors duration-500' : 'bg-blue-700 hover:bg-blue-800 transition-colors duration-500 text-white'}>{complete ? 'Completada' : 'Completar'}</Button>
+                <Button type='button' onClick={handleComplete} disabled={isPending || complete} className={complete ? 'bg-red-700 hover:bg-red-800 text-white transition-colors duration-500' : 'bg-blue-700 hover:bg-blue-800 transition-colors duration-500 text-white'}>{complete ? 'Completed' : 'Complete'}</Button>
                 {
-                  isInList !== null && isInList !== undefined && !isInList
-                    ? <Button type='button' className='bg-red-700 hover:bg-red-800 text-white transition-colors duration-500' onClick={() => { setEditMode(!editMode) }}>{editMode ? 'Save' : 'Edit'}</Button>
-                    : ''
+                  !isInList &&
+                    <Button type='button' className='bg-red-700 hover:bg-red-800 text-white transition-colors duration-500' onClick={() => { setEditMode(!editMode) }}>{editMode ? 'Save' : 'Edit'}</Button>
                 }
 
                 {
                     editMode
                       ? (
                           <>
-                          {/* { isInList !== null && isInList !== undefined && !isInList && <Button type='button' className='bg-blue-600 hover:bg-blue-400 text-white'>Save</Button> } */}
-
-                            <label className='text-white' htmlFor="season">Temporada:</label>
-                            <select className='text-black' name="" id="season" onChange={getSeasonEpisodes} defaultValue={seasonWatched}>
+                            <label className='text-white' htmlFor="season">Season:</label>
+                            <select className='text-black' name="season" id="season" onChange={getSeasonEpisodes} value={seasonWatched}>
                                 {
-                                    seasons.map(season => {
-                                      return (
+                                    seasons.map(season => (
                                         <option key={season.id} value={season.season_number}>{season.name}</option>
-                                      )
-                                    })
+                                    ))
                                 }
                             </select>
-                            <label className='text-white' htmlFor="chapters">Capítulo:</label>
-                            <select className='text-black' name="" id="chapters" onChange={getSeasonEpisodes} defaultValue={episodeWatched}>
+                            <label className='text-white' htmlFor="chapters">Episode:</label>
+                            <select className='text-black' name="chapters" id="chapters" onChange={getSeasonEpisodes} value={episodeWatched}>
                                 {
-                                    totalEpisodes !== undefined
-                                      ? Array.from({ length: totalEpisodes ?? 0 }, (_, i) => i + 1).map((chapter, index) => {
-                                        return (
-                                        <option key={index} value={chapter}>{chapter}</option>
-                                        )
-                                      })
-                                      : null
+                                    Array.from({ length: totalEpisodes }, (_, i) => i + 1).map((chapter) => (
+                                        <option key={chapter} value={chapter}>{chapter}</option>
+                                    ))
                                 }
                             </select>
                           </>
@@ -148,14 +143,14 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
                       : (
                         <>
                           <div className='flex gap-2 flex-wrap uppercase font-[700] tracking-[1.5px]'>
-                              <p className='text-white text-sm'>{seasons[seasonWatched - startingSeasonNumber]?.name}</p>
-                              <p className='text-white text-sm'>Capítulo: {episodeWatched}</p>
+                              <p className='text-white text-sm'>{currentSeasonName}</p>
+                              <p className='text-white text-sm'>Episode: {episodeWatched}</p>
                           </div>
                           <div className='flex flex-col gap-1'>
-                            <button type='button' onClick={increaseEpisode} className='p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white'>
+                            <button type='button' onClick={increaseEpisode} disabled={isPending || complete} className='p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white'>
                               <ChevronUp className='w-4 h-4'/>
                             </button>
-                            <button type='button' onClick={decreaseEpisode} className='p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white'>
+                            <button type='button' onClick={decreaseEpisode} disabled={isPending} className='p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white'>
                               <ChevronDown className='w-4 h-4'/>
                             </button>
                           </div>

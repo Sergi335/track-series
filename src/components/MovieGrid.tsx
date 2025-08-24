@@ -1,56 +1,22 @@
-'use client'
 import { type MovieInfo, type Movies } from '@/types'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import Controls from './Controls'
 
 export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] }) {
-  const [className, setClassName] = useState(Array<string>)
-  const [storedData, setStoredData] = useState<MovieInfo[]>([])
-
-  useEffect(() => {
-    const updateData = () => {
-      setStoredData(JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? {})
-      console.log('Actualizando storage')
-    }
-    updateData()
-    window.addEventListener('storageEvent', updateData)
-    return () => {
-      window.removeEventListener('storageEvent', updateData)
-    }
-  }, [])
-
-  // Esto añadía un borde rojo a los elementos completados
-  useEffect(() => {
-    const itemsInListIds = series.filter((item) => storedData.some((storedItem) => storedItem.id === item.id)).map(item => item.id)
-    const completedIds = storedData.filter((item) => item.complete).map(item => item.id)
-
-    const updateClass = () => {
-      const newState: string[] = []
-      series?.map(movie => {
-        if (itemsInListIds.includes(movie.id) && completedIds.includes(movie.id)) {
-          newState.push('border-red-600')
-        } else if (itemsInListIds.includes(movie.id)) {
-          newState.push('border-blue-600')
-        } else {
-          newState.push('border-white')
-        }
-        return null
-      })
-      setClassName(newState)
-    }
-    updateClass()
-  }, [storedData, series])
-
   return (
         <section className='grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 py-14 mx-auto w-3/4'>
           {series === undefined && <h1 className='text-white'>No series in watchlist</h1>}
-          {series?.map((movie, index) => {
+          {series?.map((movie) => {
+            // Determine border color based on completion status
+            const isFollowed = 'complete' in movie // A simple way to check if it's from the 'series' list
+            const isCompleted = isFollowed && (movie as MovieInfo).complete
+            const borderColor = isCompleted ? 'border-red-600' : isFollowed ? 'border-blue-600' : 'border-white'
+
             return (
                 <article key={movie.id} className="flex flex-col relative group">
                   {/* ImageCard */}
                   <Link href={`/movies/${movie.id}`}>
-                      <img className={`rounded-2xl ${className[index]} shadow-xl aspect-[9/13] object-cover`} src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} alt={`cover image for ${movie.name}`} />
+                      <img className={`rounded-2xl ${borderColor} shadow-xl aspect-[9/13] object-cover`} src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} alt={`cover image for ${movie.name}`} />
                   </Link>
                   {/* HooverInfo */}
                   <div className="absolute py-3 px-2 bg-[#1e293bd4] backdrop-blur-sm w-full rounded-b-[8px] overflow-hidden invisible opacity-0 transition-all duration-500 bottom-0 group-hover:visible group-hover:opacity-100">

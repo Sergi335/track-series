@@ -30,7 +30,7 @@ export default async function MoviePage ({ params }: { params: { id: string } })
     return json
   }
   const credits: Credits = await fetchCastInfo()
-  const data: MovieInfo = await fetchMovieInfo() // coger de localStorage si ya está guardado
+  const data: MovieInfo = await fetchMovieInfo()
   console.log(data.first_air_date.split('-')[0])
   return (
         <>

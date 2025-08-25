@@ -19,7 +19,7 @@ export default function Home ({
         <Header />
         <main className="flex flex-col items-center flex-1">
             {query.length > 0
-              ? (<SearchResults results={[]} query={query} page={page} />)
+              ? (<SearchResults query={query} page={page} />)
               : (
                   <>
                     <HomeButtons />

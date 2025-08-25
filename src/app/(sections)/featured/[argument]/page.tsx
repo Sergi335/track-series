@@ -48,7 +48,7 @@ export default async function FeaturedSeries ({ searchParams, params }: { search
         <main className="flex flex-col items-center">
         {query.length > 0
           ? (
-            <SearchResults query={query} page={page} results={[]} />
+            <SearchResults query={query} page={page} />
             )
           : (
             <>

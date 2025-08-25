@@ -100,10 +100,17 @@ const FilterComponent = () => {
       [name]: type === 'number' ? (value === '' ? '' : parseFloat(value)) : value
     }
     setFilters(newFilters)
-    const params = new URLSearchParams()
-    Object.entries(newFilters).forEach(([key, val]) => {
-      if (val !== '') params.set(key, String(val))
-    })
+
+    // Empieza con los parámetros actuales
+    const params = new URLSearchParams(searchParams.toString())
+    // Actualiza solo el filtro cambiado
+    if (value !== '') {
+      params.set(name, value)
+    } else {
+      params.delete(name)
+    }
+    // Opcional: resetear la página al cambiar filtro
+    params.set('page', '1')
     router.push(`?${params.toString()}`)
   }
 

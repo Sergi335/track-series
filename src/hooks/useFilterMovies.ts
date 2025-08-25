@@ -97,23 +97,23 @@ export function useFilterMovies ({ movies, activeFilters }: { movies: Movies[], 
       results = results.filter(movie => movie.status === status)
     }
     // Filtro por Popularidad (rango)
-    const popularityMin = activeFilters.popularity_min
-    if (popularityMin !== undefined && popularityMin !== 0) {
-      results = results.filter(movie => movie.popularity >= popularityMin)
-    }
-    const popularityMax = activeFilters.popularity_max
-    if (popularityMax !== undefined && popularityMax !== 0) {
-      results = results.filter(movie => movie.popularity <= popularityMax)
-    }
-    // Filtro por Año (rango)
-    const yearMin = activeFilters.year_min
-    if (yearMin !== undefined && yearMin !== 0 && yearMin !== null) {
-      results = results.filter(movie => new Date(movie.first_air_date).getFullYear() >= yearMin)
-    }
-    const yearMax = activeFilters.year_max
-    if (yearMax !== undefined && yearMax !== 0) {
-      results = results.filter(movie => new Date(movie.first_air_date).getFullYear() <= yearMax)
-    }
+    // const popularityMin = activeFilters.popularity_min
+    // if (popularityMin !== undefined && popularityMin !== 0) {
+    //   results = results.filter(movie => movie.popularity >= popularityMin)
+    // }
+    // const popularityMax = activeFilters.popularity_max
+    // if (popularityMax !== undefined && popularityMax !== 0) {
+    //   results = results.filter(movie => movie.popularity <= popularityMax)
+    // }
+    // // Filtro por Año (rango)
+    // const yearMin = activeFilters.year_min
+    // if (yearMin !== undefined && yearMin !== 0 && yearMin !== null) {
+    //   results = results.filter(movie => new Date(movie.first_air_date).getFullYear() >= yearMin)
+    // }
+    // const yearMax = activeFilters.year_max
+    // if (yearMax !== undefined && yearMax !== 0) {
+    //   results = results.filter(movie => new Date(movie.first_air_date).getFullYear() <= yearMax)
+    // }
 
     // Actualizamos el estado con los resultados filtrados.
     setFilteredMovies(results)

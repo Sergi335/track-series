@@ -1,100 +1,14 @@
-export interface Movies {
-  adult: boolean
-  backdrop_path: string
-  genre_ids: number[]
+export interface Genre {
   id: number
-  origin_country: string[]
-  original_language: string
-  original_name: string
-  overview: string
-  popularity: number
-  poster_path: string
-  first_air_date: Date
   name: string
-  vote_average: number
-  vote_count: number
-
-  // --- CAMPOS AÑADIDOS PARA LA LÓGICA DEL FILTRO ---
-  network_id?: number // Asumiendo que una serie pertenece a una network principal
-  status?: 'returning' | 'ended' | 'planned' | string // Para el filtro de status
-  company_ids?: number[] // Asumiendo que puede tener varias productoras
-}
-export interface SearchResultsType {
-  page: number
-  results: Movies[]
-  total_pages: number
-  total_results: number
-  error?: boolean
-}
-export interface MovieInfo extends Movies {
-  adult: boolean
-  backdrop_path: string
-  created_by: CreatedBy[]
-  episode_run_time: any[]
-  first_air_date: string
-  genres: Genre[]
-  homepage: string
-  id: number
-  in_production: boolean
-  languages: string[]
-  last_air_date: string
-  last_episode_to_air: LastEpisodeToAir
-  name: string
-  next_episode_to_air: null
-  networks: Network[]
-  number_of_episodes: number
-  number_of_seasons: number
-  origin_country: string[]
-  original_language: string
-  original_name: string
-  overview: string
-  popularity: number
-  poster_path: string
-  production_companies: Network[]
-  production_countries: ProductionCountry[]
-  seasons: Season[]
-  spoken_languages: SpokenLanguage[]
-  status: string
-  tagline: string
-  type: string
-  vote_average: number
-  vote_count: number
-  watched_season?: number
-  watched_episode?: number
-  complete?: boolean
-}
-export interface PopularMoviesInfo {
-  adult: boolean
-  backdrop_path: string
-  genre_ids: number[]
-  id: number
-  original_language: string
-  original_title: string
-  overview: string
-  popularity: number
-  poster_path: string
-  release_date: string
-  title: string
-  video: boolean
-  vote_average: number
-  vote_count: number
 }
 
-export enum OriginalLanguage {
-  En = 'en',
-  Es = 'es',
-}
 export interface CreatedBy {
   id: number
   credit_id: string
   name: string
   gender: number
   profile_path: string
-}
-
-export interface Genre {
-  id: number
-  name: string
 }
 
 export interface LastEpisodeToAir {
@@ -141,10 +55,12 @@ export interface SpokenLanguage {
   iso_639_1: string
   name: string
 }
-export interface Credits {
-  cast: CastElement[]
-  crew: CastElement[]
-  id: number
+
+export enum Department {
+  Acting = 'Acting',
+  Directing = 'Directing',
+  Production = 'Production',
+  Writing = 'Writing',
 }
 
 export interface CastElement {
@@ -163,11 +79,102 @@ export interface CastElement {
   job?: string
 }
 
-export enum Department {
-  Acting = 'Acting',
-  Directing = 'Directing',
-  Production = 'Production',
-  Writing = 'Writing',
+// Ahora el resto de interfaces pueden usarlas sin error
+
+export interface Movies {
+  adult: boolean
+  backdrop_path: string
+  genre_ids: number[]
+  id: number
+  origin_country: string[]
+  original_language: string
+  original_name: string
+  overview: string
+  popularity: number
+  poster_path: string
+  first_air_date: Date
+  name: string
+  vote_average: number
+  vote_count: number
+
+  // --- CAMPOS AÑADIDOS PARA LA LÓGICA DEL FILTRO ---
+  network_id?: number // Asumiendo que una serie pertenece a una network principal
+  status?: 'returning' | 'ended' | 'planned' | string // Para el filtro de status
+  company_ids?: number[] // Asumiendo que puede tener varias productoras
+}
+
+export interface SearchResultsType {
+  page: number
+  results: Movies[]
+  total_pages: number
+  total_results: number
+  error?: boolean
+}
+
+export interface MovieInfo extends Movies {
+  adult: boolean
+  backdrop_path: string
+  created_by: CreatedBy[]
+  episode_run_time: number[] // Cambiado de any[] a number[]
+  first_air_date: string
+  genres: Genre[]
+  homepage: string
+  id: number
+  in_production: boolean
+  languages: string[]
+  last_air_date: string
+  last_episode_to_air: LastEpisodeToAir
+  name: string
+  next_episode_to_air: null
+  networks: Network[]
+  number_of_episodes: number
+  number_of_seasons: number
+  origin_country: string[]
+  original_language: string
+  original_name: string
+  overview: string
+  popularity: number
+  poster_path: string
+  production_companies: Network[]
+  production_countries: ProductionCountry[]
+  seasons: Season[]
+  spoken_languages: SpokenLanguage[]
+  status: string
+  tagline: string
+  type: string
+  vote_average: number
+  vote_count: number
+  watched_season?: number
+  watched_episode?: number
+  complete?: boolean
+}
+
+export interface PopularMoviesInfo {
+  adult: boolean
+  backdrop_path: string
+  genre_ids: number[]
+  id: number
+  original_language: string
+  original_title: string
+  overview: string
+  popularity: number
+  poster_path: string
+  release_date: string
+  title: string
+  video: boolean
+  vote_average: number
+  vote_count: number
+}
+
+export enum OriginalLanguage {
+  En = 'en',
+  Es = 'es',
+}
+
+export interface Credits {
+  cast: CastElement[]
+  crew: CastElement[]
+  id: number
 }
 
 // Opciones para los campos de tipo 'select'

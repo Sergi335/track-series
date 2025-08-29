@@ -1,7 +1,6 @@
 import type { SearchResultsType } from '@/types'
-// import Link from 'next/link'
-import MovieGrid from './MovieGrid'
-import Pagination from './Pagination'
+import ClientSearchResults from './ClientSearchResults'
+
 export default async function SearchResults ({ query, page }: { query?: string, page?: string }) {
   const url = `https://api.themoviedb.org/3/search/tv?query=${query}&include_adult=false&language=es-ES&page=${page}`
   const options = {
@@ -27,20 +26,9 @@ export default async function SearchResults ({ query, page }: { query?: string, 
   }
 
   const { results, total_pages: totalPages, total_results: totalResults, error }: SearchResultsType = await searchMovies()
-  console.log(totalPages, totalResults, results)
+  console.log('🚀 ~ SearchResults ~ totalResults:', totalResults)
 
   return (
-    <>
-      {results.length > 0
-        ? (
-        <>
-          <MovieGrid series={results} />
-          {totalPages > 1 && <Pagination totalPages={totalPages} />}
-        </>
-          )
-        : (
-            error !== undefined ? <h1 className='text-white'>Error al recuperar los datos</h1> : <h1 className='text-white'>No results found</h1>
-          )}
-    </>
+    <ClientSearchResults results={results} totalPages={totalPages} error={error} />
   )
 }

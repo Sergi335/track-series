@@ -46,16 +46,16 @@ export default function SeriesList ({ page }: { page: string }) {
 
   return (
     <>
-        {
-            series.length > 0
-              ? (
-                  <>
-                    <MovieGrid series={slicedSeries} />
-                    {totalPages > 1 && <Pagination totalPages={totalPages} />}
-                  </>
-                )
-              : <h1 className='text-white'>No series in your series</h1>
-        }
+      {
+        series.length > 0
+          ? (
+            <>
+              <MovieGrid series={slicedSeries} />
+              {totalPages > 1 && <Pagination totalPages={totalPages} />}
+            </>
+          )
+          : <h1 className="text-white">No series in your series</h1>
+      }
     </>
   )
 }

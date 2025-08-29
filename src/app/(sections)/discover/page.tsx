@@ -71,18 +71,18 @@ export default async function Discover ({ searchParams }: { searchParams?: Recor
   }
 
   return (
-    <div className='app flex flex-col'>
+    <div className="app flex flex-col">
       <main className="flex flex-col items-center">
         <FilterComponent />
         {typeof searchParams?.query === 'string' && searchParams.query.length > 0 && !hasFilters
           ? (
             // Solo búsqueda global, sin filtros
             <SearchResults query={searchParams?.query} page={searchParams?.page} />
-            )
+          )
           : (
             // Filtros activos (con o sin búsqueda local)
             <PopularSeries results={results} totalPages={totalPages} />
-            )}
+          )}
       </main>
     </div>
   )

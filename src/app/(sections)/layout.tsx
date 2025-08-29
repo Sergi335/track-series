@@ -6,9 +6,9 @@ export default function SectionsLayout ({
   children: React.ReactNode
 }) {
   return (
-      <div>
+    <div>
       <Header />
-        {children}
-      </div>
+      {children}
+    </div>
   )
 }

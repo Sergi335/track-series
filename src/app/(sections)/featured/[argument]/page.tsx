@@ -44,18 +44,18 @@ export default async function FeaturedSeries ({ searchParams, params }: { search
   const LIMIT_API_RESULTS = 500
 
   return (
-    <div className='app flex flex-col'>
-        <main className="flex flex-col items-center">
+    <div className="app flex flex-col">
+      <main className="flex flex-col items-center">
         {query.length > 0
           ? (
             <SearchResults query={query} page={page} />
-            )
+          )
           : (
             <>
               <MovieGrid series={results}/>
               {totalPages > 1 && <Pagination totalPages={totalPages > LIMIT_API_RESULTS ? LIMIT_API_RESULTS : totalPages} />}
             </>
-            )}
+          )}
       </main>
     </div>
   )

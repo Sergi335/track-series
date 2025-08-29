@@ -6,16 +6,16 @@ export default function PopularSeries ({ results, totalPages }: { results: any[]
   const LIMIT_API_RESULTS = 500
   return (
     <>
-        {/* <Filters /> */}
-        {
-          results.length > 0
-            ? <>
-                <MovieGrid series={results} />
-                {totalPages > 1 && <Pagination totalPages={totalPages > LIMIT_API_RESULTS ? LIMIT_API_RESULTS : totalPages} />}
-              </>
-            : <h1 className='text-white'>Error al recuperar los datos</h1>
+      {/* <Filters /> */}
+      {
+        results.length > 0
+          ? <>
+            <MovieGrid series={results} />
+            {totalPages > 1 && <Pagination totalPages={totalPages > LIMIT_API_RESULTS ? LIMIT_API_RESULTS : totalPages} />}
+          </>
+          : <h1 className="text-white">Error al recuperar los datos</h1>
 
-        }
+      }
     </>
   )
 }

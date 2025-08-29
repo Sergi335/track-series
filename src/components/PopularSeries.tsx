@@ -1,8 +1,9 @@
 'use client'
+import { Movies } from '@/types'
 import MovieGrid from './MovieGrid'
 import Pagination from './Pagination'
 
-export default function PopularSeries ({ results, totalPages }: { results: any[], totalPages: number }) {
+export default function PopularSeries ({ results, totalPages }: { results: Movies[], totalPages: number }) {
   const LIMIT_API_RESULTS = 500
   return (
     <>

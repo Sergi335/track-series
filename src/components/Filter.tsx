@@ -1,9 +1,16 @@
 'use client'
 // Proveedores más famosos (top 20)
 // FilterComponent.tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { type FilterState } from '@/types'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, type ChangeEvent } from 'react'
+import React, { useState, type ChangeEvent } from 'react'
 
 const currentYear = new Date().getFullYear()
 const filterTypes = {
@@ -94,7 +101,10 @@ const FilterComponent = () => {
   const { genres, countries, networks, companies } = filterTypes
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target
+    let { name, value, type } = e.target
+    if (value === 'Todos') {
+      value = ''
+    }
     const newFilters = {
       ...filters,
       [name]: type === 'number' ? (value === '' ? '' : parseFloat(value)) : value
@@ -117,26 +127,25 @@ const FilterComponent = () => {
   const renderSelect = (name: keyof FilterState, label: string, options: Array<{ value: string, label: string }>) => (
     <div>
       <label htmlFor={name} className="block text-sm font-medium">{label}</label>
-      <select
-        name={name}
-        id={name}
-        value={filters[name]}
-        onChange={handleChange}
-        className="bg-gray-900 mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-      >
-        <option value="">Todos</option>
-        {options.map(option => (
-          <option key={option.value} value={option.value}>{option.label}</option>
-        ))}
-      </select>
+      <Select onValueChange={(value) => handleChange({ target: { name, value } } as React.ChangeEvent<HTMLSelectElement>)}>
+        <SelectTrigger className="w-[180px] rounded-[8px]">
+          <SelectValue placeholder="Todos" />
+        </SelectTrigger>
+        <SelectContent className="border-none">
+          <SelectItem value={'Todos'}>{'Todos'}</SelectItem>
+          {options.map(option => (
+            <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   )
   const years = Array.from({ length: currentYear - 1950 + 1 }, (_, i) => 1950 + i).toReversed().map(year => (
     { value: year.toString(), label: year.toString() }
   ))
   return (
-    <div className="p-4 rounded-lg shadow text-white mt-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 bg-gray-700 p-6 rounded-lg">
+    <div className="">
+      <div className="grid grid-cols-1 gap-6 rounded-lg">
         {renderSelect('genre', 'Género', genres)}
         {renderSelect('language', 'Idioma', [
           { value: 'es', label: 'Español' },
@@ -146,49 +155,6 @@ const FilterComponent = () => {
         {renderSelect('network', 'Network', networks)}
         {renderSelect('company', 'Compañías', companies)}
         {renderSelect('year', 'Año', years)}
-        {/* <div>
-          <label className="block text-sm font-medium text-gray-700">Popularidad</label>
-          <div className="flex items-center space-x-2 mt-1">
-            <input type="number" name="popularity_min" value={filters.popularity_min} onChange={handleChange} className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm bg-gray-900" placeholder="Min"/>
-            <span className="text-gray-500">-</span>
-            <input type="number" name="popularity_max" value={filters.popularity_max} onChange={handleChange} className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm bg-gray-900" placeholder="Max"/>
-          </div>
-        </div> */}
-        {/* <div>
-          <label className="block text-sm font-medium text-gray-700">Año</label>
-          <div className="mt-1">
-            <select
-              name="year"
-              value={filters.year}
-              onChange={handleChange}
-              className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm bg-gray-900"
-            >
-              <option value="">Todos</option>
-              {Array.from({ length: currentYear - 1950 + 1 }, (_, i) => 1950 + i).toReversed().map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-          </div>
-        </div> */}
-        {/* <div>
-          <label className="block text-sm font-medium text-gray-700">Status</label>
-          <div className="mt-2 flex items-center space-x-4">
-            {statuses.map(status => (
-              <div key={status.value} className="flex items-center">
-                <input
-                  id={`status-${status.value}`}
-                  name="status"
-                  type="radio"
-                  value={status.value}
-                  checked={filters.status === status.value}
-                  onChange={handleChange}
-                  className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 bg-gray-900"
-                />
-                <label htmlFor={`status-${status.value}`} className="ml-2 block text-sm text-gray-900">{status.label}</label>
-              </div>
-            ))}
-          </div>
-        </div> */}
       </div>
     </div>
   )

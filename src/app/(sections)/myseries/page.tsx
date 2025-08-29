@@ -12,13 +12,13 @@ export default async function MySeries ({
   const page = searchParams?.page ?? '1'
 
   return (
-    <div className='app flex flex-col'>
+    <div className="app flex flex-col">
       <main className="flex flex-col items-center">
-      {query.length > 0
-        ? (
+        {query.length > 0
+          ? (
             <SearchResults query={query} page={page} />
           )
-        : (
+          : (
             <SeriesList page={page}/>
           )}
       </main>

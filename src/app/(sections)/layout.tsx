@@ -1,4 +1,5 @@
 import Header from '@/components/Header'
+import Search from '@/components/Search'
 import React from 'react'
 export default function SectionsLayout ({
   children
@@ -8,7 +9,10 @@ export default function SectionsLayout ({
   return (
     <>
       <Header />
-      {children}
+      <Search />
+      <main className="flex flex-col items-center">
+        {children}
+      </main>
     </>
   )
 }

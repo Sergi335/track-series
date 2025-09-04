@@ -1,3 +1,4 @@
+import FilterComponent from '@/components/Filter'
 import MovieGrid from '@/components/MovieGrid'
 import Pagination from '@/components/Pagination'
 import SearchResults from '@/components/SearchResults'
@@ -44,19 +45,25 @@ export default async function FeaturedSeries ({ searchParams, params }: { search
   const LIMIT_API_RESULTS = 500
 
   return (
-    <div className="app flex flex-col">
-      <main className="flex flex-col items-center">
-        {query.length > 0
-          ? (
-            <SearchResults query={query} page={page} />
-          )
-          : (
-            <>
+
+    <>
+      <h1 className="text-6xl font-bold my-24">{`Descubre ${params.argument}`}</h1>
+      {query.length > 0
+        ? (
+          <SearchResults query={query} page={page} />
+        )
+        : (
+          <section className="flex w-3/4 gap-8 mt-16">
+            <div>
+              <FilterComponent />
+            </div>
+            <div className="flex-1">
               <MovieGrid series={results}/>
               {totalPages > 1 && <Pagination totalPages={totalPages > LIMIT_API_RESULTS ? LIMIT_API_RESULTS : totalPages} />}
-            </>
-          )}
-      </main>
-    </div>
+            </div>
+          </section>
+        )}
+    </>
+
   )
 }

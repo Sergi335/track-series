@@ -1,3 +1,4 @@
+import FilterComponent from '@/components/Filter'
 import SearchResults from '@/components/SearchResults'
 import SeriesList from '@/components/SeriesList'
 
@@ -12,16 +13,24 @@ export default async function MySeries ({
   const page = searchParams?.page ?? '1'
 
   return (
-    <div className="app flex flex-col">
-      <main className="flex flex-col items-center">
-        {query.length > 0
-          ? (
-            <SearchResults query={query} page={page} />
-          )
-          : (
-            <SeriesList page={page}/>
-          )}
-      </main>
-    </div>
+
+    <>
+      <h1 className="text-6xl font-bold my-24">Mis Series</h1>
+      {query.length > 0
+        ? (
+          <SearchResults query={query} page={page} />
+        )
+        : (
+          <section className="flex w-3/4 gap-8 mt-16">
+            <div>
+              <FilterComponent />
+            </div>
+            <div className="flex-1">
+              <SeriesList page={page} />
+            </div>
+          </section>
+        )}
+    </>
+
   )
 }

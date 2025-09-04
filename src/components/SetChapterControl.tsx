@@ -105,65 +105,65 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
     formListClass = 'flex items-center gap-2'
   }
   return (
-        <>
-            <div className='flex gap-4 flex-wrap items-center'>
-              <form action="" className={`${formListClass}`}>
-                <Button type='button' onClick={() => { handleComplete() }} className={complete ? 'bg-red-700 hover:bg-red-800 text-white transition-colors duration-500' : 'bg-blue-700 hover:bg-blue-800 transition-colors duration-500 text-white'}>{complete ? 'Completada' : 'Completar'}</Button>
-                {
-                  isInList !== null && isInList !== undefined && !isInList
-                    ? <Button type='button' className='bg-red-700 hover:bg-red-800 text-white transition-colors duration-500' onClick={() => { setEditMode(!editMode) }}>{editMode ? 'Save' : 'Edit'}</Button>
-                    : ''
-                }
+    <>
+      <div className="flex gap-4 flex-wrap items-center">
+        <form action="" className={`${formListClass}`}>
+          <Button type="button" onClick={() => { handleComplete() }} className={complete ? 'bg-red-700 hover:bg-red-800 text-white transition-colors duration-500' : 'bg-blue-700 hover:bg-blue-800 transition-colors duration-500 text-white'}>{complete ? 'Completada' : 'Completar'}</Button>
+          {
+            isInList !== null && isInList !== undefined && !isInList
+              ? <Button type="button" className="bg-red-700 hover:bg-red-800 text-white transition-colors duration-500" onClick={() => { setEditMode(!editMode) }}>{editMode ? 'Save' : 'Edit'}</Button>
+              : ''
+          }
 
-                {
-                    editMode
-                      ? (
-                          <>
-                          {/* { isInList !== null && isInList !== undefined && !isInList && <Button type='button' className='bg-blue-600 hover:bg-blue-400 text-white'>Save</Button> } */}
+          {
+            editMode
+              ? (
+                <>
+                  {/* { isInList !== null && isInList !== undefined && !isInList && <Button type='button' className='bg-blue-600 hover:bg-blue-400 text-white'>Save</Button> } */}
 
-                            <label className='text-white' htmlFor="season">Temporada:</label>
-                            <select className='text-black' name="" id="season" onChange={getSeasonEpisodes} defaultValue={seasonWatched}>
-                                {
-                                    seasons.map(season => {
-                                      return (
-                                        <option key={season.id} value={season.season_number}>{season.name}</option>
-                                      )
-                                    })
-                                }
-                            </select>
-                            <label className='text-white' htmlFor="chapters">Capítulo:</label>
-                            <select className='text-black' name="" id="chapters" onChange={getSeasonEpisodes} defaultValue={episodeWatched}>
-                                {
-                                    totalEpisodes !== undefined
-                                      ? Array.from({ length: totalEpisodes ?? 0 }, (_, i) => i + 1).map((chapter, index) => {
-                                        return (
-                                        <option key={index} value={chapter}>{chapter}</option>
-                                        )
-                                      })
-                                      : null
-                                }
-                            </select>
-                          </>
+                  <label className="text-white" htmlFor="season">Temporada:</label>
+                  <select className="text-black" name="" id="season" onChange={getSeasonEpisodes} defaultValue={seasonWatched}>
+                    {
+                      seasons.map(season => {
+                        return (
+                          <option key={season.id} value={season.season_number}>{season.name}</option>
                         )
-                      : (
-                        <>
-                          <div className='flex gap-2 flex-wrap uppercase font-[700] tracking-[1.5px]'>
-                              <p className='text-white text-sm'>{seasons[seasonWatched - startingSeasonNumber]?.name}</p>
-                              <p className='text-white text-sm'>Capítulo: {episodeWatched}</p>
-                          </div>
-                          <div className='flex flex-col gap-1'>
-                            <button type='button' onClick={increaseEpisode} className='p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white'>
-                              <ChevronUp className='w-4 h-4'/>
-                            </button>
-                            <button type='button' onClick={decreaseEpisode} className='p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white'>
-                              <ChevronDown className='w-4 h-4'/>
-                            </button>
-                          </div>
-                        </>
-                        )
-                }
-              </form>
-            </div>
-        </>
+                      })
+                    }
+                  </select>
+                  <label className="text-white" htmlFor="chapters">Capítulo:</label>
+                  <select className="text-black" name="" id="chapters" onChange={getSeasonEpisodes} defaultValue={episodeWatched}>
+                    {
+                      totalEpisodes !== undefined
+                        ? Array.from({ length: totalEpisodes ?? 0 }, (_, i) => i + 1).map((chapter, index) => {
+                          return (
+                            <option key={index} value={chapter}>{chapter}</option>
+                          )
+                        })
+                        : null
+                    }
+                  </select>
+                </>
+              )
+              : (
+                <>
+                  <div className="flex gap-2 flex-wrap uppercase font-[700] tracking-[1.5px]">
+                    <p className="text-white text-sm">{seasons[seasonWatched - startingSeasonNumber]?.name}</p>
+                    <p className="text-white text-sm">Capítulo: {episodeWatched}</p>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <button type="button" onClick={increaseEpisode} className="p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white">
+                      <ChevronUp className="w-4 h-4"/>
+                    </button>
+                    <button type="button" onClick={decreaseEpisode} className="p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white">
+                      <ChevronDown className="w-4 h-4"/>
+                    </button>
+                  </div>
+                </>
+              )
+          }
+        </form>
+      </div>
+    </>
   )
 }

@@ -24,6 +24,7 @@ export default function SeriesList ({ page }: { page: string }) {
       return 0 // Default value when the return value is undefined
     })
   }, [series])
+  // console.log('🚀 ~ SeriesList ~ sortedSeries:', sortedSeries)
 
   useEffect(() => {
     setTotalPages(Math.ceil(sortedSeries.length / 20))

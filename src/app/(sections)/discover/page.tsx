@@ -1,18 +1,8 @@
 import FilterComponent from '@/components/Filter'
 import PopularSeries from '@/components/PopularSeries'
 import SearchResults from '@/components/SearchResults'
+import { searchInFiltered } from '@/lib/utils'
 import { type Movies } from '@/types'
-
-export function searchInFiltered (movies: Movies[], query: string): Movies[] {
-  if (query === '') return movies
-  const q = query.toLowerCase()
-  return movies.filter(
-    m =>
-      m.name?.toLowerCase().includes(q) ||
-      m.original_name?.toLowerCase().includes(q) ||
-      m.overview?.toLowerCase().includes(q)
-  )
-}
 
 export default async function Discover ({ searchParams }: { searchParams?: Record<string, string> }) {
   // Construir los parámetros de la API de TMDB

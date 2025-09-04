@@ -1,3 +1,4 @@
+import { Movies } from '@/types'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -135,3 +136,13 @@ export const genreItems = [
     backgroundImage: 'url(/genres/western.jpg)'
   }
 ]
+export function searchInFiltered (movies: Movies[], query: string): Movies[] {
+  if (query === '') return movies
+  const q = query.toLowerCase()
+  return movies.filter(
+    m =>
+      m.name?.toLowerCase().includes(q) ||
+      m.original_name?.toLowerCase().includes(q) ||
+      m.overview?.toLowerCase().includes(q)
+  )
+}

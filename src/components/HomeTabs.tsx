@@ -1,8 +1,8 @@
 'use client'
 import { Tabs } from '@/components/ui/tabs'
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
-export default function HomeTabs ({ query, page, children }: { query: string, page: string, children: React.ReactNode }) {
+export default function HomeTabs ({ query, children }: { query: string, page: string, children: React.ReactNode }) {
   const [value, setValue] = useState('serieslist')
   const [firstRender, setFirstRender] = useState(true)
   useEffect(() => {
@@ -18,13 +18,13 @@ export default function HomeTabs ({ query, page, children }: { query: string, pa
     setFirstRender(false)
   }
   return (
-        <Tabs
-            defaultValue={'serieslist'}
-            value={firstRender && query.length > 0 ? 'search' : value}
-            className="text-white flex flex-col items-center"
-            onValueChange={onValueChange}
-        >
-          {children}
-        </Tabs>
+    <Tabs
+      defaultValue={'serieslist'}
+      value={firstRender && query.length > 0 ? 'search' : value}
+      className="text-white flex flex-col items-center"
+      onValueChange={onValueChange}
+    >
+      {children}
+    </Tabs>
   )
 }

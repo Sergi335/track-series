@@ -1,15 +1,17 @@
 'use client'
+import { useUserSeries } from '@/hooks/useUserSeries'
 import { type MovieInfo } from '@/types'
 import React, { useEffect, useState } from 'react'
 import { ChevronDown, ChevronUp } from './icons/icons'
 import { Button } from './ui/button'
 
 export default function SetChapterControl ({ data, isInList }: { data: MovieInfo, isInList?: boolean }) {
-  // Recuperar la información del localStorage, buscarla de entre todas las series y recuperar la info que necesitamos
-  const storedData = JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? {}
-  const id = data.id
-  const movie = storedData?.find(mov => mov.id === data.id)
-  const { seasons, watched_season: storedSeason, watched_episode: storedEpisode, complete: storedComplete } = movie ?? { seasons: [], watched_season: undefined, watched_episode: undefined }
+  const { series, updateProgress } = useUserSeries()
+
+  // Buscar la serie en los datos del usuario
+  const movie = series.find(mov => mov.id === data.id)
+  const { seasons, watched_season: storedSeason, watched_episode: storedEpisode, complete: storedComplete } = movie ?? { seasons: data.seasons || [], watched_season: undefined, watched_episode: undefined, complete: undefined }
+
   // Declaramos los estados que vamos a necesitar
   const [episodeWatched, setEpisodeWatched] = useState<number>(storedEpisode ?? 1) // Ojo si no empieza en 1
   const [seasonWatched, setSeasonWatched] = useState<number>(storedSeason ?? Number(seasons[0]?.season_number))
@@ -22,21 +24,36 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
   const limitNumber = startingSeasonNumber === 0 ? 1 : 0
   // console.log({ movie, seasons, limitNumber, startingSeasonNumber, seasonWatched, episodeWatched, seasonEpisodes: seasons[seasonWatched - startingSeasonNumber].episode_count, complete, totalEpisodes })
 
-  // Guardar en localStorage los cambios en el estado de los episodios
+  // Guardar en Supabase los cambios en el estado de los episodios
+  // TEMPORALMENTE DESHABILITADO PARA EVITAR BUCLES INFINITOS
+  /*
   useEffect(() => {
-    const series = JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? []
-    const seriesIndex = series.findIndex((item: MovieInfo) => item.id === id)
-    series[seriesIndex] = { ...series[seriesIndex], watched_season: seasonWatched, watched_episode: episodeWatched, complete }
-    window.localStorage.setItem('series', JSON.stringify(series))
-    const storeEvent = new Event('storageEvent')
-    window.dispatchEvent(storeEvent)
-  }, [complete, episodeWatched, id, seasonWatched])
+    // SOLO actualizar si hay datos válidos y no es la carga inicial
+    if (movie && id && (storedSeason !== seasonWatched || storedEpisode !== episodeWatched || storedComplete !== complete)) {
+      updateProgress(id, {
+        watched_season: seasonWatched,
+        watched_episode: episodeWatched,
+        complete
+      })
+    }
+  }, [complete, episodeWatched, seasonWatched]) // SIN updateProgress en dependencias
+  */
 
   // Función para marcar la serie como completa
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    const newSeasonWatched = seasons.length - limitNumber
+    const newEpisodeWatched = seasons[seasons.length - 1].episode_count
+
     setComplete(true)
-    setSeasonWatched(seasons.length - limitNumber)
-    setEpisodeWatched(seasons[seasons.length - 1].episode_count)
+    setSeasonWatched(newSeasonWatched)
+    setEpisodeWatched(newEpisodeWatched)
+
+    // Guardar en Supabase inmediatamente
+    await updateProgress(data.id, {
+      watched_season: newSeasonWatched,
+      watched_episode: newEpisodeWatched,
+      complete: true
+    })
   }
 
   // Función para obtener los episodios de la temporada seleccionada en el select
@@ -47,6 +64,11 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
     if (e?.currentTarget?.id === 'season') {
       setTotalEpisodes(seasons[Number(e?.currentTarget?.value) - startingSeasonNumber].episode_count)
     }
+
+    // Guardar después de cambio manual (con delay para que se apliquen los cambios)
+    setTimeout(() => {
+      saveProgress()
+    }, 100)
   }
 
   // Actualizar el número total de episodios cuando se cambie de temporada
@@ -57,15 +79,38 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
 
   // Actualizar el estado de la serie a completa si se llega al último episodio de la última temporada
   useEffect(() => {
-    if (seasons.length === seasonWatched + limitNumber && seasons[seasonWatched - startingSeasonNumber].episode_count === episodeWatched) {
+    const shouldBeComplete = seasons.length === seasonWatched + limitNumber && seasons[seasonWatched - startingSeasonNumber].episode_count === episodeWatched
+
+    if (shouldBeComplete && !complete) {
       setComplete(true)
-    } else {
+      // Guardar automáticamente cuando se complete
+      updateProgress(data.id, {
+        watched_season: seasonWatched,
+        watched_episode: episodeWatched,
+        complete: true
+      })
+    } else if (!shouldBeComplete && complete) {
       setComplete(false)
+      // Guardar cuando se desmarque como completa
+      updateProgress(data.id, {
+        watched_season: seasonWatched,
+        watched_episode: episodeWatched,
+        complete: false
+      })
     }
-  }, [seasonWatched, episodeWatched, limitNumber, seasons, startingSeasonNumber])
+  }, [seasonWatched, episodeWatched, limitNumber, seasons, startingSeasonNumber, complete, updateProgress, data.id])
+
+  // Función para guardar progreso manualmente
+  const saveProgress = async () => {
+    await updateProgress(data.id, {
+      watched_season: seasonWatched,
+      watched_episode: episodeWatched,
+      complete
+    })
+  }
 
   // Caso especial para cuando el episode_count de una temporada es 0
-  const increaseEpisode = () => {
+  const increaseEpisode = async () => {
     // Si el número total de temporadas coincide con el número de temporada que estamos viendo más el limitNumber* y el número total de episodios de la temporada que es la última coincide con el episodio que estamos viendo, no aumentar el episodio
     if (seasons.length === seasonWatched + limitNumber && seasons[seasonWatched - startingSeasonNumber].episode_count === episodeWatched) return
     if (seasonWatched !== undefined && episodeWatched !== undefined) {
@@ -75,7 +120,11 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
       setSeasonWatched(prevSeason => {
         return episodeWatched >= totalEpisodes ? prevSeason + 1 : prevSeason
       })
-      // setTotalEpisodes(seasons[seasonWatched - startingSeasonNumber].episode_count)
+
+      // Guardar después de cambiar estados (con delay para que se apliquen los cambios)
+      setTimeout(() => {
+        saveProgress()
+      }, 100)
     }
   }
   const getTotalEpisodes = () => {
@@ -95,6 +144,11 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
         // console.log(prevSeason)
         return episodeWatched <= 1 ? prevSeason - 1 : prevSeason
       })
+
+      // Guardar después de cambiar estados (con delay para que se apliquen los cambios)
+      setTimeout(() => {
+        saveProgress()
+      }, 100)
     }
   }
 

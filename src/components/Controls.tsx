@@ -1,5 +1,7 @@
 'use client'
 import { Button } from '@/components/ui/button'
+import { useUserSeries } from '@/hooks/useUserSeries'
+import { useUserWatchlist } from '@/hooks/useUserWatchlist'
 import { fetchMovieInfo } from '@/lib/data'
 import { type MovieInfo, type Movies } from '@/types'
 import { useEffect, useState } from 'react'
@@ -7,49 +9,41 @@ import SetChapterControl from './SetChapterControl'
 import { CheckIcon, WatchingIcon } from './icons/icons'
 
 export default function Controls ({ data, isInList }: { data: Movies | MovieInfo, isInList?: boolean }) {
+  const { isFollowing: isFollowingFromHook, followSeries, unfollowSeries } = useUserSeries()
+  const { isInWatchlist: isInWatchlistFromHook, addToWatchlist, removeFromWatchlist } = useUserWatchlist()
+
   const [isFollowing, setIsFollowing] = useState(false)
   const [isInWatchlist, setIsInWatchlist] = useState(false)
-  if (window.localStorage.getItem('series') === null) window.localStorage.setItem('series', JSON.stringify([]))
-  if (window.localStorage.getItem('watchlist') === null) window.localStorage.setItem('watchlist', JSON.stringify([]))
-  const storedMySeriesData = JSON.parse(window.localStorage.getItem('series') ?? '') ?? [] as MovieInfo[]
-  const storedWatchlistData = JSON.parse(window.localStorage.getItem('watchlist') ?? '') ?? [] as Movies[]
-  const mySeriesIndex = storedMySeriesData.findIndex((item: MovieInfo) => item.id === data.id)
-  const watchlistIndex = storedWatchlistData.findIndex((item: Movies) => item.id === data.id)
+
   useEffect(() => {
-    if (mySeriesIndex !== -1) setIsFollowing(true)
-    if (watchlistIndex !== -1) setIsInWatchlist(true)
-  }, [mySeriesIndex, watchlistIndex])
+    setIsFollowing(isFollowingFromHook(data.id))
+    setIsInWatchlist(isInWatchlistFromHook(data.id))
+  }, [isFollowingFromHook, isInWatchlistFromHook, data.id])
   // console.log(data)
   const storeMySeriesData = async () => {
+    let seriesData = data
     // Si el componente se renderiza en moviegrid, no tiene la propiedad seasons, hay que hacer un fetch para traer la info de la serie
     if (isInList === true) {
-      data = await fetchMovieInfo(data.id)
+      seriesData = await fetchMovieInfo(data.id)
     }
-    if (storedMySeriesData !== null) {
-      if (mySeriesIndex === -1) {
-        storedMySeriesData.push(data)
-        setIsFollowing(true)
-      } else {
-        storedMySeriesData.splice(mySeriesIndex, 1)
-        setIsFollowing(false)
-      }
+
+    if (isFollowing) {
+      await unfollowSeries(data.id)
+      setIsFollowing(false)
+    } else {
+      await followSeries(seriesData as MovieInfo)
+      setIsFollowing(true)
     }
-    window.localStorage.setItem('series', JSON.stringify(storedMySeriesData))
-    const storeEvent = new Event('storageEvent')
-    window.dispatchEvent(storeEvent)
   }
 
-  const storeWatchlistData = () => {
-    if (storedWatchlistData !== null) {
-      if (watchlistIndex === -1) {
-        storedWatchlistData.push(data)
-        setIsInWatchlist(true)
-      } else {
-        storedWatchlistData.splice(watchlistIndex, 1)
-        setIsInWatchlist(false)
-      }
+  const storeWatchlistData = async () => {
+    if (isInWatchlist) {
+      await removeFromWatchlist(data.id)
+      setIsInWatchlist(false)
+    } else {
+      await addToWatchlist(data as MovieInfo)
+      setIsInWatchlist(true)
     }
-    window.localStorage.setItem('watchlist', JSON.stringify(storedWatchlistData))
   }
 
   let buttonListClass, buttonContainerListClass, iconsClass

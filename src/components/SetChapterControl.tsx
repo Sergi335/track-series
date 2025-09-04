@@ -1,7 +1,7 @@
 'use client'
 import { useUserSeries } from '@/hooks/useUserSeries'
 import { type MovieInfo } from '@/types'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ChevronDown, ChevronUp } from './icons/icons'
 import { Button } from './ui/button'
 
@@ -60,21 +60,26 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
   }
 
   // Cambiar temporada o episodio desde los selects
-  const handleSelectChange = () => {
-    // const { id, value } = e.currentTarget
-    // if (id === 'season') {
-    //   setstoredSeason(Number(value))
-    //   // Reset episodio al cambiar de temporada
-    //   const seasonObj = seasons.find(s => s.season_number === Number(value))
-    //   setstoredEpisode(1)
-    //   setTotalEpisodes(seasonObj?.episode_count ?? 0)
-    // } else if (id === 'chapters') {
-    //   setstoredEpisode(Number(value))
-    // }
-    // // Guardar después de cambiar (con pequeño delay para asegurar el setState)
-    // setTimeout(() => {
-    //   saveProgress()
-    // }, 100)
+  const handleSelectChange = (e: React.FormEvent<HTMLSelectElement>) => {
+    const { id, value } = e.currentTarget
+    let newStoredSeason: number
+    let newStoredEpisode: number
+    if (id === 'season') {
+      newStoredSeason = Number(value)
+      // Reset episodio al cambiar de temporada
+      const seasonObj = seasons.find(s => s.season_number === Number(value))
+      newStoredEpisode = 1
+      setTotalEpisodes(seasonObj?.episode_count ?? 0)
+      saveProgress(newStoredSeason, newStoredEpisode)
+    } else if (id === 'chapters') {
+      newStoredEpisode = Number(value)
+      if (storedSeason !== undefined) {
+        saveProgress(storedSeason, newStoredEpisode)
+      }
+    }
+    // Guardar después de cambiar (con pequeño delay para asegurar el setState)
+
+    // saveProgress(newStoredSeason, newStoredEpisode)
   }
 
   // Lógica para los botones de aumentar/disminuir episodio -> Debounce

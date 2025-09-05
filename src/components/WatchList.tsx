@@ -8,7 +8,7 @@ export default function WatchList () {
   if (loading) {
     return <h1 className="text-white">Cargando tu watchlist...</h1>
   }
-
+  // TODO Paginación
   return (
     <>
       {

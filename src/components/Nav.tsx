@@ -1,36 +1,57 @@
 'use client'
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
+import { UserButton, useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import ThemeToggle from './ThemeToggle'
+import { Skeleton } from './ui/skeleton'
 
 export default function Nav () {
   const pathname = usePathname()
+  const { user, isLoaded } = useUser()
   return (
     <nav className="p-4 flex justify-end items-center text-gray-700 dark:text-slate-200 w-full">
-      <div className="flex justify-end items-center gap-2 p-1 rounded-lg lg:flex-row flex-col w-3/4 lg:w-auto">
-        <Link className={`link ${pathname === '/' ? 'bg-blue-700' : ''} px-8 py-1 rounded-lg w-full lg:w-fit text-center hover:bg-blue-700 transition-colors duration-500`} href="/">Home</Link>
-        <Link className={`link ${pathname === '/discover' ? 'bg-blue-700' : ''} px-8 py-1 rounded-lg w-full lg:w-fit text-center hover:bg-blue-700 transition-colors duration-500`} href="/discover">Discover</Link>
+      <div className="flex items-center gap-2 p-1 lg:flex-row flex-col">
+        <Link className={`${pathname === '/' ? 'bg-blue-700 text-white' : ''} px-8 py-1 rounded-lg w-full lg:w-fit text-center hover:bg-blue-700 transition-colors duration-200 hover:text-white`} href="/">
+          Inicio
+        </Link>
+        <Link className={`${pathname === '/discover' ? 'bg-blue-700 text-white' : ''} px-8 py-1 rounded-lg w-full lg:w-fit text-center hover:bg-blue-700 transition-colors duration-200 hover:text-white`} href="/discover">
+          Descubrir
+        </Link>
+        {
+          isLoaded
+            ? (
 
-        {/* Protected links - only show when signed in */}
-        <SignedIn>
-          <Link className={`link ${pathname === '/myseries' ? 'bg-blue-700' : ''} px-8 py-1 rounded-lg w-full lg:w-fit text-center hover:bg-blue-700 transition-colors duration-500`} href="/myseries">My Series</Link>
-          <Link className={`link ${pathname === '/watchlist' ? 'bg-blue-700' : ''} px-8 py-1 rounded-lg w-full lg:w-fit text-center hover:bg-blue-700 transition-colors duration-500`} href="/watchlist">Watchlist</Link>
-        </SignedIn>
+              user
+                ? (
+                  <>
+                    <Link className={`${pathname === '/myseries' ? 'bg-blue-700 text-white' : ''} px-8 py-1 rounded-lg w-full lg:w-fit text-center hover:bg-blue-700 transition-colors duration-200 hover:text-white`} href="/myseries">Mis Series</Link>
+                    <Link className={`${pathname === '/watchlist' ? 'bg-blue-700 text-white' : ''} px-8 py-1 rounded-lg w-full lg:w-fit text-center hover:bg-blue-700 transition-colors duration-200 hover:text-white`} href="/watchlist">Watchlist</Link></>
+                )
+                : null
 
+            )
+            : <>
+              <Skeleton className="h-[32px] w-[134.88px] rounded-lg" />
+              <Skeleton className="h-[32px] w-[128.3px] rounded-lg" />
+            </>
+        }
         <ThemeToggle />
+        {
+          isLoaded && !user
+            ? (
+              <Link className={'px-8 py-1 rounded-lg w-full lg:w-fit text-center hover:bg-blue-700 hover:text-white transition-colors duration-200'} href="/sign-in">
+                Inicia Sesión
+              </Link>
+            )
+            : null
+        }
 
-        {/* Authentication buttons */}
-        <SignedOut>
-          <Link href="/sign-in">
-            <button className="px-8 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors duration-500">
-              Sign In
-            </button>
-          </Link>
-        </SignedOut>
-        <SignedIn>
-          <UserButton afterSignOutUrl="/" />
-        </SignedIn>
+        {isLoaded
+          ? (
+            user ? <UserButton /> : null
+          )
+          : <Skeleton className="w-[28px] h-[28px] rounded-full" />}
+
       </div>
     </nav>
   )

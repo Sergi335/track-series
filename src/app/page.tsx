@@ -20,10 +20,12 @@ export default function Home ({
   return (
     <>
       <Header />
-      <main className="flex flex-col items-center">
-        <Hero />
-        <BrandsHome />
-        <Search />
+      <main className="flex flex-col items-center relative">
+        <section className="mosaic w-full pb-14">
+          <Hero />
+          <BrandsHome />
+          <Search />
+        </section>
         {query.length > 0
           ? (<SearchResults query={query} page={page} />)
           : (

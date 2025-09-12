@@ -18,6 +18,23 @@ export default function RootLayout ({
   return (
     <ClerkWrapper>
       <html lang="en" suppressHydrationWarning>
+        <head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+              (function() {
+                try {
+                  let theme = localStorage.getItem('theme');
+                  if (!theme) {
+                    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                  }
+                  document.documentElement.classList.add(theme);
+                } catch (_) {}
+              })();
+            `
+            }}
+          />
+        </head>
         <body>
           <ThemeProvider>
 

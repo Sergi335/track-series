@@ -1,9 +1,9 @@
 'use client'
-import { useUserWatchlist } from '@/hooks/useUserWatchlist'
+import { useUserSeriesStore } from '@/store/userSeriesStore'
 import MovieGrid from './MovieGrid'
 
 export default function WatchList () {
-  const { watchlist, loading } = useUserWatchlist()
+  const { watchlist, loading } = useUserSeriesStore()
 
   if (loading) {
     return <h1 className="text-white">Cargando tu watchlist...</h1>

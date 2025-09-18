@@ -1,4 +1,5 @@
 import ClerkWrapper from '@/components/ClerkWrapper'
+import { UserDataInitializer } from '@/components/UserDataInitializer'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import type { Metadata } from 'next'
 import 'overlayscrollbars/overlayscrollbars.css'
@@ -37,9 +38,9 @@ export default function RootLayout ({
         </head>
         <body>
           <ThemeProvider>
-
-            {children}
-
+            <UserDataInitializer>
+              {children}
+            </UserDataInitializer>
           </ThemeProvider>
         </body>
       </html>

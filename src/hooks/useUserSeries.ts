@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 export function useUserSeries () {
   const { user } = useUser()
   const [series, setSeries] = useState<MovieInfo[]>([])
+  console.log('🚀 ~ useUserSeries ~ series:', series)
   const [loading, setLoading] = useState(true)
 
   // Memoizar servicios para evitar recreación
@@ -99,6 +100,8 @@ export function useUserSeries () {
       const success = await seriesService.unfollowSeries(seriesId)
       if (success) {
         // Actualizar estado local
+        console.log('exito unfollow')
+
         setSeries(prev => prev.filter(s => s.id !== seriesId))
       }
       return success

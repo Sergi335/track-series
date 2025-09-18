@@ -1,12 +1,14 @@
 'use client'
-import { useUserSeries } from '@/hooks/useUserSeries'
+import { useUserSeriesStore } from '@/store/userSeriesStore'
 import { type MovieInfo } from '@/types'
+import { useUser } from '@clerk/nextjs'
 import React, { useEffect, useState } from 'react'
 import { ChevronDown, ChevronUp } from './icons/icons'
 import { Button } from './ui/button'
 
 export default function SetChapterControl ({ data, isInList }: { data: MovieInfo, isInList?: boolean }) {
-  const { series, updateProgress } = useUserSeries()
+  const { user } = useUser()
+  const { series, updateProgress } = useUserSeriesStore()
   const [totalEpisodes, setTotalEpisodes] = useState<number>(0)
   const [editMode, setEditMode] = useState<boolean>(false)
 
@@ -43,20 +45,24 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
       newstoredEpisode = 1
     }
 
-    await updateProgress(data.id, {
-      watched_season: newstoredSeason,
-      watched_episode: newstoredEpisode,
-      complete: newComplete
-    })
+    if (user?.id) {
+      await updateProgress(data.id, user.id, {
+        watched_season: newstoredSeason,
+        watched_episode: newstoredEpisode,
+        complete: newComplete
+      })
+    }
   }
 
   // Guardar progreso manualmente desde los selects
   const saveProgress = async (newstoredSeason: number, newstoredEpisode: number) => {
-    await updateProgress(data.id, {
-      watched_season: newstoredSeason,
-      watched_episode: newstoredEpisode,
-      complete: storedComplete
-    })
+    if (user?.id) {
+      await updateProgress(data.id, user.id, {
+        watched_season: newstoredSeason,
+        watched_episode: newstoredEpisode,
+        complete: storedComplete
+      })
+    }
   }
 
   // Cambiar temporada o episodio desde los selects

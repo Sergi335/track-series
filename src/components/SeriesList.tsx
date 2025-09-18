@@ -1,21 +1,22 @@
 'use client'
-import { useUserSeries } from '@/hooks/useUserSeries'
+import { useUserSeriesStore } from '@/store/userSeriesStore'
 import { type MovieInfo } from '@/types'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import MovieGrid from './MovieGrid'
 import MovieGridLoader from './MovieGridLoader'
 import Pagination from './Pagination'
 
 export default function SeriesList ({ page }: { page: string }) {
-  const { series, loading } = useUserSeries()
-  const [slicedSeries, setSlicedSeries] = useState<MovieInfo[]>([])
-  const [totalPages, setTotalPages] = useState<number>(0)
-  const [localLoading, setLocalLoading] = useState(true)
+  const { series, loading } = useUserSeriesStore()
+  console.log('🚀 ~ SeriesList ~ series:', series)
 
-  // Ordenar las series: las completas al final (memoizado para evitar recálculos)
-  const sortedSeries = useMemo(() => {
-    const safeSeries = series ?? []
-    return safeSeries.toSorted((a, b) => {
+  // Calcular todo en un solo useMemo para optimizar renders
+  const { sortedSeries, slicedSeries, totalPages } = useMemo(() => {
+    if (!series || series.length === 0) {
+      return { sortedSeries: [], slicedSeries: [], totalPages: 0 }
+    }
+
+    const sorted = series.toSorted((a: MovieInfo, b: MovieInfo) => {
       const aComplete = a.complete ?? false
       const bComplete = b.complete ?? false
 
@@ -24,25 +25,22 @@ export default function SeriesList ({ page }: { page: string }) {
       if (bComplete) return -1
       return 0
     })
-  }, [series])
 
-  useEffect(() => {
-    setTotalPages(Math.ceil(sortedSeries.length / 20))
     const start = (Number(page) - 1) * 20
     const end = start + 20
-    setSlicedSeries(sortedSeries.slice(start, end))
-    setTimeout(() => {
-      setLocalLoading(false)
-    }, 300)
-  }, [sortedSeries, page])
+    const sliced = sorted.slice(start, end)
+    const pages = Math.ceil(sorted.length / 20)
+
+    return { sortedSeries: sorted, slicedSeries: sliced, totalPages: pages }
+  }, [series, page])
 
   // Mostrar loader mientras loading es true
-  if (loading || localLoading) {
+  if (loading) {
     return <MovieGridLoader />
   }
 
   // Mostrar las series si hay
-  if (sortedSeries.length > 0 && !localLoading && !loading) {
+  if (sortedSeries.length > 0) {
     return (
       <>
         <MovieGrid series={slicedSeries} />

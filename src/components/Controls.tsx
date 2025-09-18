@@ -1,26 +1,30 @@
 'use client'
 import { Button } from '@/components/ui/button'
-import { useUserSeries } from '@/hooks/useUserSeries'
-import { useUserWatchlist } from '@/hooks/useUserWatchlist'
 import { fetchMovieInfo } from '@/lib/data'
+import { useUserSeriesStore } from '@/store/userSeriesStore'
 import { type MovieInfo, type Movies } from '@/types'
-import { useEffect, useState } from 'react'
+import { useUser } from '@clerk/nextjs'
 import SetChapterControl from './SetChapterControl'
 import { CheckIcon, WatchingIcon } from './icons/icons'
 
 export default function Controls ({ data, isInList }: { data: Movies | MovieInfo, isInList?: boolean }) {
-  const { isFollowing: isFollowingFromHook, followSeries, unfollowSeries } = useUserSeries()
-  const { isInWatchlist: isInWatchlistFromHook, addToWatchlist, removeFromWatchlist } = useUserWatchlist()
+  const { user } = useUser()
+  const {
+    isFollowing: isFollowingFromStore,
+    followSeries,
+    unfollowSeries,
+    isInWatchlist: isInWatchlistFromStore,
+    addToWatchlist,
+    removeFromWatchlist
+  } = useUserSeriesStore()
 
-  const [isFollowing, setIsFollowing] = useState(false)
-  const [isInWatchlist, setIsInWatchlist] = useState(false)
+  // Usar directamente el estado de Zustand para ambos
+  const isFollowing = isFollowingFromStore(data.id)
+  const isInWatchlist = isInWatchlistFromStore(data.id)
 
-  useEffect(() => {
-    setIsFollowing(isFollowingFromHook(data.id))
-    setIsInWatchlist(isInWatchlistFromHook(data.id))
-  }, [isFollowingFromHook, isInWatchlistFromHook, data.id])
-  // console.log(data)
   const storeMySeriesData = async () => {
+    if (!user?.id) return
+
     let seriesData = data
     // Si el componente se renderiza en moviegrid, no tiene la propiedad seasons, hay que hacer un fetch para traer la info de la serie
     if (isInList === true) {
@@ -28,21 +32,19 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
     }
 
     if (isFollowing) {
-      await unfollowSeries(data.id)
-      setIsFollowing(false)
+      await unfollowSeries(data.id, user.id)
     } else {
-      await followSeries(seriesData as MovieInfo)
-      setIsFollowing(true)
+      await followSeries(seriesData as MovieInfo, user.id)
     }
   }
 
   const storeWatchlistData = async () => {
+    if (!user?.id) return
+
     if (isInWatchlist) {
-      await removeFromWatchlist(data.id)
-      setIsInWatchlist(false)
+      await removeFromWatchlist(data.id, user.id)
     } else {
-      await addToWatchlist(data as MovieInfo)
-      setIsInWatchlist(true)
+      await addToWatchlist(data as MovieInfo, user.id)
     }
   }
 

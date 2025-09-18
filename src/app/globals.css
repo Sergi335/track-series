@@ -72,9 +72,9 @@ h1 {
   background-repeat: no-repeat;
 }
 
-.dark .mainContent {
+/* .dark .mainContent {
   background: rgba(0, 0, 0, 0.72);
-}
+} */
 
 .header {
   grid-area: header;

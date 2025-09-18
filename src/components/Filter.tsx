@@ -1,6 +1,7 @@
 'use client'
 // Proveedores más famosos (top 20)
 // FilterComponent.tsx
+import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -124,10 +125,37 @@ const FilterComponent = () => {
     router.push(`?${params.toString()}`)
   }
 
+  const resetFilters = () => {
+    // Reset estado local
+    const resetState: FilterState = {
+      genre: '',
+      language: '',
+      country: '',
+      year: '',
+      network: '',
+      status: '',
+      company: ''
+    }
+    setFilters(resetState)
+
+    // Reset URL - solo mantener query y page si existen
+    const params = new URLSearchParams()
+    const currentQuery = searchParams.get('query')
+    if (currentQuery) {
+      params.set('query', currentQuery)
+    }
+    params.set('page', '1')
+
+    router.push(`?${params.toString()}`)
+  }
+
   const renderSelect = (name: keyof FilterState, label: string, options: Array<{ value: string, label: string }>) => (
     <div>
       <label htmlFor={name} className="block text-sm font-medium">{label}</label>
-      <Select onValueChange={(value) => handleChange({ target: { name, value } } as React.ChangeEvent<HTMLSelectElement>)}>
+      <Select
+        value={filters[name] || 'Todos'}
+        onValueChange={(value) => handleChange({ target: { name, value } } as React.ChangeEvent<HTMLSelectElement>)}
+      >
         <SelectTrigger className="w-[180px] rounded-[8px]">
           <SelectValue placeholder="Todos" />
         </SelectTrigger>
@@ -143,6 +171,10 @@ const FilterComponent = () => {
   const years = Array.from({ length: currentYear - 1950 + 1 }, (_, i) => 1950 + i).toReversed().map(year => (
     { value: year.toString(), label: year.toString() }
   ))
+
+  // Verificar si hay filtros activos
+  const hasActiveFilters = Object.values(filters).some(value => value !== '')
+
   return (
     <div className="">
       <div className="grid grid-cols-1 gap-6 rounded-lg">
@@ -155,6 +187,19 @@ const FilterComponent = () => {
         {renderSelect('network', 'Network', networks)}
         {renderSelect('company', 'Compañías', companies)}
         {renderSelect('year', 'Año', years)}
+
+        {/* Botón de reset - solo se muestra si hay filtros activos */}
+        {hasActiveFilters && (
+          <div className="pt-4">
+            <Button
+              onClick={resetFilters}
+              variant="outline"
+              className="w-full"
+            >
+              Limpiar filtros
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   )

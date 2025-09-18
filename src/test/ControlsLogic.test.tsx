@@ -75,16 +75,16 @@ describe('Controls Component Logic', () => {
       if (key === 'series') return JSON.stringify(storedData)
       return '[]'
     })
-    
+
     window.localStorage.getItem = mockGetItem
     window.localStorage.setItem = mockSetItem
-    
+
     const mockStorageUpdate = vi.fn()
-    
+
     render(<MockControls data={mockMovie} onStorageUpdate={mockStorageUpdate} />)
-    
+
     fireEvent.click(screen.getByText('Follow'))
-    
+
     expect(mockSetItem).toHaveBeenCalledWith('series', JSON.stringify([mockMovie]))
     expect(mockStorageUpdate).toHaveBeenCalled()
   })
@@ -100,16 +100,16 @@ describe('Controls Component Logic', () => {
       if (key === 'watchlist') return JSON.stringify(storedData)
       return '[]'
     })
-    
+
     window.localStorage.getItem = mockGetItem
     window.localStorage.setItem = mockSetItem
-    
+
     const mockStorageUpdate = vi.fn()
-    
+
     render(<MockControls data={mockMovie} onStorageUpdate={mockStorageUpdate} />)
-    
+
     fireEvent.click(screen.getByText('Add to Watchlist'))
-    
+
     expect(mockSetItem).toHaveBeenCalledWith('watchlist', JSON.stringify([mockMovie]))
     expect(mockStorageUpdate).toHaveBeenCalled()
   })

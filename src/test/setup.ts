@@ -6,7 +6,7 @@ const localStorageMock = {
   getItem: vi.fn().mockReturnValue('[]'),
   setItem: vi.fn(),
   removeItem: vi.fn(),
-  clear: vi.fn(),
+  clear: vi.fn()
 }
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,

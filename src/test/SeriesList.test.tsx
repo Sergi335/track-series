@@ -172,18 +172,18 @@ describe('SeriesList Component', () => {
   it('should render "No series in your series" when localStorage is empty', () => {
     const mockGetItem = vi.fn().mockReturnValue('[]')
     window.localStorage.getItem = mockGetItem
-    
+
     render(<SeriesList page="1" />)
-    
+
     expect(screen.getByText('No series in your series')).toBeInTheDocument()
   })
 
   it('should render series when localStorage has data', () => {
     const mockGetItem = vi.fn().mockReturnValue(JSON.stringify(mockSeries))
     window.localStorage.getItem = mockGetItem
-    
+
     render(<SeriesList page="1" />)
-    
+
     expect(screen.getByTestId('movie-grid')).toBeInTheDocument()
     expect(screen.getByTestId('series-1')).toBeInTheDocument()
     expect(screen.getByTestId('series-2')).toBeInTheDocument()
@@ -194,9 +194,9 @@ describe('SeriesList Component', () => {
     const reversedSeries = [...mockSeries].reverse()
     const mockGetItem = vi.fn().mockReturnValue(JSON.stringify(reversedSeries))
     window.localStorage.getItem = mockGetItem
-    
+
     render(<SeriesList page="1" />)
-    
+
     const movieGrid = screen.getByTestId('movie-grid')
     expect(movieGrid).toBeInTheDocument()
   })
@@ -208,12 +208,12 @@ describe('SeriesList Component', () => {
       id: i + 1,
       name: `Test Series ${i + 1}`
     }))
-    
+
     const mockGetItem = vi.fn().mockReturnValue(JSON.stringify(manySeries))
     window.localStorage.getItem = mockGetItem
-    
+
     render(<SeriesList page="1" />)
-    
+
     expect(screen.getByTestId('pagination')).toBeInTheDocument()
     expect(screen.getByText('Total Pages: 2')).toBeInTheDocument()
   })
@@ -225,12 +225,12 @@ describe('SeriesList Component', () => {
       id: i + 1,
       name: `Test Series ${i + 1}`
     }))
-    
+
     const mockGetItem = vi.fn().mockReturnValue(JSON.stringify(manySeries))
     window.localStorage.getItem = mockGetItem
-    
+
     render(<SeriesList page="2" />)
-    
+
     // Page 2 should show the remaining 5 series (21-25)
     expect(screen.getByTestId('movie-grid')).toBeInTheDocument()
     expect(screen.getByTestId('series-21')).toBeInTheDocument()
@@ -242,9 +242,9 @@ describe('SeriesList Component', () => {
     // which causes JSON.parse error. For this test, we'll mock it to return '[]' when null
     const mockGetItem = vi.fn().mockReturnValue('[]') // Return empty array instead of null
     window.localStorage.getItem = mockGetItem
-    
+
     render(<SeriesList page="1" />)
-    
+
     expect(screen.getByText('No series in your series')).toBeInTheDocument()
   })
 
@@ -254,13 +254,13 @@ describe('SeriesList Component', () => {
     window.addEventListener = mockAddEventListener
     window.removeEventListener = mockRemoveEventListener
     window.localStorage.getItem = vi.fn().mockReturnValue('[]')
-    
+
     const { unmount } = render(<SeriesList page="1" />)
-    
+
     expect(mockAddEventListener).toHaveBeenCalledWith('storageEvent', expect.any(Function))
-    
+
     unmount()
-    
+
     expect(mockRemoveEventListener).toHaveBeenCalledWith('storageEvent', expect.any(Function))
   })
 })

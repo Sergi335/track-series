@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom'
+import { beforeEach, vi } from 'vitest'
 
 // Mock environment variables
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co'
@@ -9,7 +10,7 @@ const localStorageMock = {
   getItem: vi.fn(),
   setItem: vi.fn(),
   removeItem: vi.fn(),
-  clear: vi.fn(),
+  clear: vi.fn()
 }
 
 // Mock window.addEventListener and window.removeEventListener
@@ -17,12 +18,12 @@ const windowEventListeners: Record<string, Function[]> = {}
 
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
-  writable: true,
+  writable: true
 })
 
 Object.defineProperty(global, 'localStorage', {
   value: localStorageMock,
-  writable: true,
+  writable: true
 })
 
 // Mock window event methods
@@ -33,7 +34,7 @@ Object.defineProperty(window, 'addEventListener', {
     }
     windowEventListeners[event].push(callback)
   }),
-  writable: true,
+  writable: true
 })
 
 Object.defineProperty(window, 'removeEventListener', {
@@ -45,7 +46,7 @@ Object.defineProperty(window, 'removeEventListener', {
       }
     }
   }),
-  writable: true,
+  writable: true
 })
 
 Object.defineProperty(window, 'dispatchEvent', {
@@ -54,7 +55,7 @@ Object.defineProperty(window, 'dispatchEvent', {
       windowEventListeners[event.type].forEach(callback => callback(event))
     }
   }),
-  writable: true,
+  writable: true
 })
 
 // Clean up between tests
@@ -65,7 +66,7 @@ beforeEach(() => {
   localStorageMock.setItem.mockImplementation(() => {})
   localStorageMock.removeItem.mockImplementation(() => {})
   localStorageMock.clear.mockImplementation(() => {})
-  
+
   // Clear event listeners
   Object.keys(windowEventListeners).forEach(key => {
     windowEventListeners[key] = []

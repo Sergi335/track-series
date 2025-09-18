@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest'
 import { cn, generatePagination, searchInFiltered } from '@/lib/utils'
 import type { Movies } from '@/types'
+import { describe, expect, it } from 'vitest'
 
 describe('Utils', () => {
   describe('cn function', () => {

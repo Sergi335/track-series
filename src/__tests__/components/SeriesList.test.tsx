@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
 import SeriesList from '@/components/SeriesList'
 import { useUserSeriesStore } from '@/store/userSeriesStore'
 import type { MovieInfo } from '@/types'
+import { render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the child components
 vi.mock('@/components/MovieGrid', () => ({
@@ -24,13 +24,13 @@ vi.mock('@/components/Pagination', () => ({
 // Mock Supabase services
 vi.mock('@/lib/services/userSeries', () => ({
   UserSeriesService: vi.fn().mockImplementation(() => ({
-    getUserSeries: vi.fn().mockResolvedValue([]),
+    getUserSeries: vi.fn().mockResolvedValue([])
   }))
 }))
 
 vi.mock('@/lib/services/userWatchlist', () => ({
   UserWatchlistService: vi.fn().mockImplementation(() => ({
-    getUserWatchlist: vi.fn().mockResolvedValue([]),
+    getUserWatchlist: vi.fn().mockResolvedValue([])
   }))
 }))
 
@@ -50,7 +50,21 @@ describe('SeriesList Component', () => {
       in_production: false,
       languages: ['en'],
       last_air_date: '2013-09-29',
-      last_episode_to_air: {} as any,
+      last_episode_to_air: {
+        id: 1,
+        name: 'Test Episode',
+        overview: 'Test overview',
+        vote_average: 8.5,
+        vote_count: 100,
+        air_date: new Date('2013-09-29'),
+        episode_number: 13,
+        episode_type: 'finale',
+        production_code: 'TEST01',
+        runtime: 47,
+        season_number: 5,
+        show_id: 1396,
+        still_path: '/test.jpg'
+      },
       next_episode_to_air: null,
       networks: [],
       number_of_episodes: 62,
@@ -88,7 +102,21 @@ describe('SeriesList Component', () => {
       in_production: false,
       languages: ['en'],
       last_air_date: '2022-08-15',
-      last_episode_to_air: {} as any,
+      last_episode_to_air: {
+        id: 2,
+        name: 'Saul Gone',
+        overview: 'Final episode',
+        vote_average: 9.0,
+        vote_count: 200,
+        air_date: new Date('2022-08-15'),
+        episode_number: 13,
+        episode_type: 'finale',
+        production_code: 'BCS613',
+        runtime: 47,
+        season_number: 6,
+        show_id: 60059,
+        still_path: '/saul.jpg'
+      },
       next_episode_to_air: null,
       networks: [],
       number_of_episodes: 63,
@@ -128,7 +156,7 @@ describe('SeriesList Component', () => {
 
   it('should render "No tienes series guardadas" when no series', () => {
     render(<SeriesList page="1" />)
-    
+
     expect(screen.getByText('No tienes series guardadas')).toBeInTheDocument()
   })
 
@@ -140,9 +168,9 @@ describe('SeriesList Component', () => {
       currentUserId: 'test',
       watchlist: []
     })
-    
+
     render(<SeriesList page="1" />)
-    
+
     expect(screen.getByTestId('movie-grid')).toBeInTheDocument()
     expect(screen.getByText('MovieGrid with 2 series')).toBeInTheDocument()
   })
@@ -155,9 +183,9 @@ describe('SeriesList Component', () => {
       currentUserId: null,
       watchlist: []
     })
-    
+
     render(<SeriesList page="1" />)
-    
+
     expect(screen.getByTestId('loader')).toBeInTheDocument()
   })
 
@@ -169,9 +197,9 @@ describe('SeriesList Component', () => {
       currentUserId: 'test',
       watchlist: []
     })
-    
+
     render(<SeriesList page="1" />)
-    
+
     expect(screen.getByTestId('movie-grid')).toBeInTheDocument()
   })
 
@@ -182,7 +210,7 @@ describe('SeriesList Component', () => {
       id: i + 1,
       name: `Series ${i + 1}`
     }))
-    
+
     useUserSeriesStore.setState({
       series: manySeries,
       loading: false,
@@ -190,9 +218,9 @@ describe('SeriesList Component', () => {
       currentUserId: 'test',
       watchlist: []
     })
-    
+
     render(<SeriesList page="1" />)
-    
+
     expect(screen.getByTestId('pagination')).toBeInTheDocument()
     expect(screen.getByText('Pagination with 2 pages')).toBeInTheDocument()
   })
@@ -204,7 +232,7 @@ describe('SeriesList Component', () => {
       id: i + 1,
       name: `Series ${i + 1}`
     }))
-    
+
     useUserSeriesStore.setState({
       series: manySeries,
       loading: false,
@@ -212,9 +240,9 @@ describe('SeriesList Component', () => {
       currentUserId: 'test',
       watchlist: []
     })
-    
+
     render(<SeriesList page="1" />)
-    
+
     // Should show 20 series on page 1
     expect(screen.getByText('MovieGrid with 20 series')).toBeInTheDocument()
   })
@@ -226,7 +254,7 @@ describe('SeriesList Component', () => {
       id: i + 1,
       name: `Series ${i + 1}`
     }))
-    
+
     useUserSeriesStore.setState({
       series: manySeries,
       loading: false,
@@ -234,9 +262,9 @@ describe('SeriesList Component', () => {
       currentUserId: 'test',
       watchlist: []
     })
-    
+
     render(<SeriesList page="2" />)
-    
+
     // Should show 5 series on page 2
     expect(screen.getByText('MovieGrid with 5 series')).toBeInTheDocument()
   })
@@ -249,9 +277,9 @@ describe('SeriesList Component', () => {
       currentUserId: 'test',
       watchlist: []
     })
-    
+
     render(<SeriesList page="1" />)
-    
+
     expect(screen.queryByTestId('pagination')).not.toBeInTheDocument()
   })
 })

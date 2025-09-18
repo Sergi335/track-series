@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
 import WatchList from '@/components/WatchList'
 import { useUserSeriesStore } from '@/store/userSeriesStore'
 import type { MovieInfo } from '@/types'
+import { render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the MovieGrid component
 vi.mock('@/components/MovieGrid', () => ({
@@ -14,13 +14,13 @@ vi.mock('@/components/MovieGrid', () => ({
 // Mock Supabase services
 vi.mock('@/lib/services/userSeries', () => ({
   UserSeriesService: vi.fn().mockImplementation(() => ({
-    getUserSeries: vi.fn().mockResolvedValue([]),
+    getUserSeries: vi.fn().mockResolvedValue([])
   }))
 }))
 
 vi.mock('@/lib/services/userWatchlist', () => ({
   UserWatchlistService: vi.fn().mockImplementation(() => ({
-    getUserWatchlist: vi.fn().mockResolvedValue([]),
+    getUserWatchlist: vi.fn().mockResolvedValue([])
   }))
 }))
 
@@ -40,7 +40,21 @@ describe('WatchList Component', () => {
       in_production: true,
       languages: ['en'],
       last_air_date: '2023-07-27',
-      last_episode_to_air: {} as any,
+      last_episode_to_air: {
+        id: 3,
+        name: 'The Cost of Chaos',
+        overview: 'Latest episode',
+        vote_average: 8.2,
+        vote_count: 150,
+        air_date: new Date('2023-07-27'),
+        episode_number: 8,
+        episode_type: 'standard',
+        production_code: 'WIT308',
+        runtime: 60,
+        season_number: 3,
+        show_id: 71912,
+        still_path: '/witcher.jpg'
+      },
       next_episode_to_air: null,
       networks: [],
       number_of_episodes: 24,
@@ -75,7 +89,21 @@ describe('WatchList Component', () => {
       in_production: true,
       languages: ['en'],
       last_air_date: '2024-08-04',
-      last_episode_to_air: {} as any,
+      last_episode_to_air: {
+        id: 4,
+        name: 'The Queen Who Ever Was',
+        overview: 'Season 2 finale',
+        vote_average: 8.8,
+        vote_count: 180,
+        air_date: new Date('2024-08-04'),
+        episode_number: 8,
+        episode_type: 'finale',
+        production_code: 'HOTD208',
+        runtime: 70,
+        season_number: 2,
+        show_id: 94997,
+        still_path: '/hotd.jpg'
+      },
       next_episode_to_air: null,
       networks: [],
       number_of_episodes: 18,
@@ -112,7 +140,7 @@ describe('WatchList Component', () => {
 
   it('should render "No tienes series en tu watchlist" when no watchlist', () => {
     render(<WatchList />)
-    
+
     expect(screen.getByText('No tienes series en tu watchlist')).toBeInTheDocument()
   })
 
@@ -124,9 +152,9 @@ describe('WatchList Component', () => {
       initialized: false,
       currentUserId: null
     })
-    
+
     render(<WatchList />)
-    
+
     expect(screen.getByText('Cargando tu watchlist...')).toBeInTheDocument()
   })
 
@@ -138,9 +166,9 @@ describe('WatchList Component', () => {
       initialized: true,
       currentUserId: 'test'
     })
-    
+
     render(<WatchList />)
-    
+
     expect(screen.getByTestId('movie-grid')).toBeInTheDocument()
     expect(screen.getByText('MovieGrid with 2 series')).toBeInTheDocument()
   })
@@ -153,9 +181,9 @@ describe('WatchList Component', () => {
       initialized: true,
       currentUserId: 'test'
     })
-    
+
     render(<WatchList />)
-    
+
     expect(screen.getByText('No tienes series en tu watchlist')).toBeInTheDocument()
     expect(screen.queryByTestId('movie-grid')).not.toBeInTheDocument()
   })
@@ -166,7 +194,7 @@ describe('WatchList Component', () => {
       id: i + 1,
       name: `Series ${i + 1}`
     }))
-    
+
     useUserSeriesStore.setState({
       series: [],
       watchlist: largeSeries,
@@ -174,9 +202,9 @@ describe('WatchList Component', () => {
       initialized: true,
       currentUserId: 'test'
     })
-    
+
     render(<WatchList />)
-    
+
     expect(screen.getByTestId('movie-grid')).toBeInTheDocument()
     expect(screen.getByText('MovieGrid with 50 series')).toBeInTheDocument()
   })

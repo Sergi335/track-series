@@ -1,8 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { fetchMovieInfo } from '@/lib/data'
+import type { MockedFunction } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock fetch globally
-global.fetch = vi.fn()
+const mockFetch = vi.fn() as MockedFunction<typeof fetch>
+global.fetch = mockFetch
 
 describe('Data functions', () => {
   beforeEach(() => {
@@ -27,9 +29,9 @@ describe('Data functions', () => {
       const mockResponse = {
         ok: true,
         json: vi.fn().mockResolvedValue(mockMovieData)
-      }
-      
-      ;(fetch as any).mockResolvedValue(mockResponse)
+      } as Partial<Response>
+
+      mockFetch.mockResolvedValue(mockResponse as Response)
 
       const result = await fetchMovieInfo(1)
 
@@ -50,9 +52,9 @@ describe('Data functions', () => {
       const mockResponse = {
         ok: true,
         json: vi.fn().mockResolvedValue(mockMovieData)
-      }
-      
-      ;(fetch as any).mockResolvedValue(mockResponse)
+      } as Partial<Response>
+
+      mockFetch.mockResolvedValue(mockResponse as Response)
 
       await fetchMovieInfo(123)
 
@@ -72,29 +74,29 @@ describe('Data functions', () => {
       const mockResponse = {
         ok: false,
         json: vi.fn().mockResolvedValue({ error: 'Not found' })
-      }
-      
-      ;(fetch as any).mockResolvedValue(mockResponse)
+      } as Partial<Response>
+
+      mockFetch.mockResolvedValue(mockResponse as Response)
 
       const result = await fetchMovieInfo(999)
       expect(result).toEqual({ error: 'Not found' })
     })
 
     it('should handle network errors', async () => {
-      ;(fetch as any).mockRejectedValue(new Error('Network error'))
+      mockFetch.mockRejectedValue(new Error('Network error'))
 
       await expect(fetchMovieInfo(1)).rejects.toThrow('Network error')
     })
 
     it('should use AUTH environment variable', async () => {
       process.env.AUTH = 'Bearer custom-token'
-      
+
       const mockResponse = {
         ok: true,
         json: vi.fn().mockResolvedValue(mockMovieData)
-      }
-      
-      ;(fetch as any).mockResolvedValue(mockResponse)
+      } as Partial<Response>
+
+      mockFetch.mockResolvedValue(mockResponse as Response)
 
       await fetchMovieInfo(1)
 
@@ -110,13 +112,13 @@ describe('Data functions', () => {
 
     it('should handle empty AUTH environment variable', async () => {
       process.env.AUTH = ''
-      
+
       const mockResponse = {
         ok: true,
         json: vi.fn().mockResolvedValue(mockMovieData)
-      }
-      
-      ;(fetch as any).mockResolvedValue(mockResponse)
+      } as Partial<Response>
+
+      mockFetch.mockResolvedValue(mockResponse as Response)
 
       await fetchMovieInfo(1)
 

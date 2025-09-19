@@ -259,8 +259,9 @@ describe('Controls Component', () => {
   it('should apply correct styles when isInList is true', () => {
     render(<Controls data={mockMovieData} isInList={true} />)
 
-    const container = screen.getByText('Follow').closest('div')
-    expect(container).toHaveClass('px-0')
+    // Buscar el contenedor principal que contiene las clases de estilo
+    const mainContainer = screen.getByText('Follow').closest('div')?.parentElement
+    expect(mainContainer).toHaveClass('px-0')
 
     const followButton = screen.getByText('Follow')
     expect(followButton).toHaveClass('h-auto px-2 py-2 text-xs')
@@ -269,8 +270,9 @@ describe('Controls Component', () => {
   it('should apply default styles when isInList is false', () => {
     render(<Controls data={mockMovieData} isInList={false} />)
 
-    const container = screen.getByText('Follow').closest('div')
-    expect(container).toHaveClass('p-5')
+    // Buscar el contenedor principal que contiene las clases de estilo
+    const mainContainer = screen.getByText('Follow').closest('div')?.parentElement
+    expect(mainContainer).toHaveClass('p-5')
   })
 
   it('should handle both following and watchlist states', () => {

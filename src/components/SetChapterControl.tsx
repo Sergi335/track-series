@@ -7,13 +7,16 @@ import { ChevronDown, ChevronUp } from './icons/icons'
 import { Button } from './ui/button'
 
 export default function SetChapterControl ({ data, isInList }: { data: MovieInfo, isInList?: boolean }) {
+  console.log('🚀 ~ SetChapterControl ~ data:', data)
   const { user } = useUser()
   const { series, updateProgress } = useUserSeriesStore()
+  console.log('🚀 ~ SetChapterControl ~ series:', series)
   const [totalEpisodes, setTotalEpisodes] = useState<number>(0)
   const [editMode, setEditMode] = useState<boolean>(false)
 
   // Buscar la serie en los datos del usuario
   const movie = series.find(mov => mov.id === data.id)
+  console.log('🚀 ~ SetChapterControl ~ movie:', movie)
   const { seasons, watched_season: storedSeason, watched_episode: storedEpisode, complete: storedComplete } = movie ?? { seasons: data.seasons || [], watched_season: 1, watched_episode: 1, complete: false }
 
   // Actualizar el número total de episodios cuando cambie la temporada seleccionada

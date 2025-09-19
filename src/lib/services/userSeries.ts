@@ -42,7 +42,7 @@ export class UserSeriesService {
 
     try {
       // Primero quitar de watchlist si está ahí
-      await this.removeFromWatchlistIfExists(seriesData.id)
+      // await this.removeFromWatchlistIfExists(seriesData.id)
 
       const { error } = await supabase
         .from('user_series')

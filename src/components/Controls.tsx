@@ -4,6 +4,7 @@ import { fetchMovieInfo } from '@/lib/data'
 import { useUserSeriesStore } from '@/store/userSeriesStore'
 import { type MovieInfo, type Movies } from '@/types'
 import { useUser } from '@clerk/nextjs'
+import { useEffect, useRef, useState } from 'react'
 import SetChapterControl from './SetChapterControl'
 import { CheckIcon, WatchingIcon } from './icons/icons'
 
@@ -15,39 +16,98 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
     unfollowSeries,
     isInWatchlist: isInWatchlistFromStore,
     addToWatchlist,
-    removeFromWatchlist
+    removeFromWatchlist,
+    series
   } = useUserSeriesStore()
 
-  // Usar directamente el estado de Zustand para ambos
-  const isFollowing = isFollowingFromStore(data.id)
-  const isInWatchlist = isInWatchlistFromStore(data.id)
+  // Estados locales optimistas
+  const [localIsFollowing, setLocalIsFollowing] = useState<boolean | null>(null)
+  const [localIsInWatchlist, setLocalIsInWatchlist] = useState<boolean | null>(null)
+  const [seriesData, setSeriesData] = useState<MovieInfo | null>(series.find(mov => mov.id === data.id) ?? null)
 
-  const storeMySeriesData = async () => {
+  // Referencias para debounce
+  const followingTimeoutRef = useRef<number>()
+  const watchlistTimeoutRef = useRef<number>()
+
+  // Estados efectivos
+  const isFollowing = localIsFollowing !== null ? localIsFollowing : isFollowingFromStore(data.id)
+  const isInWatchlist = localIsInWatchlist !== null ? localIsInWatchlist : isInWatchlistFromStore(data.id)
+
+  // Debounced follow toggle - SIMPLIFICADO
+  const handleFollowToggle = () => {
     if (!user?.id) return
 
-    let seriesData = data
-    // Si el componente se renderiza en moviegrid, no tiene la propiedad seasons, hay que hacer un fetch para traer la info de la serie
-    if (isInList === true) {
-      seriesData = await fetchMovieInfo(data.id)
+    // 1. Cambio visual inmediato
+    const newState = !isFollowing
+    setLocalIsFollowing(newState)
+
+    // 2. Limpiar timeout anterior
+    if (followingTimeoutRef.current) {
+      clearTimeout(followingTimeoutRef.current)
     }
 
-    if (isFollowing) {
-      await unfollowSeries(data.id, user.id)
-    } else {
-      await followSeries(seriesData as MovieInfo, user.id)
-    }
+    // 3. Programar petición
+    followingTimeoutRef.current = window.setTimeout(async () => {
+      try {
+        const movieCompleteData = await fetchMovieInfo(data.id)
+        setSeriesData(movieCompleteData)
+        // Usar el estado local actual en lugar de calcularlo
+        if (newState && seriesData !== null) {
+          await followSeries(seriesData, user.id)
+        } else {
+          await unfollowSeries(data.id, user.id)
+        }
+
+        // Sincronizar con store solo después de éxito/error
+        setLocalIsFollowing(null)
+      } catch (error) {
+        console.error('Error in follow operation:', error)
+        setLocalIsFollowing(null)
+      }
+    }, 500)
   }
 
-  const storeWatchlistData = async () => {
+  // Debounced watchlist toggle - SIMPLIFICADO
+  const handleWatchlistToggle = () => {
     if (!user?.id) return
 
-    if (isInWatchlist) {
-      await removeFromWatchlist(data.id, user.id)
-    } else {
-      await addToWatchlist(data as MovieInfo, user.id)
+    // 1. Cambio visual inmediato
+    const newState = !isInWatchlist
+    setLocalIsInWatchlist(newState)
+
+    // 2. Limpiar timeout anterior
+    if (watchlistTimeoutRef.current) {
+      clearTimeout(watchlistTimeoutRef.current)
     }
+
+    // 3. Programar petición
+    watchlistTimeoutRef.current = window.setTimeout(async () => {
+      try {
+        // Usar el estado local actual en lugar de calcularlo
+        if (newState) {
+          await addToWatchlist(data as MovieInfo, user.id)
+        } else {
+          await removeFromWatchlist(data.id, user.id)
+        }
+
+        // Sincronizar con store solo después de éxito/error
+        setLocalIsInWatchlist(null)
+      } catch (error) {
+        console.error('Error in watchlist operation:', error)
+        setLocalIsInWatchlist(null)
+      }
+    }, 500)
   }
 
+  // Cleanup
+  useEffect(() => {
+    return () => {
+      if (followingTimeoutRef.current) clearTimeout(followingTimeoutRef.current)
+      if (watchlistTimeoutRef.current) clearTimeout(watchlistTimeoutRef.current)
+    }
+  }, [])
+
+  // Estilos condicionales
   let buttonListClass, buttonContainerListClass, iconsClass
   if (isInList !== undefined && isInList) {
     buttonListClass = 'h-auto px-2 py-2 text-xs'
@@ -58,29 +118,33 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
     buttonContainerListClass = ''
     iconsClass = ''
   }
-  // Si le damos a follow desde la lista peta por que le pasamos un objeto que no tiene la propiedad seasons, if isFollowing hacer un fetch para traer la info de la serie
+
   return (
     <div className={`p-5 flex items-center gap-3 flex-wrap ${buttonContainerListClass}`}>
-      <Button className={`${isFollowing ? 'bg-red-700 hover:bg-red-800 ' : 'bg-blue-700 hover:bg-blue-800'} text-white flex gap-2 transition-colors duration-500 ${buttonListClass}`} onClick={storeMySeriesData}>
-        {
-          isFollowing
+      {isFollowing && seriesData !== null && (
+        <SetChapterControl data={seriesData as MovieInfo} isInList={isInList} />
+      )}
+      <div className="flex gap-3 flex-wrap">
+        <Button
+          className={`${isFollowing ? 'bg-red-700 hover:bg-red-800' : 'bg-blue-700 hover:bg-blue-800'} text-white flex gap-2 transition-colors duration-500 ${buttonListClass}`}
+          onClick={handleFollowToggle}
+        >
+          {isFollowing
             ? (<><CheckIcon className={`${iconsClass}`}/> Following</>)
             : 'Follow'
-        }
-      </Button>
-      <Button className={`${isInWatchlist ? 'bg-red-700 hover:bg-red-800' : 'bg-blue-700 hover:bg-blue-800'} text-white flex gap-2 transition-colors duration-500 ${buttonListClass}`} onClick={storeWatchlistData}>
-        {
-          isInWatchlist
+          }
+        </Button>
+
+        <Button
+          className={`${isInWatchlist ? 'bg-red-700 hover:bg-red-800' : 'bg-blue-700 hover:bg-blue-800'} text-white flex gap-2 transition-colors duration-500 ${buttonListClass}`}
+          onClick={handleWatchlistToggle}
+        >
+          {isInWatchlist
             ? (<><WatchingIcon className={`${iconsClass}`} /> InWatchList</>)
             : 'SetInWatchList'
-        }
-      </Button>
-      {
-        isFollowing
-          ? (<SetChapterControl data={data as MovieInfo} isInList={isInList} />)
-          : ''
-      }
-
+          }
+        </Button>
+      </div>
     </div>
   )
 }

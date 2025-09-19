@@ -83,18 +83,29 @@ export const useUserSeriesStore = create<UserSeriesState>((set, get) => ({
     try {
       console.log('➕ Siguiendo serie:', seriesData.name)
       const seriesService = new UserSeriesService(userId)
-      const watchlistService = new UserWatchlistService(userId)
+      // const watchlistService = new UserWatchlistService(userId)
 
       // Remover de watchlist y agregar a series
-      await watchlistService.removeFromWatchlist(seriesData.id)
+      // await watchlistService.removeFromWatchlist(seriesData.id)
       const success = await seriesService.followSeries(seriesData)
 
       if (success) {
-        // Actualizar estado local optimísticamente
-        const exists = series.some(s => s.id === seriesData.id)
-        if (!exists) {
-          set({ series: [...series, seriesData] })
-          console.log('✅ Serie añadida al estado local')
+      // ✅ CORREGIDO: Recargar datos desde la BD para obtener el progreso correcto
+        const updatedUserSeries = await seriesService.getUserSeries()
+        const newSeries = updatedUserSeries.find(s => s.id === seriesData.id)
+
+        if (newSeries) {
+        // ✅ CORREGIDO: Verificar que no existe antes de añadir
+          const exists = series.some(s => s.id === newSeries.id)
+          if (!exists) {
+            set({ series: [...series, newSeries] })
+            console.log('✅ Serie añadida al estado local con progreso:', {
+              watched_season: newSeries.watched_season,
+              watched_episode: newSeries.watched_episode
+            })
+          } else {
+            console.log('⚠️ Serie ya existe en el estado local, no se añade duplicado')
+          }
         }
       }
 

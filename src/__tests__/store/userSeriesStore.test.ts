@@ -2,22 +2,67 @@ import { useUserSeriesStore } from '@/store/userSeriesStore'
 import type { MovieInfo } from '@/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-// Mock the services
+// Mock the services with proper implementation tracking
+const mockUserSeries: MovieInfo[] = []
+
+const mockUserSeriesService = {
+  getUserSeries: vi.fn().mockImplementation(() => Promise.resolve([...mockUserSeries])),
+  followSeries: vi.fn().mockImplementation((seriesData: MovieInfo) => {
+    // Simular que la serie se añade a la "base de datos"
+    const existingIndex = mockUserSeries.findIndex(s => s.id === seriesData.id)
+    if (existingIndex === -1) {
+      mockUserSeries.push({
+        ...seriesData,
+        watched_season: 1,
+        watched_episode: 1
+      })
+    }
+    return Promise.resolve(true)
+  }),
+  unfollowSeries: vi.fn().mockImplementation((seriesId: number) => {
+    const index = mockUserSeries.findIndex(s => s.id === seriesId)
+    if (index > -1) {
+      mockUserSeries.splice(index, 1)
+    }
+    return Promise.resolve(true)
+  }),
+  updateProgress: vi.fn().mockImplementation((seriesId: number, updates: {watched_season?: number, watched_episode?: number, complete?: boolean}) => {
+    const series = mockUserSeries.find(s => s.id === seriesId)
+    if (series) {
+      if (updates.watched_season !== undefined) series.watched_season = updates.watched_season
+      if (updates.watched_episode !== undefined) series.watched_episode = updates.watched_episode
+      if (updates.complete !== undefined) series.complete = updates.complete
+    }
+    return Promise.resolve(true)
+  })
+}
+
 vi.mock('@/lib/services/userSeries', () => ({
-  UserSeriesService: vi.fn().mockImplementation(() => ({
-    getUserSeries: vi.fn().mockResolvedValue([]),
-    followSeries: vi.fn().mockResolvedValue(true),
-    unfollowSeries: vi.fn().mockResolvedValue(true),
-    updateProgress: vi.fn().mockResolvedValue(true)
-  }))
+  UserSeriesService: vi.fn().mockImplementation(() => mockUserSeriesService)
 }))
 
+const mockUserWatchlist: MovieInfo[] = []
+
+const mockUserWatchlistService = {
+  getUserWatchlist: vi.fn().mockImplementation(() => Promise.resolve([...mockUserWatchlist])),
+  addToWatchlist: vi.fn().mockImplementation((seriesData: MovieInfo) => {
+    const existingIndex = mockUserWatchlist.findIndex(s => s.id === seriesData.id)
+    if (existingIndex === -1) {
+      mockUserWatchlist.push(seriesData)
+    }
+    return Promise.resolve(true)
+  }),
+  removeFromWatchlist: vi.fn().mockImplementation((seriesId: number) => {
+    const index = mockUserWatchlist.findIndex(s => s.id === seriesId)
+    if (index > -1) {
+      mockUserWatchlist.splice(index, 1)
+    }
+    return Promise.resolve(true)
+  })
+}
+
 vi.mock('@/lib/services/userWatchlist', () => ({
-  UserWatchlistService: vi.fn().mockImplementation(() => ({
-    getUserWatchlist: vi.fn().mockResolvedValue([]),
-    addToWatchlist: vi.fn().mockResolvedValue(true),
-    removeFromWatchlist: vi.fn().mockResolvedValue(true)
-  }))
+  UserWatchlistService: vi.fn().mockImplementation(() => mockUserWatchlistService)
 }))
 
 describe('UserSeriesStore', () => {
@@ -76,6 +121,9 @@ describe('UserSeriesStore', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    // Reset mock arrays
+    mockUserSeries.length = 0
+    mockUserWatchlist.length = 0
     // Reset store state
     useUserSeriesStore.setState({
       series: [],

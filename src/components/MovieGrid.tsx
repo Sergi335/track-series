@@ -1,15 +1,17 @@
 'use client'
+import { useUserSeriesStore } from '@/store/userSeriesStore'
 import { type MovieInfo, type Movies } from '@/types'
 import Link from 'next/link'
 import Controls from './Controls'
 
 export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] }) {
+  const { isFollowing, isInWatchlist } = useUserSeriesStore()
   return (
     <section className="grid grid-cols-5 gap-4 mx-auto">
       {series === undefined && <h1 className="text-white">No series in watchlist</h1>}
       {series?.map((movie) => {
         return (
-          <article key={movie.id} className="flex flex-col relative group">
+          <article key={movie.id} className={`flex flex-col relative group ${isFollowing(movie.id) && isInWatchlist(movie.id) ? 'border-red-600' : isFollowing(movie.id) ? 'border-blue-600' : isInWatchlist(movie.id) ? 'border-green-600' : 'border-white'} border-2 rounded-2xl`}>
             {/* ImageCard */}
             <Link href={`/movies/${movie.id}`}>
               <img className="rounded-2xl shadow-xl aspect-[9/13] object-cover" src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} alt={`cover image for ${movie.name}`} />

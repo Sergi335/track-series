@@ -52,8 +52,8 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
         const movieCompleteData = await fetchMovieInfo(data.id)
         setSeriesData(movieCompleteData)
         // Usar el estado local actual en lugar de calcularlo
-        if (newState && seriesData !== null) {
-          await followSeries(seriesData, user.id)
+        if (newState) {
+          await followSeries(movieCompleteData, user.id)
         } else {
           await unfollowSeries(data.id, user.id)
         }

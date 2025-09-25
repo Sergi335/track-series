@@ -39,9 +39,14 @@ export default function Nav () {
         {
           isLoaded && !user
             ? (
+              <>
               <Link className={'px-8 py-1 rounded-lg w-full lg:w-fit text-center hover:bg-blue-700 hover:text-white transition-colors duration-200'} href="/sign-in">
                 Inicia Sesión
               </Link>
+              <Link className={'px-8 py-1 rounded-lg w-full lg:w-fit text-center hover:bg-blue-700 hover:text-white transition-colors duration-200'} href="/sign-up">
+                Regístrate
+              </Link>
+              </>
             )
             : null
         }

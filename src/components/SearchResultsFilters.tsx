@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -5,55 +6,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { COUNTRY_MAP, COUNTRY_MAP_REVERSE, GENRE_MAP, GENRE_MAP_REVERSE } from '@/lib/constants'
 import { Movies } from '@/types'
 import React, { useMemo, useRef, useState } from 'react'
-
-// Diccionario de equivalencias id <-> nombre para géneros
-const GENRE_MAP: Record<string, string> = {
-  10759: 'Acción',
-  16: 'Animación',
-  35: 'Comedia',
-  80: 'Crimen',
-  99: 'Documental',
-  18: 'Drama',
-  10751: 'Familiar',
-  10762: 'Infantil',
-  9648: 'Misterio',
-  10763: 'Noticias',
-  10764: 'Reality',
-  10765: 'Ciencia ficción',
-  10766: 'Telenovela',
-  10767: 'Talk Show',
-  10768: 'Bélico/Política',
-  37: 'Western'
-}
-const GENRE_MAP_REVERSE = Object.fromEntries(
-  Object.entries(GENRE_MAP).map(([id, name]) => [name, id])
-)
-
-// Diccionario de equivalencias código <-> nombre para países (puedes ampliarlo)
-const COUNTRY_MAP: Record<string, string> = {
-  AR: 'Argentina',
-  US: 'Estados Unidos',
-  ES: 'España',
-  MX: 'México',
-  GB: 'Reino Unido',
-  FR: 'Francia',
-  IT: 'Italia',
-  JP: 'Japón',
-  KR: 'Corea del Sur',
-  DE: 'Alemania',
-  CA: 'Canadá',
-  BR: 'Brasil',
-  AU: 'Australia',
-  CN: 'China',
-  IN: 'India',
-  RU: 'Rusia'
-  // ...añade los que necesites
-}
-const COUNTRY_MAP_REVERSE = Object.fromEntries(
-  Object.entries(COUNTRY_MAP).map(([code, name]) => [name, code])
-)
 
 export default function SearchResultsFilters ({
   results = [],
@@ -102,6 +57,46 @@ export default function SearchResultsFilters ({
     year: ''
   })
 
+  // ✅ NUEVA FUNCIÓN: Renderizar Select con estilo condicional
+  const renderSelect = (
+    name: keyof typeof selected,
+    label: string,
+    options: string[],
+    placeholder = 'Todos'
+  ) => {
+    const isActive = selected[name] !== '' && selected[name] !== 'Todos'
+
+    return (
+      <div className="flex justify-between items-center gap-4">
+        <label className={`transition-colors ${isActive ? 'text-blue-400' : ''}`}>
+          {label}
+        </label>
+        <Select
+          value={selected[name] || placeholder}
+          onValueChange={(value) => handleFilterChange({
+            target: { name, value }
+          } as React.ChangeEvent<HTMLSelectElement>)}
+        >
+          <SelectTrigger
+            className={`w-[180px] rounded-[8px] transition-all duration-200 ${
+              isActive
+                ? 'border-blue-500 ring-1 ring-blue-500 ring-opacity-50'
+                : ''
+            }`}
+          >
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent className="border-none">
+            <SelectItem value="Todos">Todos</SelectItem>
+            {options.map(option => (
+              <SelectItem key={option} value={option}>{option}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    )
+  }
+
   // Handler para filtrar resultados
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -142,52 +137,38 @@ export default function SearchResultsFilters ({
     setResults(filtered)
   }
 
+  // ✅ NUEVA FUNCIÓN: Limpiar todos los filtros
+  const clearFilters = () => {
+    setSelected({
+      genre: '',
+      country: '',
+      year: ''
+    })
+    setResults(originalResultsRef.current)
+  }
+
+  // Verificar si hay algún filtro activo
+  const hasActiveFilters = selected.genre !== '' || selected.country !== '' || selected.year !== ''
+
   return (
     <aside className="flex flex-col p-4 text-white rounded-2xl">
-      <h2>Filtrar Resultados</h2>
-      <div className="flex flex-col gap-3 mt-4">
-        <div className="flex justify-between items-center gap-4">
-          <label>Género</label>
-          <Select onValueChange={(value) => handleFilterChange({ target: { name: 'genre', value } } as React.ChangeEvent<HTMLSelectElement>)}>
-            <SelectTrigger className="w-[180px] rounded-[8px]">
-              <SelectValue placeholder="Todos" />
-            </SelectTrigger>
-            <SelectContent className="border-none">
-              <SelectItem value={'Todos'}>{'Todos'}</SelectItem>
-              {genres.map(g => (
-                <SelectItem key={g} value={g}>{g}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex justify-between items-center gap-4">
-          <label>País</label>
-          <Select onValueChange={(value) => handleFilterChange({ target: { name: 'country', value } } as React.ChangeEvent<HTMLSelectElement>)}>
-            <SelectTrigger className="w-[180px] rounded-[8px]">
-              <SelectValue placeholder="Todos" />
-            </SelectTrigger>
-            <SelectContent className="border-none">
-              <SelectItem value={'Todos'}>{'Todos'}</SelectItem>
-              {countries.map(c => (
-                <SelectItem key={c} value={c}>{c}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex justify-between items-center gap-4">
-          <label>Año</label>
-          <Select onValueChange={(value) => handleFilterChange({ target: { name: 'year', value } } as React.ChangeEvent<HTMLSelectElement>)}>
-            <SelectTrigger className="w-[180px] rounded-[8px]">
-              <SelectValue placeholder="Todos" />
-            </SelectTrigger>
-            <SelectContent className="border-none">
-              <SelectItem value={'Todos'}>{'Todos'}</SelectItem>
-              {years.map(y => (
-                <SelectItem key={y} value={y}>{y}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="flex items-center justify-between mb-4">
+        <h2>Filtrar Resultados</h2>
+        {hasActiveFilters && (
+          <Button
+            onClick={clearFilters}
+            variant="outline"
+            size="sm"
+            className="text-red-400 border-red-400 hover:bg-red-400 hover:text-white transition-colors"
+          >
+            Limpiar
+          </Button>
+        )}
+      </div>
+      <div className="flex flex-col gap-3">
+        {renderSelect('genre', 'Género', genres)}
+        {renderSelect('country', 'País', countries)}
+        {renderSelect('year', 'Año', years)}
       </div>
     </aside>
   )

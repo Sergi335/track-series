@@ -2,6 +2,7 @@ import ClerkWrapper from '@/components/ClerkWrapper'
 import { UserDataInitializer } from '@/components/UserDataInitializer'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
 import 'overlayscrollbars/overlayscrollbars.css'
 import React from 'react'
 import './globals.css'
@@ -10,6 +11,12 @@ export const metadata: Metadata = {
   title: 'Track My Series - Descubre y Sigue tus Series Favoritas',
   description: 'Descubre series de televisión por género, mantén un registro de lo que has visto y encuentra tu próxima serie favorita. Explora ciencia ficción, comedia, misterio y más.'
 }
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter'
+})
 
 export default function RootLayout ({
   children
@@ -36,7 +43,7 @@ export default function RootLayout ({
             }}
           />
         </head>
-        <body>
+        <body className={`${inter.variable} font-sans`}>
           <ThemeProvider>
             <UserDataInitializer>
               {children}

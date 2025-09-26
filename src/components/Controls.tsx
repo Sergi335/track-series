@@ -130,8 +130,8 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
           onClick={handleFollowToggle}
         >
           {isFollowing
-            ? (<><CheckIcon className={`${iconsClass}`}/> Following</>)
-            : 'Follow'
+            ? (<><CheckIcon className={`${iconsClass}`}/> Siguiendo</>)
+            : 'Seguir'
           }
         </Button>
 
@@ -140,8 +140,8 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
           onClick={handleWatchlistToggle}
         >
           {isInWatchlist
-            ? (<><WatchingIcon className={`${iconsClass}`} /> InWatchList</>)
-            : 'SetInWatchList'
+            ? (<><WatchingIcon className={`${iconsClass}`} /> En Watchlist</>)
+            : 'Watchlist'
           }
         </Button>
       </div>

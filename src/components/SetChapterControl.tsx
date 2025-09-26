@@ -176,17 +176,17 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
               )
               : (
                 <>
-                  <div className="flex gap-2 flex-wrap uppercase font-[700] tracking-[1.5px]">
+                  <div className="flex gap-2 flex-wrap text-base">
                     <p className="text-white text-sm">{seasons.find(s => s.season_number === storedSeason)?.name}</p>
                     <p className="text-white text-sm">Capítulo: {storedEpisode}</p>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <button type="button" onClick={increaseEpisode} className="p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white">
-                      <ChevronUp className="w-4 h-4"/>
-                    </button>
-                    <button type="button" onClick={decreaseEpisode} className="p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white">
-                      <ChevronDown className="w-4 h-4"/>
-                    </button>
+                    <div className="flex gap-1">
+                      <button type="button" onClick={increaseEpisode} className="p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white">
+                        <ChevronUp className="w-4 h-4"/>
+                      </button>
+                      <button type="button" onClick={decreaseEpisode} className="p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white">
+                        <ChevronDown className="w-4 h-4"/>
+                      </button>
+                    </div>
                   </div>
                 </>
               )

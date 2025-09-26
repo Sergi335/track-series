@@ -176,7 +176,7 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
               )
               : (
                 <>
-                  <div className="flex gap-2 flex-wrap text-base">
+                  <div className="flex gap-2 flex-wrap text-base items-center">
                     <p className="text-white text-sm">{seasons.find(s => s.season_number === storedSeason)?.name}</p>
                     <p className="text-white text-sm">Capítulo: {storedEpisode}</p>
                     <div className="flex gap-1">

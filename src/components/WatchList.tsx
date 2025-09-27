@@ -1,23 +1,21 @@
 'use client'
-import { type MovieInfo } from '@/types'
-import { useState, useEffect } from 'react'
+import { useUserSeriesStore } from '@/store/userSeriesStore'
 import MovieGrid from './MovieGrid'
 
 export default function WatchList () {
-  const [series, setSeries] = useState<MovieInfo[]>([])
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Your client-side code that uses window goes here
-      if (window.localStorage.getItem('watchlist') === null) window.localStorage.setItem('watchlist', JSON.stringify([]))
-      setSeries(JSON.parse(window.localStorage.getItem('watchlist') ?? '') as MovieInfo[] ?? [])
-    }
-  }, [])
+  const { watchlist, loading } = useUserSeriesStore()
 
+  if (loading) {
+    return <h1 className="text-white">Cargando tu watchlist...</h1>
+  }
+  // TODO Paginación
   return (
     <>
-        {
-            series.length > 0 ? <MovieGrid series={series} /> : <h1 className='text-white'>No series in watchlist</h1>
-        }
+      {
+        watchlist.length > 0
+          ? <MovieGrid series={watchlist} />
+          : <h1 className="text-white">No tienes series en tu watchlist</h1>
+      }
     </>
   )
 }

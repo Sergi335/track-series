@@ -1,61 +1,54 @@
 'use client'
+import { useUserSeriesStore } from '@/store/userSeriesStore'
 import { type MovieInfo } from '@/types'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import MovieGrid from './MovieGrid'
+import MovieGridLoader from './MovieGridLoader'
 import Pagination from './Pagination'
 
-// Esto es CSR porque obtenemos los datos del localStorage
 export default function SeriesList ({ page }: { page: string }) {
-  const [series, setSeries] = useState<MovieInfo[]>([])
-  const [slicedSeries, setSlicedSeries] = useState<MovieInfo[]>([])
-  const [totalPages, setTotalPages] = useState<number>(0)
+  const { series, loading } = useUserSeriesStore()
+  console.log('🚀 ~ SeriesList ~ series:', series)
 
-  useEffect(() => {
-    const updateSeries = () => {
-      if (typeof window !== 'undefined') {
-        // Your client-side code that uses window goes here
-        if (window.localStorage.getItem('series') === null) window.localStorage.setItem('series', JSON.stringify([]))
-        const rawSeries = JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? []
-        setSeries(rawSeries.toSorted((a, b) => {
-          const aComplete = a.complete ?? false
-          const bComplete = b.complete ?? false
-
-          if (aComplete === bComplete) return 0 // Si ambos son iguales, no cambia el orden
-          if (aComplete) return 1 // Si a.complete es true, a va después de b
-          if (bComplete) return -1 // Si b.complete es true, a va antes de b
-
-          return 0 // Default value when the return value is undefined
-        }))
-      }
+  // Calcular todo en un solo useMemo para optimizar renders
+  const { sortedSeries, slicedSeries, totalPages } = useMemo(() => {
+    if (!series || series.length === 0) {
+      return { sortedSeries: [], slicedSeries: [], totalPages: 0 }
     }
-    updateSeries()
-    window.addEventListener('storageEvent', updateSeries)
-    return () => {
-      window.removeEventListener('storageEvent', updateSeries)
-    }
-  }, [])
 
-  useEffect(() => {
-    setTotalPages(Math.ceil(series.length / 20))
+    const sorted = series.toSorted((a: MovieInfo, b: MovieInfo) => {
+      const aComplete = a.complete ?? false
+      const bComplete = b.complete ?? false
+
+      if (aComplete === bComplete) return 0
+      if (aComplete) return 1
+      if (bComplete) return -1
+      return 0
+    })
+
     const start = (Number(page) - 1) * 20
     const end = start + 20
-    setSlicedSeries(series.slice(start, end))
+    const sliced = sorted.slice(start, end)
+    const pages = Math.ceil(sorted.length / 20)
+
+    return { sortedSeries: sorted, slicedSeries: sliced, totalPages: pages }
   }, [series, page])
 
-  // console.log(series.length)
+  // Mostrar loader mientras loading es true
+  if (loading) {
+    return <MovieGridLoader />
+  }
 
-  return (
-    <>
-        {
-            series.length > 0
-              ? (
-                  <>
-                    <MovieGrid series={slicedSeries} />
-                    {totalPages > 1 && <Pagination totalPages={totalPages} />}
-                  </>
-                )
-              : <h1 className='text-white'>No series in your series</h1>
-        }
-    </>
-  )
+  // Mostrar las series si hay
+  if (sortedSeries.length > 0) {
+    return (
+      <>
+        <MovieGrid series={slicedSeries} />
+        {totalPages > 1 && <Pagination totalPages={totalPages} />}
+      </>
+    )
+  }
+
+  // Solo mostrar el mensaje si loading es false y no hay series
+  return <h1 className="text-white">No tienes series guardadas</h1>
 }

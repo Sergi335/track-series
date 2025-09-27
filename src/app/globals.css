@@ -4,7 +4,7 @@
 
 :root {
   --radius: 5px;
-  
+
   /* Light theme variables */
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -28,8 +28,8 @@
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
+  --background: 0 0% 0%;
+  --foreground: 216 12.2% 83.92%;
   --card: 222.2 84% 4.9%;
   --card-foreground: 210 40% 98%;
   --popover: 222.2 84% 4.9%;
@@ -53,9 +53,16 @@ body {
   color: hsl(var(--foreground));
   background: hsl(var(--background));
 }
+
 h1 {
   line-height: normal;
 }
+
+.mosaic {
+  background-image: linear-gradient(360deg, hsl(var(--background)), hsl(var(--background)/0.75)), url(/mosaic.webp);
+  background-attachment: fixed;
+}
+
 .mainContent {
   background: rgba(0, 0, 0, 0.72);
   display: grid;
@@ -64,20 +71,41 @@ h1 {
   grid-template-areas: "sidebar" "content";
   background-repeat: no-repeat;
 }
-.dark .mainContent {
+
+/* .dark .mainContent {
   background: rgba(0, 0, 0, 0.72);
-}
+} */
+
 .header {
   grid-area: header;
   /* grid-template-columns: 12% 1fr; */
 }
+
 .sidebar {
   grid-area: sidebar;
 }
+
 .mainSection {
   grid-area: content;
   /* grid-template-columns: 12% 1fr; */
 }
+
+/* Change Autocomplete styles in Chrome*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: 1px solid green;
+  -webkit-text-fill-color: hsl(var(--foreground));
+  -webkit-box-shadow: 0 0 0px 1000px #000 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 @media (min-width: 1536px) {
   .mainContent {
     background: none;
@@ -85,6 +113,7 @@ h1 {
     grid-template-columns: 20% 1fr;
     grid-template-areas: "sidebar content" "sidebar content";
   }
+
   .dark .mainContent {
     background-image: linear-gradient(to right, rgba(255, 255, 255, 0.13) 0% 20%, rgba(0, 0, 0, 0.72) 20% 100%);
   }

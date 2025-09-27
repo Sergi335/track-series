@@ -1,83 +1,105 @@
 'use client'
+import { useUserSeriesStore } from '@/store/userSeriesStore'
 import { type MovieInfo, type Movies } from '@/types'
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Controls from './Controls'
 
 export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] }) {
-  console.log('🚀 ~ MovieGrid ~ series.length:', series.length)
-  const [className, setClassName] = useState(Array<string>)
-  const [storedData, setStoredData] = useState<MovieInfo[]>([])
+  const { isFollowing, isInWatchlist } = useUserSeriesStore()
+  const [expandedItem, setExpandedItem] = useState<number | null>(null)
 
-  useEffect(() => {
-    const updateData = () => {
-      setStoredData(JSON.parse(window.localStorage.getItem('series') ?? '') as MovieInfo[] ?? {})
-      console.log('Actualizando storage')
-    }
-    updateData()
-    window.addEventListener('storageEvent', updateData)
-    return () => {
-      window.removeEventListener('storageEvent', updateData)
-    }
-  }, [])
-  console.log(className)
-  useEffect(() => {
-    const itemsInListIds = series.filter((item) => storedData.some((storedItem) => storedItem.id === item.id)).map(item => item.id)
-    console.log('🚀 ~ useEffect ~ itemsInListIds:', itemsInListIds.length)
-    const completedIds = storedData.filter((item) => item.complete).map(item => item.id)
-    console.log('🚀 ~ useEffect ~ completedIds:', completedIds)
+  const handleItemClick = (movieId: number) => {
+    setExpandedItem(expandedItem === movieId ? null : movieId)
+  }
 
-    const updateClass = () => {
-      const newState: string[] = []
-      series?.map(movie => {
-        if (itemsInListIds.includes(movie.id) && completedIds.includes(movie.id)) {
-          newState.push('border-red-600')
-        } else if (itemsInListIds.includes(movie.id)) {
-          newState.push('border-blue-600')
-        } else {
-          newState.push('border-white')
+  const getGridPosition = (index: number) => {
+    const rowPosition = Math.floor(index / 4) // Qué fila (0, 1, 2...)
+    const colPosition = index % 4 // Posición en la fila (0, 1, 2, 3)
+
+    if (!series) return { gridColumn: '1', gridRow: '1' }
+
+    // Encontrar el índice del elemento expandido
+    const expandedIndex = series.findIndex(movie => movie.id === expandedItem)
+    const expandedRowPosition = expandedIndex >= 0 ? Math.floor(expandedIndex / 4) : -1
+    const expandedColPosition = expandedIndex >= 0 ? expandedIndex % 4 : -1
+
+    // Si estamos en la misma fila que el elemento expandido
+    if (rowPosition === expandedRowPosition && expandedIndex >= 0) {
+      const isCurrentExpanded = series[index].id === expandedItem
+
+      if (isCurrentExpanded) {
+        // El elemento expandido
+        return {
+          gridColumn: `${colPosition + 1} / ${colPosition + 3}`, // Ocupa 2 columnas
+          gridRow: `${rowPosition + 1}`
         }
-        return null
-      })
-      setClassName(newState)
+      } else if (colPosition > expandedColPosition) {
+        // Elementos a la derecha del expandido se desplazan
+        return {
+          gridColumn: `${colPosition + 2}`, // Se desplaza +1 columna extra
+          gridRow: `${rowPosition + 1}`
+        }
+      } else {
+        // Elementos a la izquierda del expandido mantienen su posición
+        return {
+          gridColumn: `${colPosition + 1}`,
+          gridRow: `${rowPosition + 1}`
+        }
+      }
+    } else {
+      // Filas sin elementos expandidos, posición normal
+      return {
+        gridColumn: `${colPosition + 1}`,
+        gridRow: `${rowPosition + 1}`
+      }
     }
-    updateClass()
-  }, [storedData, series])
-  // const itemsInListIds = itemsInList.map((item) => item.id)
-  // console.log('🚀 ~ MovieGrid ~ itemsInList:', itemsInList)
-  // let className = '' // estado para que reaccione
+  }
+
   return (
-    <section className='grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-12 py-14 w-3/4'>
-            {series === undefined && <h1 className='text-white'>No series in watchlist</h1>}
-            {series?.map((movie, index) => {
-              // if (itemsInListIds.includes(movie.id) && completedIds.includes(movie.id)) {
-              //   className = 'border-red-600'
-              // } else if (itemsInListIds.includes(movie.id)) {
-              //   className = 'border-blue-600'
-              // } else {
-              //   className = 'border-white'
-              // }
-              return (
-                <article key={movie.id} className="flex flex-col relative group">
-                  <Link href={`/movies/${movie.id}`}>
-                      <img className={`rounded-2xl border-[5px] ${className[index]} shadow-xl aspect-[9/13] object-cover`} src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} alt={`cover image for ${movie.name}`} />
-                  </Link>
-                  <div className="absolute py-3 px-2 bg-[#1e293bd4] backdrop-blur-sm w-[calc(100%-9.6px)] ml-[4.8px] rounded-b-[8px] overflow-hidden invisible opacity-0 transition-all duration-500 bottom-[4.8px] group-hover:visible group-hover:opacity-100">
-                    <Link className='flex' href={`/movies/${movie.id}`}>
-                      <h5 className="mb-2 text-xl text-balance font-bold text-zinc-200">{movie.name}</h5>
-                    </Link>
-                    {/* <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-6">{movie.overview}</p> */}
-                    <Link href={`/movies/${movie.id}`} className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                      Read more
-                      <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                      </svg>
-                    </Link>
-                    <Controls data={movie} isInList={true} />
+    <section className="grid grid-cols-5 gap-4 mx-auto">
+      {series === undefined && <h1 className="text-white">No series in watchlist</h1>}
+      {series?.map((movie, index) => {
+        const isExpanded = expandedItem === movie.id
+        const position = getGridPosition(index)
+
+        return (
+          <article
+            key={movie.id}
+            className={`grid ${isExpanded ? 'grid-cols-2' : ''} relative transition-all duration-300 cursor-pointer gap-4`}
+            style={{
+              gridColumn: position.gridColumn,
+              gridRow: position.gridRow
+            }}
+            onClick={() => handleItemClick(movie.id)}
+          >
+            <div className={`flex relative w-full ${isFollowing(movie.id) && isInWatchlist(movie.id) ? 'border-red-600' : isFollowing(movie.id) ? 'border-blue-600' : isInWatchlist(movie.id) ? 'border-green-600' : 'border-white'} border-2 rounded-2xl`}>
+              {/* ImageCard */}
+              <div>
+                <img
+                  className={'rounded-2xl shadow-xl object-cover transition-all duration-300 w-full h-full'}
+                  src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+                  alt={`cover image for ${movie.name}`}
+                />
+              </div>
+
+              {/* ✅ Info expandida - solo aparece cuando está expandido */}
+            </div>
+            {isExpanded && (
+              <div className="flex flex-col p-2">
+                <div>
+                  <h3 className="text-white font-bold text-base mb-0">{movie.name}</h3>
+                  <div className="flex gap-2">
+                    <p className="text-gray-400 text-sm mt-0">{String(movie.first_air_date).slice(0, 4)}</p>
+                    <p className="text-gray-400 text-sm">Rating: ⭐ {movie.vote_average?.toFixed(1)}</p>
                   </div>
-                </article>
-              )
-            })}
-        </section>
+                  <p className="text-gray-300 text-sm mt-3 line-clamp-4">{movie.overview}</p>
+                </div>
+                <Controls data={movie} isInList={true} />
+              </div>
+            )}
+          </article>
+        )
+      })}
+    </section>
   )
 }

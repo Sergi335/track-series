@@ -14,6 +14,9 @@ vi.mock('@clerk/nextjs', () => ({
       firstName: 'Test',
       lastName: 'User'
     }
+  })),
+  useAuth: vi.fn(() => ({
+    getToken: vi.fn(async () => 'mock-token-123')
   }))
 }))
 
@@ -169,8 +172,8 @@ describe('Controls Component', () => {
   it('should render follow button when not following', () => {
     render(<Controls data={mockMovieData} />)
 
-    expect(screen.getByText('Follow')).toBeInTheDocument()
-    expect(screen.getByText('SetInWatchList')).toBeInTheDocument()
+    expect(screen.getByText('Seguir')).toBeInTheDocument()
+    expect(screen.getByText('Watchlist')).toBeInTheDocument()
   })
 
   it('should render following button when following', () => {
@@ -184,7 +187,7 @@ describe('Controls Component', () => {
 
     render(<Controls data={mockMovieInfo} />)
 
-    expect(screen.getByText('Following')).toBeInTheDocument()
+    expect(screen.getByText('Siguiendo')).toBeInTheDocument()
     expect(screen.getByTestId('check-icon')).toBeInTheDocument()
     expect(screen.getByTestId('chapter-control')).toBeInTheDocument()
   })
@@ -200,7 +203,7 @@ describe('Controls Component', () => {
 
     render(<Controls data={mockMovieData} />)
 
-    expect(screen.getByText('InWatchList')).toBeInTheDocument()
+    expect(screen.getByText('En Watchlist')).toBeInTheDocument()
     expect(screen.getByTestId('watching-icon')).toBeInTheDocument()
   })
 
@@ -209,7 +212,7 @@ describe('Controls Component', () => {
 
     render(<Controls data={mockMovieData} isInList={true} />)
 
-    const followButton = screen.getByText('Follow')
+    const followButton = screen.getByText('Seguir')
     await user.click(followButton)
 
     // Since the component calls followSeries, we need to check if the store method would be called
@@ -221,7 +224,7 @@ describe('Controls Component', () => {
 
     render(<Controls data={mockMovieData} />)
 
-    const watchlistButton = screen.getByText('SetInWatchList')
+    const watchlistButton = screen.getByText('Watchlist')
     await user.click(watchlistButton)
 
     // The button should be clickable
@@ -260,10 +263,10 @@ describe('Controls Component', () => {
     render(<Controls data={mockMovieData} isInList={true} />)
 
     // Buscar el contenedor principal que contiene las clases de estilo
-    const mainContainer = screen.getByText('Follow').closest('div')?.parentElement
+    const mainContainer = screen.getByText('Seguir').closest('div')?.parentElement
     expect(mainContainer).toHaveClass('px-0')
 
-    const followButton = screen.getByText('Follow')
+    const followButton = screen.getByText('Seguir')
     expect(followButton).toHaveClass('h-auto px-2 py-2 text-xs')
   })
 
@@ -271,7 +274,7 @@ describe('Controls Component', () => {
     render(<Controls data={mockMovieData} isInList={false} />)
 
     // Buscar el contenedor principal que contiene las clases de estilo
-    const mainContainer = screen.getByText('Follow').closest('div')?.parentElement
+    const mainContainer = screen.getByText('Seguir').closest('div')?.parentElement
     expect(mainContainer).toHaveClass('p-5')
   })
 
@@ -286,8 +289,8 @@ describe('Controls Component', () => {
 
     render(<Controls data={mockMovieInfo} />)
 
-    expect(screen.getByText('Following')).toBeInTheDocument()
-    expect(screen.getByText('InWatchList')).toBeInTheDocument()
+    expect(screen.getByText('Siguiendo')).toBeInTheDocument()
+    expect(screen.getByText('En Watchlist')).toBeInTheDocument()
     expect(screen.getByTestId('chapter-control')).toBeInTheDocument()
   })
 
@@ -295,7 +298,7 @@ describe('Controls Component', () => {
     render(<Controls data={mockMovieData} />)
 
     // Should render without errors
-    expect(screen.getByText('Follow')).toBeInTheDocument()
-    expect(screen.getByText('SetInWatchList')).toBeInTheDocument()
+    expect(screen.getByText('Seguir')).toBeInTheDocument()
+    expect(screen.getByText('Watchlist')).toBeInTheDocument()
   })
 })

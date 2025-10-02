@@ -147,7 +147,7 @@ describe('UserSeriesStore', () => {
   it('should initialize user correctly', async () => {
     const store = useUserSeriesStore.getState()
 
-    await store.initializeUser('user123')
+    await store.initializeUser('user123', 'mock-token')
 
     const newState = useUserSeriesStore.getState()
     expect(newState.initialized).toBe(true)
@@ -159,13 +159,13 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // Initialize first time
-    await store.initializeUser('user123')
+    await store.initializeUser('user123', 'mock-token')
 
     // Mock service calls to verify they're not called again
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
     // Try to initialize same user again
-    await store.initializeUser('user123')
+    await store.initializeUser('user123', 'mock-token')
 
     expect(consoleSpy).toHaveBeenCalledWith('🔄 Usuario ya inicializado:', 'user123')
 
@@ -175,7 +175,7 @@ describe('UserSeriesStore', () => {
   it('should follow series correctly', async () => {
     const store = useUserSeriesStore.getState()
 
-    const result = await store.followSeries(mockSeries, 'user123')
+    const result = await store.followSeries(mockSeries, 'user123', 'mock-token')
 
     expect(result).toBe(true)
 
@@ -187,10 +187,10 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // Add series first time
-    await store.followSeries(mockSeries, 'user123')
+    await store.followSeries(mockSeries, 'user123', 'mock-token')
 
     // Try to add same series again
-    await store.followSeries(mockSeries, 'user123')
+    await store.followSeries(mockSeries, 'user123', 'mock-token')
 
     const newState = useUserSeriesStore.getState()
     expect(newState.series).toHaveLength(1)
@@ -200,10 +200,10 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // First add a series
-    await store.followSeries(mockSeries, 'user123')
+    await store.followSeries(mockSeries, 'user123', 'mock-token')
 
     // Then unfollow it
-    const result = await store.unfollowSeries(mockSeries.id, 'user123')
+    const result = await store.unfollowSeries(mockSeries.id, 'user123', 'mock-token')
 
     expect(result).toBe(true)
 
@@ -215,11 +215,11 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // First add a series
-    await store.followSeries(mockSeries, 'user123')
+    await store.followSeries(mockSeries, 'user123', 'mock-token')
 
     // Update progress
     const updates = { watched_season: 2, watched_episode: 5, complete: false }
-    const result = await store.updateProgress(mockSeries.id, 'user123', updates)
+    const result = await store.updateProgress(mockSeries.id, 'user123', 'mock-token', updates)
 
     expect(result).toBe(true)
 
@@ -233,7 +233,7 @@ describe('UserSeriesStore', () => {
   it('should add to watchlist correctly', async () => {
     const store = useUserSeriesStore.getState()
 
-    const result = await store.addToWatchlist(mockSeries, 'user123')
+    const result = await store.addToWatchlist(mockSeries, 'user123', 'mock-token')
 
     expect(result).toBe(true)
 
@@ -245,10 +245,10 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // Add to watchlist first time
-    await store.addToWatchlist(mockSeries, 'user123')
+    await store.addToWatchlist(mockSeries, 'user123', 'mock-token')
 
     // Try to add same series again
-    await store.addToWatchlist(mockSeries, 'user123')
+    await store.addToWatchlist(mockSeries, 'user123', 'mock-token')
 
     const newState = useUserSeriesStore.getState()
     expect(newState.watchlist).toHaveLength(1)
@@ -258,10 +258,10 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // First add to watchlist
-    await store.addToWatchlist(mockSeries, 'user123')
+    await store.addToWatchlist(mockSeries, 'user123', 'mock-token')
 
     // Then remove from watchlist
-    const result = await store.removeFromWatchlist(mockSeries.id, 'user123')
+    const result = await store.removeFromWatchlist(mockSeries.id, 'user123', 'mock-token')
 
     expect(result).toBe(true)
 
@@ -332,7 +332,7 @@ describe('UserSeriesStore', () => {
     console.log('Mock implementation:', MockedUserSeriesService.mock)
 
     // For now, let's just test that the function exists and can be called
-    const result = await store.followSeries(mockSeries, 'user123')
+    const result = await store.followSeries(mockSeries, 'user123', 'mock-token')
 
     // The test was failing because it expected false but got true
     // This suggests the mock is not working as expected

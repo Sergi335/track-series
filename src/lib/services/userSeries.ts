@@ -1,11 +1,13 @@
-import { supabase } from '@/lib/supabase'
+import { createSupabaseClient } from '@/lib/supabase'
 import { MovieInfo } from '@/types'
 
 export class UserSeriesService {
   private userId: string | null | undefined
+  private supabase
 
-  constructor (userId: string | null | undefined) {
+  constructor (userId: string | null | undefined, token: string = '') {
     this.userId = userId
+    this.supabase = createSupabaseClient(token)
   }
 
   // Obtener series del usuario (reemplaza localStorage.getItem('series'))
@@ -13,7 +15,7 @@ export class UserSeriesService {
     if (!this.userId) return []
 
     try {
-      const { data, error } = await supabase
+      const { data, error } = await this.supabase
         .from('user_series')
         .select('*')
         .eq('user_id', this.userId)
@@ -44,7 +46,7 @@ export class UserSeriesService {
       // Primero quitar de watchlist si está ahí
       // await this.removeFromWatchlistIfExists(seriesData.id)
 
-      const { error } = await supabase
+      const { error } = await this.supabase
         .from('user_series')
         .insert({
           user_id: this.userId,
@@ -72,7 +74,7 @@ export class UserSeriesService {
     if (!this.userId) return false
 
     try {
-      const { error } = await supabase
+      const { error } = await this.supabase
         .from('user_series')
         .delete()
         .eq('user_id', this.userId)
@@ -99,7 +101,7 @@ export class UserSeriesService {
     if (!this.userId) return false
 
     try {
-      const { error } = await supabase
+      const { error } = await this.supabase
         .from('user_series')
         .update({
           ...updates,
@@ -125,7 +127,7 @@ export class UserSeriesService {
     if (!this.userId) return false
 
     try {
-      const { data, error } = await supabase
+      const { data, error } = await this.supabase
         .from('user_series')
         .select('id')
         .eq('user_id', this.userId)
@@ -143,7 +145,7 @@ export class UserSeriesService {
     if (!this.userId) return
 
     try {
-      await supabase
+      await this.supabase
         .from('user_watchlist')
         .delete()
         .eq('user_id', this.userId)

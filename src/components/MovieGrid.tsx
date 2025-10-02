@@ -9,7 +9,9 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
   const [expandedItem, setExpandedItem] = useState<number | null>(null)
 
   const handleItemClick = (movieId: number) => {
-    setExpandedItem(expandedItem === movieId ? null : movieId)
+    document.startViewTransition(() => {
+      setExpandedItem(expandedItem === movieId ? null : movieId)
+    })
   }
 
   const getGridPosition = (index: number) => {
@@ -70,7 +72,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
               gridColumn: position.gridColumn,
               gridRow: position.gridRow
             }}
-            onClick={() => handleItemClick(movie.id)}
+
           >
             <div className={`flex relative w-full ${isFollowing(movie.id) && isInWatchlist(movie.id) ? 'border-red-600' : isFollowing(movie.id) ? 'border-blue-600' : isInWatchlist(movie.id) ? 'border-green-600' : 'border-white'} border-2 rounded-2xl`}>
               {/* ImageCard */}
@@ -79,6 +81,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
                   className={'rounded-2xl shadow-xl object-cover transition-all duration-300 w-full h-full'}
                   src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
                   alt={`cover image for ${movie.name}`}
+                  onClick={() => handleItemClick(movie.id)}
                 />
               </div>
 

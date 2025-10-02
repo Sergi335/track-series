@@ -13,9 +13,7 @@ export default async function Discover ({ searchParams }: { searchParams?: Recor
   if (typeof searchParams?.language === 'string' && searchParams.language.trim() !== '') params.set('with_original_language', searchParams.language)
   if (typeof searchParams?.country === 'string' && searchParams.country.trim() !== '') params.set('with_origin_country', searchParams.country)
   if (typeof searchParams?.year === 'string' && searchParams.year.trim() !== '') params.set('first_air_date_year', `${searchParams.year}`)
-  if (typeof searchParams?.network === 'string' && searchParams.network.trim() !== '') params.set('with_networks', searchParams.network)
   if (typeof searchParams?.status === 'string' && searchParams.status.trim() !== '') params.set('with_status', searchParams.status)
-  if (typeof searchParams?.company === 'string' && searchParams.company.trim() !== '') params.set('with_companies', searchParams.company)
   if (typeof searchParams?.with_watch_providers === 'string' && searchParams.with_watch_providers.trim() !== '') {
     params.set('with_watch_providers', searchParams.with_watch_providers)
     params.set('watch_region', 'ES')
@@ -27,9 +25,7 @@ export default async function Discover ({ searchParams }: { searchParams?: Recor
     (typeof searchParams?.language === 'string' && searchParams.language.trim() !== '') ||
     (typeof searchParams?.country === 'string' && searchParams.country.trim() !== '') ||
     (typeof searchParams?.year === 'string' && searchParams.year.trim() !== '') ||
-    (typeof searchParams?.network === 'string' && searchParams.network.trim() !== '') ||
     (typeof searchParams?.status === 'string' && searchParams.status.trim() !== '') ||
-    (typeof searchParams?.company === 'string' && searchParams.company.trim() !== '') ||
     (typeof searchParams?.with_watch_providers === 'string' && searchParams.with_watch_providers.trim() !== '')
   )
 

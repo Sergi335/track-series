@@ -191,9 +191,8 @@ export interface FilterState {
   // popularity_min: number
   // popularity_max: number
   year: string // Año seleccionado (de first_air_date)
-  network: string
+  provider: string
   status: string
-  company: string
 }
 
 // Props que recibirá el componente de filtro
@@ -201,9 +200,8 @@ export interface FilterProps {
   // Datos para poblar los selects y radios
   genres: SelectOption[]
   countries: SelectOption[]
-  networks: SelectOption[]
+  providers: SelectOption[]
   statuses: SelectOption[]
-  companies: SelectOption[]
 
   // Función para notificar al componente padre de los cambios
   onFilterChange: (filters: Partial<FilterState>) => void

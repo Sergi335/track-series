@@ -13,7 +13,7 @@ export default async function ProvidersGrid () {
   }
 
   return (
-    <section className="w-full">
+    <section className="max-w-4xl mx-auto">
       <h2 className="text-white text-2xl font-bold mb-6">Proveedores de Streaming</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
         {providers.map((provider) => (

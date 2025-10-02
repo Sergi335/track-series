@@ -26,7 +26,6 @@ export default function Home ({
           <Hero />
           <Search />
           <BrandsHome />
-          <ProvidersGrid />
         </section>
         {query.length > 0
           ? (<SearchResults query={query} page={page} />)
@@ -34,6 +33,7 @@ export default function Home ({
             <>
               <FeaturesSection />
               <GenresCarousel />
+              <ProvidersGrid />
             </>
           )
         }

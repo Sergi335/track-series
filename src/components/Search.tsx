@@ -38,11 +38,11 @@ export default function Search () {
   }, 500)
 
   return (
-    <section className="flex flex-wrap justify-center w-full flex-grow items-center mt-36">
+    <section className="flex flex-wrap justify-center w-full flex-grow items-center">
       <form className="flex w-[500px]" onSubmit={handleSubmit}>
         <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
         <div className="relative w-full">
-          <div className="absolute inset-y-0 start-0 flex items-center ps-3 cursor-pointer text-gray-600 dark:text-gray-400" onClick={clearSearch}>
+          <div className="absolute inset-y-0 start-0 flex items-center ps-5 cursor-pointer text-gray-600 dark:text-gray-400" onClick={clearSearch}>
 
             <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
@@ -55,9 +55,9 @@ export default function Search () {
             id="default-search"
             onChange={(e) => { handleSearch(e.target.value) }}
             autoComplete="off"
-            className="block w-full p-4 ps-10 text-sm text-gray-900 border-2 border-gray-300 rounded-full bg-white
+            className="block w-full p-4 ps-11 text-sm text-gray-900 border-2 border-gray-300 rounded-full bg-white
           focus:ring-blue-500 focus:border-blue-500
-          dark:bg-gray-900 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white
+          dark:bg-black dark:border-[#21262d] dark:placeholder-gray-400 dark:text-white
           dark:focus:ring-blue-500 dark:focus-visible:border-blue-500 dark:focus:border-blue-500
           focus-visible:ring-1 focus-visible:ring-blue-500
           outline-none autofill:bg-gray-900 autofill:text-white

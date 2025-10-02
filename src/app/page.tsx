@@ -4,6 +4,7 @@ import Footer from '@/components/Footer'
 import GenresCarousel from '@/components/GenresCarrousel'
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
+import ProvidersGrid from '@/components/ProvidersGrid'
 import Search from '@/components/Search'
 import SearchResults from '@/components/SearchResults'
 
@@ -21,10 +22,11 @@ export default function Home ({
     <>
       <Header />
       <main className="flex flex-col items-center relative">
-        <section className="mosaic w-full pb-14">
+        <section className="mosaic w-full pb-14 min-h-[50vh]">
           <Hero />
-          <BrandsHome />
           <Search />
+          <BrandsHome />
+          <ProvidersGrid />
         </section>
         {query.length > 0
           ? (<SearchResults query={query} page={page} />)

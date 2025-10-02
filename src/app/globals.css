@@ -59,7 +59,7 @@ h1 {
 }
 
 .mosaic {
-  background-image: linear-gradient(360deg, hsl(var(--background)), hsl(var(--background)/0.75)), url(/mosaic.webp);
+  background-image: linear-gradient(0deg, hsl(var(--background)) 40%, hsl(var(--background) / 0.8)), url(/mosaic.webp);
   background-attachment: fixed;
 }
 

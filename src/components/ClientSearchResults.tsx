@@ -24,12 +24,12 @@ export default function ClientSearchResults ({ results, totalPages, error }: {re
               </div>
             </section>
           </>
-        )
+          )
         : (
-          error !== undefined
-            ? <h1 className="text-white">Error al recuperar los datos</h1>
-            : <h1 className="text-white">No results found</h1>
-        )}
+            error !== undefined
+              ? <h1 className="text-white">Error al recuperar los datos</h1>
+              : <h1 className="text-white">No results found</h1>
+          )}
     </>
   )
 }

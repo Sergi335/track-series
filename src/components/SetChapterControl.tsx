@@ -186,7 +186,7 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
                     }
                   </select>
                 </>
-              )
+                )
               : (
                 <>
                   <div className="flex gap-2 flex-wrap text-base items-center">
@@ -202,7 +202,7 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
                     </div>
                   </div>
                 </>
-              )
+                )
           }
         </form>
       </div>

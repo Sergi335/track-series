@@ -84,12 +84,12 @@ function PaginationNumber ({
   return isActive || position === 'middle'
     ? (
       <div className={className}>{page}</div>
-    )
+      )
     : (
       <Link href={href} className={className}>
         {page}
       </Link>
-    )
+      )
 }
 
 function PaginationArrow ({
@@ -115,18 +115,18 @@ function PaginationArrow ({
     direction === 'left'
       ? (
         <ArrowLeftIcon className="w-4" />
-      )
+        )
       : (
         <ArrowRightIcon className="w-4" />
-      )
+        )
 
   return (isDisabled ?? false)
     ? (
       <div className={className}>{icon}</div>
-    )
+      )
     : (
       <Link className={className} href={href}>
         {icon}
       </Link>
-    )
+      )
 }

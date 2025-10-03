@@ -3,13 +3,16 @@ import { Button } from '@/components/ui/button'
 import { fetchMovieInfo } from '@/lib/data'
 import { useUserSeriesStore } from '@/store/userSeriesStore'
 import { type MovieInfo, type Movies } from '@/types'
-import { useUser } from '@clerk/nextjs'
+import { useAuth, useUser } from '@clerk/nextjs'
+import { ChevronRight } from 'lucide-react'
+import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import SetChapterControl from './SetChapterControl'
 import { CheckIcon, WatchingIcon } from './icons/icons'
 
 export default function Controls ({ data, isInList }: { data: Movies | MovieInfo, isInList?: boolean }) {
   const { user } = useUser()
+  const { getToken } = useAuth()
   const {
     isFollowing: isFollowingFromStore,
     followSeries,
@@ -49,13 +52,20 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
     // 3. Programar petición
     followingTimeoutRef.current = window.setTimeout(async () => {
       try {
+        const token = await getToken({ template: 'supabase' })
+        if (!token) {
+          console.error('No se pudo obtener el token')
+          setLocalIsFollowing(null)
+          return
+        }
+
         const movieCompleteData = await fetchMovieInfo(data.id)
         setSeriesData(movieCompleteData)
         // Usar el estado local actual en lugar de calcularlo
         if (newState) {
-          await followSeries(movieCompleteData, user.id)
+          await followSeries(movieCompleteData, user.id, token)
         } else {
-          await unfollowSeries(data.id, user.id)
+          await unfollowSeries(data.id, user.id, token)
         }
 
         // Sincronizar con store solo después de éxito/error
@@ -83,11 +93,18 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
     // 3. Programar petición
     watchlistTimeoutRef.current = window.setTimeout(async () => {
       try {
+        const token = await getToken({ template: 'supabase' })
+        if (!token) {
+          console.error('No se pudo obtener el token')
+          setLocalIsInWatchlist(null)
+          return
+        }
+
         // Usar el estado local actual en lugar de calcularlo
         if (newState) {
-          await addToWatchlist(data as MovieInfo, user.id)
+          await addToWatchlist(data as MovieInfo, user.id, token)
         } else {
-          await removeFromWatchlist(data.id, user.id)
+          await removeFromWatchlist(data.id, user.id, token)
         }
 
         // Sincronizar con store solo después de éxito/error
@@ -144,6 +161,16 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
             : 'Watchlist'
           }
         </Button>
+        {
+          isInList && (
+            <Link
+              href={`/movies/${data.id}`}
+              className={`bg-blue-700 hover:bg-blue-800 text-white flex gap-2 transition-colors duration-500 rounded-full ${buttonListClass}`}
+            >
+              <ChevronRight className="w-6 h-6 text-white"/>
+            </Link>
+          )
+        }
       </div>
     </div>
   )

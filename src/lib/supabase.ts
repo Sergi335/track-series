@@ -4,7 +4,28 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
+// Cliente básico (sin autenticación)
 export const supabase = createClient(supabaseUrl, supabaseKey)
+
+// ✅ Cliente autenticado con token de Clerk
+export function createSupabaseClient (token: string = '') {
+  // Si no hay token, usar el cliente básico sin autenticación
+  if (!token) {
+    return supabase
+  }
+
+  return createClient(
+    supabaseUrl,
+    supabaseKey,
+    {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    }
+  )
+}
 
 export type Database = {
   public: {

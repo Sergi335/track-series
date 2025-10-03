@@ -26,12 +26,11 @@ const FilterComponent = () => {
     // popularity_min: Number(searchParams.get('popularity_min') ?? 0),
     // popularity_max: Number(searchParams.get('popularity_max') ?? 100000),
     year: searchParams.get('year') ?? '',
-    network: searchParams.get('network') ?? '',
-    status: searchParams.get('status') ?? '',
-    company: searchParams.get('company') ?? ''
+    provider: searchParams.get('with_watch_providers') ?? '',
+    status: searchParams.get('status') ?? ''
   })
 
-  const { genres, countries, networks, companies } = FILTER_TYPES
+  const { genres, countries, providers } = FILTER_TYPES
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     let { name, value, type } = e.target
@@ -46,11 +45,15 @@ const FilterComponent = () => {
 
     // Empieza con los parámetros actuales
     const params = new URLSearchParams(searchParams.toString())
+
+    // Mapear el nombre del campo al parámetro de URL correcto
+    const paramName = name === 'provider' ? 'with_watch_providers' : name
+
     // Actualiza solo el filtro cambiado
     if (value !== '') {
-      params.set(name, value)
+      params.set(paramName, value)
     } else {
-      params.delete(name)
+      params.delete(paramName)
     }
     // Opcional: resetear la página al cambiar filtro
     params.set('page', '1')
@@ -64,9 +67,8 @@ const FilterComponent = () => {
       language: '',
       country: '',
       year: '',
-      network: '',
-      status: '',
-      company: ''
+      provider: '',
+      status: ''
     }
     setFilters(resetState)
 
@@ -126,8 +128,7 @@ const FilterComponent = () => {
           { value: 'en', label: 'Inglés' }
         ])}
         {renderSelect('country', 'País', countries)}
-        {renderSelect('network', 'Network', networks)}
-        {renderSelect('company', 'Compañías', companies)}
+        {renderSelect('provider', 'Proveedor', providers)}
         {renderSelect('year', 'Año', years)}
 
         {/* Botón de reset - solo se muestra si hay filtros activos */}

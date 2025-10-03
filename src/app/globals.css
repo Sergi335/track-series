@@ -49,17 +49,39 @@
   --ring: 240 82% 70%;
 }
 
+@keyframes appear {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
 body {
   color: hsl(var(--foreground));
   background: hsl(var(--background));
 }
 
-h1 {
-  line-height: normal;
+h1.section_header {
+  text-transform: uppercase;
+  font-size: 250px;
+  opacity: .06;
+  letter-spacing: -15.5px;
+  line-height: 1;
+  font-weight: bold;
+  width: -webkit-fill-available;
+  padding-left: 34px;
+  margin-bottom: -115px;
+}
+
+.movieItem {
+  animation: appear 0.3s ease-in;
 }
 
 .mosaic {
-  background-image: linear-gradient(360deg, hsl(var(--background)), hsl(var(--background)/0.75)), url(/mosaic.webp);
+  background-image: linear-gradient(0deg, hsl(var(--background)) 40%, hsl(var(--background) / 0.8)), url(/mosaic.webp);
   background-attachment: fixed;
 }
 

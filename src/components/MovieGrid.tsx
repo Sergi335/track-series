@@ -74,7 +74,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
             }}
 
           >
-            <div className={`flex relative w-full ${isFollowing(movie.id) && isInWatchlist(movie.id) ? 'border-red-600' : isFollowing(movie.id) ? 'border-blue-600' : isInWatchlist(movie.id) ? 'border-green-600' : 'border-white'} border-2 rounded-[32px]`}>
+            <div className={`flex relative w-full ${isFollowing(movie.id) && isInWatchlist(movie.id) ? 'border-red-600' : isFollowing(movie.id) ? 'border-blue-600' : isInWatchlist(movie.id) ? 'border-green-600' : 'border-transparent'} border-2 rounded-[32px]`}>
               {/* ImageCard */}
               <div className="rounded-[32px] overflow-hidden">
                 <img

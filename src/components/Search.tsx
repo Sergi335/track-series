@@ -39,7 +39,7 @@ export default function Search () {
 
   return (
     <section className="flex flex-wrap justify-center w-full flex-grow items-center">
-      <form className="flex w-[500px]" onSubmit={handleSubmit}>
+      <form className="flex w-[560px]" onSubmit={handleSubmit}>
         <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
         <div className="relative w-full">
           <div className="absolute inset-y-0 start-0 flex items-center ps-5 cursor-pointer text-gray-600 dark:text-gray-400" onClick={clearSearch}>
@@ -53,6 +53,7 @@ export default function Search () {
             type="search"
             ref={inputRef}
             id="default-search"
+            style={{ boxShadow: 'rgb(29 78 216 / 40%) 0px 0px 30px' }}
             onChange={(e) => { handleSearch(e.target.value) }}
             autoComplete="off"
             className="block w-full p-4 ps-11 text-sm text-gray-900 border-2 border-gray-300 rounded-full bg-white
@@ -63,7 +64,7 @@ export default function Search () {
           outline-none autofill:bg-gray-900 autofill:text-white
           autofill:shadow-[inset_0_0_0px_1000px_#0a1120]
           autofill:border-blue-500
-          focus:autofill:bg-gray-900  [:-webkit-autofill]{color:white!important}"
+          focus:autofill:bg-gray-900 [:-webkit-autofill]{color:white!important}"
             placeholder="Busca una serie..."
             defaultValue={searchParams.get('query')?.toString()}
             required />

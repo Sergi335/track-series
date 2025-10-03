@@ -15,11 +15,10 @@ export default async function MySeries ({
   return (
 
     <>
-      <h1 className="text-6xl font-bold my-24">Mis Series</h1>
       {query.length > 0
         ? (
           <SearchResults query={query} page={page} />
-        )
+          )
         : (
           <section className="flex w-3/4 gap-8 mt-16">
             <div>
@@ -29,7 +28,7 @@ export default async function MySeries ({
               <SeriesList page={page} />
             </div>
           </section>
-        )}
+          )}
     </>
 
   )

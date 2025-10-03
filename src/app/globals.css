@@ -54,9 +54,22 @@ body {
   background: hsl(var(--background));
 }
 
-h1 {
-  line-height: normal;
+h1.section_header {
+  text-transform: uppercase;
+  font-size: 250px;
+  opacity: .12;
+  /* margin-bottom: 50px; */
+  letter-spacing: -33.5px;
+  line-height: 1;
+  font-weight: bold;
+  width: -webkit-fill-available;
+  padding-left: 34px;
 }
+
+/* .movieItem:hover {
+  transform: rotateY(360deg);
+  transition: transform 0.6s;
+} */
 
 .mosaic {
   background-image: linear-gradient(0deg, hsl(var(--background)) 40%, hsl(var(--background) / 0.8)), url(/mosaic.webp);

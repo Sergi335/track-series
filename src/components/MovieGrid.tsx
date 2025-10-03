@@ -67,7 +67,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
         return (
           <article
             key={movie.id}
-            className={`grid ${isExpanded ? 'grid-cols-2' : ''} relative transition-all duration-300 cursor-pointer gap-4`}
+            className={`movieItem grid ${isExpanded ? 'grid-cols-2' : ''} relative transition-all duration-300 cursor-pointer gap-4`}
             style={{
               gridColumn: position.gridColumn,
               gridRow: position.gridRow

@@ -64,12 +64,11 @@ export default async function Discover ({ searchParams }: { searchParams?: Recor
   return (
 
     <>
-      <h1 className="text-6xl font-bold my-24">Descubre las series más populares</h1>
       {typeof searchParams?.query === 'string' && searchParams.query.length > 0 && !hasFilters
         ? (
       // Solo búsqueda global, sin filtros
           <SearchResults query={searchParams?.query} page={searchParams?.page} />
-        )
+          )
         : (
       // Filtros activos (con o sin búsqueda local)
           <section className="flex w-3/4 gap-8 mt-16">
@@ -80,7 +79,7 @@ export default async function Discover ({ searchParams }: { searchParams?: Recor
               <PopularSeries results={results} totalPages={totalPages} />
             </div>
           </section>
-        )}
+          )}
     </>
 
   )

@@ -1,12 +1,16 @@
 {
   "extends": [
     "next/core-web-vitals",
-    "standard"
+    "standard",
+    "plugin:react/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": [
+    "@typescript-eslint",
+    "react"
+  ],
   "rules": {
-    "indent": ["error", 2],
+    // "indent": ["error", 2],
     "quotes": ["error", "single"],
     "semi": ["error", "never"],
     "comma-dangle": ["error", "never"],
@@ -20,7 +24,8 @@
     "react/jsx-indent-props": ["error", 2],
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-explicit-any": "warn",
-    "@next/next/no-img-element": "off"
+    "@next/next/no-img-element": "off",
+    "react/react-in-jsx-scope": "off"
   },
   "parserOptions": {
     "ecmaVersion": 2021,

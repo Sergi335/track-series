@@ -14,11 +14,10 @@ export default function Watchlist ({
   return (
 
     <>
-      <h1 className="text-6xl font-bold my-24">Watchlist</h1>
       {query.length > 0
         ? (
           <SearchResults query={query} page={page} />
-        )
+          )
         : (
           <section className="flex w-3/4 gap-8 mt-16">
             <div>
@@ -28,7 +27,7 @@ export default function Watchlist ({
               <WatchList />
             </div>
           </section>
-        )}
+          )}
     </>
 
   )

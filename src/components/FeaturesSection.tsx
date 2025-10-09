@@ -1,6 +1,6 @@
 export default function FeaturesSection () {
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 py-16 my-32">
+    <section className="w-full max-w-7xl mx-auto px-4">
       {/* <div className="text-center mb-16">
         <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
           ¿Por qué elegir Track My Series?

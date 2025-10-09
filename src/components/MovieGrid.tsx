@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Controls from './Controls'
 
 export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] }) {
-  const { isFollowing, isInWatchlist } = useUserSeriesStore()
+  const { isFollowing, isInWatchlist, isComplete } = useUserSeriesStore()
   const [expandedItem, setExpandedItem] = useState<number | null>(null)
 
   const handleItemClick = (movieId: number) => {
@@ -13,17 +13,17 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
       setExpandedItem(expandedItem === movieId ? null : movieId)
     })
   }
-
+  const COLUMN_COUNT = 5
   const getGridPosition = (index: number) => {
-    const rowPosition = Math.floor(index / 4) // Qué fila (0, 1, 2...)
-    const colPosition = index % 4 // Posición en la fila (0, 1, 2, 3)
+    const rowPosition = Math.floor(index / COLUMN_COUNT) // Qué fila (0, 1, 2...)
+    const colPosition = index % COLUMN_COUNT // Posición en la fila (0, 1, 2, 3, 4)
 
     if (!series) return { gridColumn: '1', gridRow: '1' }
 
     // Encontrar el índice del elemento expandido
     const expandedIndex = series.findIndex(movie => movie.id === expandedItem)
-    const expandedRowPosition = expandedIndex >= 0 ? Math.floor(expandedIndex / 4) : -1
-    const expandedColPosition = expandedIndex >= 0 ? expandedIndex % 4 : -1
+    const expandedRowPosition = expandedIndex >= 0 ? Math.floor(expandedIndex / COLUMN_COUNT) : -1
+    const expandedColPosition = expandedIndex >= 0 ? expandedIndex % COLUMN_COUNT : -1
 
     // Si estamos en la misma fila que el elemento expandido
     if (rowPosition === expandedRowPosition && expandedIndex >= 0) {
@@ -58,7 +58,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
   }
 
   return (
-    <section className="grid grid-cols-5 gap-4 mx-auto">
+    <section className={`grid grid-cols-${COLUMN_COUNT + 1} gap-4 mx-auto`}>
       {series === undefined && <h1 className="text-white">No series in watchlist</h1>}
       {series?.map((movie, index) => {
         const isExpanded = expandedItem === movie.id
@@ -74,7 +74,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
             }}
 
           >
-            <div className={`flex relative w-full ${isFollowing(movie.id) && isInWatchlist(movie.id) ? 'border-red-600' : isFollowing(movie.id) ? 'border-blue-600' : isInWatchlist(movie.id) ? 'border-green-600' : 'border-transparent'} border-2 rounded-[32px]`}>
+            <div className={`flex relative w-full ${isFollowing(movie.id) && isComplete(movie.id) ? 'border-red-600' : isFollowing(movie.id) ? 'border-blue-600' : isInWatchlist(movie.id) ? 'border-green-600' : 'border-transparent'} border-2 rounded-[32px]`}>
               {/* ImageCard */}
               <div className="rounded-[32px] overflow-hidden">
                 <img

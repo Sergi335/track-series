@@ -28,6 +28,7 @@ interface UserSeriesState {
   clearUserData: () => void
   isFollowing: (seriesId: number) => boolean
   isInWatchlist: (seriesId: number) => boolean
+  isComplete: (seriesId: number) => boolean | undefined
 }
 
 export const useUserSeriesStore = create<UserSeriesState>((set, get) => ({
@@ -230,5 +231,11 @@ export const useUserSeriesStore = create<UserSeriesState>((set, get) => ({
   isInWatchlist: (seriesId: number) => {
     const { watchlist } = get()
     return watchlist.some(s => s.id === seriesId)
+  },
+
+  isComplete: (seriesId: number) => {
+    const { series } = get()
+    const serie = series.find(s => s.id === seriesId)
+    return serie ? serie.complete : false
   }
 }))

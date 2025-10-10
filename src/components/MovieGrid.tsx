@@ -14,6 +14,8 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
     })
   }
   const COLUMN_COUNT = 5
+  const GRID_CLASS = `grid-cols-${COLUMN_COUNT + 1}`.toString()
+
   const getGridPosition = (index: number) => {
     const rowPosition = Math.floor(index / COLUMN_COUNT) // Qué fila (0, 1, 2...)
     const colPosition = index % COLUMN_COUNT // Posición en la fila (0, 1, 2, 3, 4)
@@ -58,7 +60,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
   }
 
   return (
-    <section className={`grid grid-cols-${COLUMN_COUNT + 1} gap-4 mx-auto`}>
+    <section className={`grid ${GRID_CLASS} gap-4 mx-auto`}>
       {series === undefined && <h1 className="text-white">No series in watchlist</h1>}
       {series?.map((movie, index) => {
         const isExpanded = expandedItem === movie.id

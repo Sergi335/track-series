@@ -87,8 +87,8 @@ const FilterComponent = () => {
     const isActive = filters[name] !== ''
 
     return (
-      <div>
-        <label htmlFor={name} className="block text-sm font-medium">{label}</label>
+      <div className="flex items-center gap-3">
+        <label htmlFor={name} className="block text-sm font-medium min-w-[70px] text-right">{label}</label>
         <Select
           value={filters[name] || 'Todos'}
           onValueChange={(value) => handleChange({ target: { name, value } } as React.ChangeEvent<HTMLSelectElement>)}
@@ -128,7 +128,7 @@ const FilterComponent = () => {
           { value: 'en', label: 'Inglés' }
         ])}
         {renderSelect('country', 'País', countries)}
-        {renderSelect('provider', 'Proveedor', providers)}
+        {renderSelect('provider', 'Plataforma', providers)}
         {renderSelect('year', 'Año', years)}
 
         {/* Botón de reset - solo se muestra si hay filtros activos */}

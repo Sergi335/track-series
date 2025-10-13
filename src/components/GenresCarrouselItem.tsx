@@ -1,7 +1,7 @@
 import Link from 'next/link'
 export default function GenresCarrouselItem ({ backgroundImage, genre, genreSlogan, genreSlug }: { backgroundImage: string, genre: string, genreSlogan: string, genreSlug: string }) {
   return (
-    <article className="group bg-slate-700 text-white flex flex-col justify-end bg-cover bg-center transition-all duration-300 hover:scale-105 hover:shadow-2xl aspect-[9/16] mx-2 w-[240px] min-h-96 flex-shrink-0"
+    <article className="group bg-black text-white flex flex-col justify-end bg-cover bg-center transition-all duration-300 hover:scale-105 hover:shadow-2xl aspect-[9/16] mx-2 w-[240px] min-h-96 flex-shrink-0"
       style={{ backgroundImage }}>
       {/* <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div> */}
       <div className="relative flex flex-col p-4">

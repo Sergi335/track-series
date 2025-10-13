@@ -90,7 +90,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
               {/* ✅ Info expandida - solo aparece cuando está expandido */}
             </div>
             {isExpanded && (
-              <div className="flex flex-col p-2">
+              <div className="flex flex-col p-2 animate-slide-right">
                 <div>
                   <h3 className="text-white font-bold text-base mb-0">{movie.name}</h3>
                   <div className="flex gap-2">

@@ -47,6 +47,7 @@
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
   --ring: 240 82% 70%;
+  --magic-border: #22223b;
 }
 
 @keyframes appear {
@@ -81,8 +82,8 @@ h1.section_header {
 }
 
 .mosaic {
-  background-image: linear-gradient(0deg, hsl(var(--background)) 40%, hsl(var(--background) / 0.8)), url(/mosaic.webp);
-  background-attachment: fixed;
+  background-image: linear-gradient(0deg, hsl(var(--background)) -15%, hsl(var(--background) / 0.8)), url(/mosaic.webp);
+  /* background-attachment: fixed; */
 }
 
 .mainContent {
@@ -92,6 +93,16 @@ h1.section_header {
   /* grid-template-rows: 20% 1fr; */
   grid-template-areas: "sidebar" "content";
   background-repeat: no-repeat;
+}
+
+.magic-card-content:hover {
+  box-shadow: rgba(29, 78, 216, 0.4) 0px 0px 30px;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.magic-card-content {
+  transition: box-shadow 5.5s, transform 0.7s;
+  /* transition-delay: 0.3s; */
 }
 
 /* .dark .mainContent {
@@ -144,3 +155,14 @@ select:-webkit-autofill:focus {
 /* background-image: linear-gradient(169deg, rgb(79, 79, 79) 1px, rgba(0, 0, 0, 0) 0px), linear-gradient(133deg, rgb(79, 79, 79) 1px, rgb(0, 0, 0) 0px);
     background-size: 25px 25px;
     background-attachment: fixed; */
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}

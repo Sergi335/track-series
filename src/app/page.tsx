@@ -1,4 +1,3 @@
-import BrandsHome from '@/components/BrandsHome'
 import FeaturesSection from '@/components/FeaturesSection'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
@@ -22,10 +21,10 @@ export default function Home ({
     <>
       <Header />
       <main className="flex flex-col items-center relative">
-        <section className="mosaic w-full pb-14">
+        <section className="mosaic w-full pb-14 min-h-[30vh]">
           <Hero />
           <Search />
-          <BrandsHome />
+          {/* <BrandsHome /> */}
         </section>
         {query.length > 0
           ? (<SearchResults query={query} page={page} />)

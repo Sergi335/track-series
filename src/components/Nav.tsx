@@ -35,7 +35,6 @@ export default function Nav () {
               <Skeleton className="h-[32px] w-[128.3px] rounded-lg" />
             </>
         }
-        <ThemeToggle />
         {
           isLoaded && !user
             ? (
@@ -49,8 +48,9 @@ export default function Nav () {
               </>
               )
             : null
-        }
+            }
 
+        <ThemeToggle />
         {isLoaded
           ? (
               user ? <UserButton /> : null

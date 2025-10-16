@@ -59,10 +59,9 @@ export default function ProviderSlider ({ series, providerName }: ProviderSlider
         <button
           onClick={() => scroll('left')}
           className={cn(
-            'absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 disabled:opacity-0 disabled:cursor-not-allowed',
-            { 'opacity-100': showLeftArrow }
+            'absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 rounded-full text-white opacity-0 transition-opacity duration-300 disabled:opacity-0 disabled:cursor-not-allowed',
+            { 'opacity-100': showLeftArrow }, { hidden: !showLeftArrow }
           )}
-          disabled={!showLeftArrow}
         >
           <ChevronLeft size={24} />
         </button>
@@ -74,16 +73,16 @@ export default function ProviderSlider ({ series, providerName }: ProviderSlider
         >
           {series.map((serie) => (
             serie.poster_path && (
-              <Link href={`/movies/${serie.id}`} key={serie.id} className="flex-shrink-0">
-                <div className="w-40 rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105">
-                  <img
-                    src={`https://image.tmdb.org/t/p/w500${serie.poster_path}`}
-                    alt={serie.name}
-                    width={160}
-                    height={240}
-                    className="object-cover"
+              <Link href={`/movies/${serie.id}`} key={serie.id} className="flex-shrink-0 w-44 overflow-hidden rounded-[32px]">
+                <img
+                  src={`https://image.tmdb.org/t/p/w500${serie.poster_path}`}
+                  alt={serie.name}
+                    // width={160}
+                    // height={240}
+                  className="object-cover h-full transform transition-transform duration-300 hover:scale-105"
                   />
-                </div>
+                {/* <div className="w-40 rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105">
+                </div> */}
               </Link>
             )
           ))}
@@ -93,10 +92,9 @@ export default function ProviderSlider ({ series, providerName }: ProviderSlider
         <button
           onClick={() => scroll('right')}
           className={cn(
-            'absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 disabled:opacity-0 disabled:cursor-not-allowed',
-            { 'opacity-100': showRightArrow }
+            'absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 rounded-full text-white opacity-0 transition-opacity duration-300 disabled:opacity-0 disabled:cursor-not-allowed',
+            { 'opacity-100': showRightArrow }, { hidden: !showRightArrow }
           )}
-          disabled={!showRightArrow}
         >
           <ChevronRight size={24} />
         </button>

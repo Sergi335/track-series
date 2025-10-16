@@ -4,9 +4,9 @@ import MovieGrid from './MovieGrid'
 import MovieGridLoader from './MovieGridLoader'
 
 export default function WatchList () {
-  const { watchlist, loading } = useUserSeriesStore()
+  const { watchlist, loading, initialized } = useUserSeriesStore()
 
-  if (loading) {
+  if (loading || !initialized) {
     return <MovieGridLoader />
   }
   // TODO Paginación

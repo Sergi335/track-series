@@ -10,7 +10,7 @@ export default function FeaturesSection () {
         <Particles />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group">
-        <MagicCard gradientColor={'var(--magic-gradient)'} className="p-[1px] rounded-2xl magic-card-content rotate-[-6deg] z-20 hover:rotate-0 hover:translate-x-0 translate-x-9">
+        <MagicCard gradientColor={'var(--magic-gradient)'} className="p-[1px] rounded-2xl magic-card-content rotate-[-6deg] z-20 group-hover:rotate-0 group-hover:translate-x-0 translate-x-20">
           <div className="flex flex-col gap-4 p-4">
             <div className="flex gap-2 items-center">
               <Search className="w-6 h-6 text-gray-300" strokeWidth={1} />

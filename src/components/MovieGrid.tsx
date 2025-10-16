@@ -84,6 +84,11 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
                   src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
                   alt={`cover image for ${movie.name}`}
                   onClick={() => handleItemClick(movie.id)}
+                  onError={(event) => {
+                    event.currentTarget.onerror = null
+                    const fallbackText = (movie.name ?? 'Sin título').split(' ').join('\n')
+                    event.currentTarget.src = `https://placehold.co/400x600?text=${encodeURIComponent(fallbackText)}`
+                  }}
                 />
               </div>
 

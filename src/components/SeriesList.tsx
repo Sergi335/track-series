@@ -7,9 +7,8 @@ import MovieGridLoader from './MovieGridLoader'
 import Pagination from './Pagination'
 
 export default function SeriesList ({ page }: { page: string }) {
-  const { series, loading } = useUserSeriesStore()
-  console.log('🚀 ~ SeriesList ~ series:', series)
-
+  const { series, loading, initialized } = useUserSeriesStore()
+  // const loading = true
   // Calcular todo en un solo useMemo para optimizar renders
   const { sortedSeries, slicedSeries, totalPages } = useMemo(() => {
     if (!series || series.length === 0) {
@@ -35,7 +34,7 @@ export default function SeriesList ({ page }: { page: string }) {
   }, [series, page])
 
   // Mostrar loader mientras loading es true
-  if (loading) {
+  if (loading || !initialized) {
     return <MovieGridLoader />
   }
 

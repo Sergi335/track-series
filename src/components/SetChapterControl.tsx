@@ -148,7 +148,7 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
 
   return (
     <>
-      <div className="flex gap-4 flex-wrap items-center">
+      <div className="min-[1921px]:flex gap-4 flex-wrap items-center hidden">
         <form action="" className={`${formListClass}`}>
           <Button
             type="button"

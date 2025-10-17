@@ -14,6 +14,7 @@ export default function MovieGridLoader () {
                 gridRow: index < 5 ? 1 : 2
               }
             }
+            role="loader"
           />
         ))
       }

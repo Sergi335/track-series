@@ -149,7 +149,7 @@ describe('SeriesList Component', () => {
       series: [],
       watchlist: [],
       loading: false,
-      initialized: false,
+      initialized: true,
       currentUserId: null
     })
   })

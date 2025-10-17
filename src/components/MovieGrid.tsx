@@ -95,14 +95,14 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
               {/* ✅ Info expandida - solo aparece cuando está expandido */}
             </div>
             {isExpanded && (
-              <div className="flex flex-col p-2 animate-slide-right">
-                <div>
-                  <h3 className="text-white font-bold text-base mb-0">{movie.name}</h3>
+              <div className="flex flex-col p-2 animate-slide-right py-5">
+                <div className="flex-1">
+                  <h3 className="text-white font-bold text-base mb-0 line-clamp-1 min-[1921px]:line-clamp-6">{movie.name}</h3>
                   <div className="flex gap-2">
                     <p className="text-gray-400 text-sm mt-0">{String(movie.first_air_date).slice(0, 4)}</p>
                     <p className="text-gray-400 text-sm">Rating: ⭐ {movie.vote_average?.toFixed(1)}</p>
                   </div>
-                  <p className="text-gray-300 text-sm mt-3 line-clamp-4">{movie.overview}</p>
+                  <p className="text-gray-300 text-sm mt-3 line-clamp-3 min-[1921px]:line-clamp-6">{movie.overview}</p>
                 </div>
                 <Controls data={movie} isInList={true} />
               </div>

@@ -133,7 +133,7 @@ describe('WatchList Component', () => {
       series: [],
       watchlist: [],
       loading: false,
-      initialized: false,
+      initialized: true,
       currentUserId: null
     })
   })
@@ -155,7 +155,8 @@ describe('WatchList Component', () => {
 
     render(<WatchList />)
 
-    expect(screen.getByText('Cargando tu watchlist...')).toBeInTheDocument()
+    const loaders = screen.getAllByRole('loader')
+    expect(loaders).toHaveLength(10)
   })
 
   it('should render series from store watchlist', async () => {

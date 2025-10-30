@@ -13,14 +13,14 @@ export default async function ProvidersGrid () {
   }
 
   return (
-    <section className="max-w-4xl mx-auto">
+    <section className="max-w-6xl my-8 mx-auto">
       <h2 className="text-white text-2xl font-bold mb-6">Proveedores de Streaming</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
         {providers.map((provider) => (
           <Link
             key={provider.provider_id}
             href={`/discover?with_watch_providers=${provider.provider_id}`}
-            className="group relative flex flex-col items-center p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors duration-300"
+            className="group relative flex flex-col items-center p-4 rounded-lg"
           >
             <div className="relative w-full aspect-square mb-2 overflow-hidden rounded-lg">
               <img

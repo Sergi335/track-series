@@ -1,120 +1,95 @@
-import { createSupabaseClient } from '@/lib/supabase'
+'use server'
+
+import { db } from '@/db'
+import { userWatchlist, userSeries } from '@/db/schema'
+import { eq, and, desc } from 'drizzle-orm'
 import { MovieInfo } from '@/types'
 
-export class UserWatchlistService {
-  private userId: string | null | undefined
-  private supabase
+// Obtener watchlist del usuario
+export async function getUserWatchlist (userId: string | null | undefined): Promise<MovieInfo[]> {
+  if (!userId) return []
 
-  constructor (userId: string | null | undefined, token: string = '') {
-    this.userId = userId
-    this.supabase = createSupabaseClient(token)
+  try {
+    const data = await db
+      .select()
+      .from(userWatchlist)
+      .where(eq(userWatchlist.userId, userId))
+      .orderBy(desc(userWatchlist.createdAt))
+
+    return data.map(item => item.seriesData)
+  } catch (error) {
+    console.error('Error in getUserWatchlist:', error)
+    return []
   }
+}
 
-  // Obtener watchlist del usuario (reemplaza localStorage.getItem('watchlist'))
-  async getUserWatchlist (): Promise<MovieInfo[]> {
-    if (!this.userId) return []
+// Añadir a watchlist
+export async function addToWatchlist (userId: string | null | undefined, seriesData: MovieInfo): Promise<boolean> {
+  if (!userId) return false
 
-    try {
-      const { data, error } = await this.supabase
-        .from('user_watchlist')
-        .select('*')
-        .eq('user_id', this.userId)
-        .order('created_at', { ascending: false })
+  try {
+    // Primero quitar de series seguidas si está ahí
+    await db
+      .delete(userSeries)
+      .where(
+        and(
+          eq(userSeries.userId, userId),
+          eq(userSeries.seriesId, seriesData.id)
+        )
+      )
 
-      if (error) {
-        console.error('Error fetching watchlist:', error)
-        return []
-      }
+    await db.insert(userWatchlist).values({
+      userId,
+      seriesId: seriesData.id,
+      seriesData
+    })
 
-      return data?.map((item: { series_data: MovieInfo }) => item.series_data) || []
-    } catch (error) {
-      console.error('Error in getUserWatchlist:', error)
-      return []
-    }
+    return true
+  } catch (error) {
+    console.error('Error in addToWatchlist:', error)
+    return false
   }
+}
 
-  // Añadir a watchlist (reemplaza push al array de localStorage)
-  async addToWatchlist (seriesData: MovieInfo): Promise<boolean> {
-    if (!this.userId) return false
+// Quitar de watchlist
+export async function removeFromWatchlist (userId: string | null | undefined, seriesId: number): Promise<boolean> {
+  if (!userId) return false
 
-    try {
-      // Primero quitar de series seguidas si está ahí
-      await this.removeFromSeriesIfExists(seriesData.id)
+  try {
+    await db
+      .delete(userWatchlist)
+      .where(
+        and(
+          eq(userWatchlist.userId, userId),
+          eq(userWatchlist.seriesId, seriesId)
+        )
+      )
 
-      const { error } = await this.supabase
-        .from('user_watchlist')
-        .insert({
-          user_id: this.userId,
-          series_id: seriesData.id,
-          series_data: seriesData
-        })
-
-      if (error) {
-        console.error('Error adding to watchlist:', error)
-        return false
-      }
-
-      return true
-    } catch (error) {
-      console.error('Error in addToWatchlist:', error)
-      return false
-    }
+    return true
+  } catch (error) {
+    console.error('Error in removeFromWatchlist:', error)
+    return false
   }
+}
 
-  // Quitar de watchlist (reemplaza splice del array)
-  async removeFromWatchlist (seriesId: number): Promise<boolean> {
-    if (!this.userId) return false
+// Verificar si una serie está en la watchlist
+export async function isInWatchlist (userId: string | null | undefined, seriesId: number): Promise<boolean> {
+  if (!userId) return false
 
-    try {
-      const { error } = await this.supabase
-        .from('user_watchlist')
-        .delete()
-        .eq('user_id', this.userId)
-        .eq('series_id', seriesId)
+  try {
+    const data = await db
+      .select({ id: userWatchlist.id })
+      .from(userWatchlist)
+      .where(
+        and(
+          eq(userWatchlist.userId, userId),
+          eq(userWatchlist.seriesId, seriesId)
+        )
+      )
+      .limit(1)
 
-      if (error) {
-        console.error('Error removing from watchlist:', error)
-        return false
-      }
-
-      return true
-    } catch (error) {
-      console.error('Error in removeFromWatchlist:', error)
-      return false
-    }
-  }
-
-  // Verificar si una serie está en la watchlist
-  async isInWatchlist (seriesId: number): Promise<boolean> {
-    if (!this.userId) return false
-
-    try {
-      const { data, error } = await this.supabase
-        .from('user_watchlist')
-        .select('id')
-        .eq('user_id', this.userId)
-        .eq('series_id', seriesId)
-        .single()
-
-      return !error && !!data
-    } catch (error) {
-      return false
-    }
-  }
-
-  // Método auxiliar para quitar de series seguidas
-  private async removeFromSeriesIfExists (seriesId: number): Promise<void> {
-    if (!this.userId) return
-
-    try {
-      await this.supabase
-        .from('user_series')
-        .delete()
-        .eq('user_id', this.userId)
-        .eq('series_id', seriesId)
-    } catch (error) {
-      // Silencioso, no es crítico si falla
-      console.log('Note: Could not remove from series:', error)
-    }
+    return data.length > 0
+  } catch (error) {
+    return false
   }
 }

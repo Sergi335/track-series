@@ -1,5 +1,5 @@
-import { UserSeriesService } from '@/lib/services/userSeries'
-import { UserWatchlistService } from '@/lib/services/userWatchlist'
+import * as seriesService from '@/lib/services/userSeries'
+import * as watchlistService from '@/lib/services/userWatchlist'
 import { MovieInfo } from '@/types'
 import { create } from 'zustand'
 
@@ -11,18 +11,18 @@ interface UserSeriesState {
   currentUserId: string | null
 
   // Actions para series
-  initializeUser: (userId: string, token: string) => Promise<void>
-  followSeries: (seriesData: MovieInfo, userId: string, token: string) => Promise<boolean>
-  unfollowSeries: (seriesId: number, userId: string, token: string) => Promise<boolean>
-  updateProgress: (seriesId: number, userId: string, token: string, updates: {
+  initializeUser: (userId: string) => Promise<void>
+  followSeries: (seriesData: MovieInfo, userId: string) => Promise<boolean>
+  unfollowSeries: (seriesId: number, userId: string) => Promise<boolean>
+  updateProgress: (seriesId: number, userId: string, updates: {
     watched_season?: number
     watched_episode?: number
     complete?: boolean
   }) => Promise<boolean>
 
   // Actions para watchlist
-  addToWatchlist: (seriesData: MovieInfo, userId: string, token: string) => Promise<boolean>
-  removeFromWatchlist: (seriesId: number, userId: string, token: string) => Promise<boolean>
+  addToWatchlist: (seriesData: MovieInfo, userId: string) => Promise<boolean>
+  removeFromWatchlist: (seriesId: number, userId: string) => Promise<boolean>
 
   // Utilidades
   clearUserData: () => void
@@ -38,7 +38,7 @@ export const useUserSeriesStore = create<UserSeriesState>((set, get) => ({
   initialized: false,
   currentUserId: null,
 
-  initializeUser: async (userId: string, token: string) => {
+  initializeUser: async (userId: string) => {
     const { initialized, currentUserId } = get()
 
     // Si ya está inicializado para este usuario, no hacer nada
@@ -51,16 +51,13 @@ export const useUserSeriesStore = create<UserSeriesState>((set, get) => ({
     set({ loading: true, currentUserId: userId })
 
     try {
-      const seriesService = new UserSeriesService(userId, token)
-      const watchlistService = new UserWatchlistService(userId, token)
-
-      // Cargar series y watchlist en paralelo
+      // Cargar series y watchlist en paralelo usando Server Actions
       const [userSeries, userWatchlist] = await Promise.all([
-        seriesService.getUserSeries(),
-        watchlistService.getUserWatchlist()
+        seriesService.getUserSeries(userId),
+        watchlistService.getUserWatchlist(userId)
       ])
 
-      console.log('✅ Datos cargados desde Supabase:', userSeries.length, 'series +', userWatchlist.length, 'watchlist')
+      console.log('✅ Datos cargados desde Turso:', userSeries.length, 'series +', userWatchlist.length, 'watchlist')
       set({
         series: userSeries,
         watchlist: userWatchlist,
@@ -78,32 +75,29 @@ export const useUserSeriesStore = create<UserSeriesState>((set, get) => ({
     }
   },
 
-  followSeries: async (seriesData: MovieInfo, userId: string, token: string) => {
+  followSeries: async (seriesData: MovieInfo, userId: string) => {
     const { series } = get()
 
     try {
       console.log('➕ Siguiendo serie:', seriesData.name)
-      const seriesService = new UserSeriesService(userId, token)
 
-      const success = await seriesService.followSeries(seriesData)
+      const success = await seriesService.followSeries(userId, seriesData)
 
-      if (success) {
-      // ✅ CORREGIDO: Recargar datos desde la BD para obtener el progreso correcto
-        const updatedUserSeries = await seriesService.getUserSeries()
-        const newSeries = updatedUserSeries.find(s => s.id === seriesData.id)
+      // Recargar datos desde la BD para obtener el progreso correcto
+      const updatedUserSeries = await seriesService.getUserSeries(userId)
+      const newSeries = updatedUserSeries.find(s => s.id === seriesData.id)
 
-        if (newSeries) {
-        // ✅ CORREGIDO: Verificar que no existe antes de añadir
-          const exists = series.some(s => s.id === newSeries.id)
-          if (!exists) {
-            set({ series: [...series, newSeries] })
-            console.log('✅ Serie añadida al estado local con progreso:', {
-              watched_season: newSeries.watched_season,
-              watched_episode: newSeries.watched_episode
-            })
-          } else {
-            console.log('⚠️ Serie ya existe en el estado local, no se añade duplicado')
-          }
+      if (newSeries) {
+        // Verificar que no existe antes de añadir
+        const exists = series.some(s => s.id === newSeries.id)
+        if (!exists) {
+          set({ series: [...series, newSeries] })
+          console.log('✅ Serie añadida al estado local con progreso:', {
+            watched_season: newSeries.watched_season,
+            watched_episode: newSeries.watched_episode
+          })
+        } else {
+          console.log('⚠️ Serie ya existe en el estado local, no se añade duplicado')
         }
       }
 
@@ -114,13 +108,12 @@ export const useUserSeriesStore = create<UserSeriesState>((set, get) => ({
     }
   },
 
-  unfollowSeries: async (seriesId: number, userId: string, token: string) => {
+  unfollowSeries: async (seriesId: number, userId: string) => {
     const { series } = get()
 
     try {
       console.log('🗑️ Dejando de seguir serie:', seriesId)
-      const seriesService = new UserSeriesService(userId, token)
-      const success = await seriesService.unfollowSeries(seriesId)
+      const success = await seriesService.unfollowSeries(userId, seriesId)
 
       if (success) {
         // Actualizar estado local optimísticamente
@@ -136,7 +129,7 @@ export const useUserSeriesStore = create<UserSeriesState>((set, get) => ({
     }
   },
 
-  updateProgress: async (seriesId: number, userId: string, token: string, updates: {
+  updateProgress: async (seriesId: number, userId: string, updates: {
     watched_season?: number
     watched_episode?: number
     complete?: boolean
@@ -145,8 +138,7 @@ export const useUserSeriesStore = create<UserSeriesState>((set, get) => ({
 
     try {
       console.log('📝 Actualizando progreso serie:', seriesId, updates)
-      const seriesService = new UserSeriesService(userId, token)
-      const success = await seriesService.updateProgress(seriesId, updates)
+      const success = await seriesService.updateProgress(userId, seriesId, updates)
 
       if (success) {
         // Actualizar estado local optimísticamente
@@ -166,13 +158,12 @@ export const useUserSeriesStore = create<UserSeriesState>((set, get) => ({
     }
   },
 
-  addToWatchlist: async (seriesData: MovieInfo, userId: string, token: string) => {
+  addToWatchlist: async (seriesData: MovieInfo, userId: string) => {
     const { watchlist } = get()
 
     try {
       console.log('➕ Añadiendo a watchlist:', seriesData.name)
-      const watchlistService = new UserWatchlistService(userId, token)
-      const success = await watchlistService.addToWatchlist(seriesData)
+      const success = await watchlistService.addToWatchlist(userId, seriesData)
 
       if (success) {
         // Actualizar estado local optimísticamente
@@ -190,13 +181,12 @@ export const useUserSeriesStore = create<UserSeriesState>((set, get) => ({
     }
   },
 
-  removeFromWatchlist: async (seriesId: number, userId: string, token: string) => {
+  removeFromWatchlist: async (seriesId: number, userId: string) => {
     const { watchlist } = get()
 
     try {
       console.log('🗑️ Removiendo de watchlist:', seriesId)
-      const watchlistService = new UserWatchlistService(userId, token)
-      const success = await watchlistService.removeFromWatchlist(seriesId)
+      const success = await watchlistService.removeFromWatchlist(userId, seriesId)
 
       if (success) {
         // Actualizar estado local optimísticamente

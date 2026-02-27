@@ -1,158 +1,128 @@
-import { createSupabaseClient } from '@/lib/supabase'
+'use server'
+
+import { db } from '@/db'
+import { userSeries } from '@/db/schema'
+import { eq, and, desc } from 'drizzle-orm'
 import { MovieInfo } from '@/types'
 
-export class UserSeriesService {
-  private userId: string | null | undefined
-  private supabase
+// Obtener series del usuario
+export async function getUserSeries (userId: string | null | undefined): Promise<MovieInfo[]> {
+  if (!userId) return []
 
-  constructor (userId: string | null | undefined, token: string = '') {
-    this.userId = userId
-    this.supabase = createSupabaseClient(token)
+  try {
+    const data = await db
+      .select()
+      .from(userSeries)
+      .where(eq(userSeries.userId, userId))
+      .orderBy(desc(userSeries.createdAt))
+
+    return data.map(item => ({
+      ...item.seriesData,
+      watched_season: item.watchedSeason ?? undefined,
+      watched_episode: item.watchedEpisode ?? undefined,
+      complete: item.complete ?? undefined
+    })) as MovieInfo[]
+  } catch (error) {
+    console.error('Error in getUserSeries:', error)
+    return []
   }
+}
 
-  // Obtener series del usuario (reemplaza localStorage.getItem('series'))
-  async getUserSeries (): Promise<MovieInfo[]> {
-    if (!this.userId) return []
+// Seguir serie
+export async function followSeries (userId: string | null | undefined, seriesData: MovieInfo): Promise<boolean> {
+  if (!userId) return false
 
-    try {
-      const { data, error } = await this.supabase
-        .from('user_series')
-        .select('*')
-        .eq('user_id', this.userId)
-        .order('created_at', { ascending: false })
+  try {
+    await db.insert(userSeries).values({
+      userId,
+      seriesId: seriesData.id,
+      seriesData,
+      watchedSeason: seriesData.watched_season || 1,
+      watchedEpisode: seriesData.watched_episode || 1,
+      complete: seriesData.complete || false
+    })
 
-      if (error) {
-        console.error('Error fetching series:', error)
-        return []
-      }
-
-      return data?.map(item => ({
-        ...item.series_data,
-        watched_season: item.watched_season,
-        watched_episode: item.watched_episode,
-        complete: item.complete
-      })) || []
-    } catch (error) {
-      console.error('Error in getUserSeries:', error)
-      return []
-    }
+    return true
+  } catch (error) {
+    console.error('Error in followSeries:', error)
+    return false
   }
+}
 
-  // Seguir serie (reemplaza push al array de localStorage)
-  async followSeries (seriesData: MovieInfo): Promise<boolean> {
-    if (!this.userId) return false
+// Dejar de seguir serie
+export async function unfollowSeries (userId: string | null | undefined, seriesId: number): Promise<boolean> {
+  if (!userId) return false
 
-    try {
-      // Primero quitar de watchlist si está ahí
-      // await this.removeFromWatchlistIfExists(seriesData.id)
+  try {
+    await db
+      .delete(userSeries)
+      .where(
+        and(
+          eq(userSeries.userId, userId),
+          eq(userSeries.seriesId, seriesId)
+        )
+      )
 
-      const { error } = await this.supabase
-        .from('user_series')
-        .insert({
-          user_id: this.userId,
-          series_id: seriesData.id,
-          series_data: seriesData,
-          watched_season: seriesData.watched_season || 1,
-          watched_episode: seriesData.watched_episode || 1,
-          complete: seriesData.complete || false
-        })
-
-      if (error) {
-        console.error('Error following series:', error)
-        return false
-      }
-
-      return true
-    } catch (error) {
-      console.error('Error in followSeries:', error)
-      return false
-    }
+    return true
+  } catch (error) {
+    console.error('Error in unfollowSeries:', error)
+    return false
   }
+}
 
-  // Dejar de seguir serie (reemplaza splice del array)
-  async unfollowSeries (seriesId: number): Promise<boolean> {
-    if (!this.userId) return false
-
-    try {
-      const { error } = await this.supabase
-        .from('user_series')
-        .delete()
-        .eq('user_id', this.userId)
-        .eq('series_id', seriesId)
-
-      if (error) {
-        console.error('Error unfollowing series:', error)
-        return false
-      }
-
-      return true
-    } catch (error) {
-      console.error('Error in unfollowSeries:', error)
-      return false
-    }
-  }
-
-  // Actualizar progreso (reemplaza el useEffect de SetChapterControl)
-  async updateProgress (seriesId: number, updates: {
+// Actualizar progreso
+export async function updateProgress (
+  userId: string | null | undefined,
+  seriesId: number,
+  updates: {
     watched_season?: number
     watched_episode?: number
     complete?: boolean
-  }): Promise<boolean> {
-    if (!this.userId) return false
-
-    try {
-      const { error } = await this.supabase
-        .from('user_series')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString()
-        })
-        .eq('user_id', this.userId)
-        .eq('series_id', seriesId)
-
-      if (error) {
-        console.error('Error updating progress:', error)
-        return false
-      }
-
-      return true
-    } catch (error) {
-      console.error('Error in updateProgress:', error)
-      return false
-    }
   }
+): Promise<boolean> {
+  if (!userId) return false
 
-  // Verificar si una serie está siendo seguida
-  async isFollowing (seriesId: number): Promise<boolean> {
-    if (!this.userId) return false
+  try {
+    const mappedUpdates: Partial<typeof userSeries.$inferInsert> = {}
+    if (updates.watched_season !== undefined) mappedUpdates.watchedSeason = updates.watched_season
+    if (updates.watched_episode !== undefined) mappedUpdates.watchedEpisode = updates.watched_episode
+    if (updates.complete !== undefined) mappedUpdates.complete = updates.complete
 
-    try {
-      const { data, error } = await this.supabase
-        .from('user_series')
-        .select('id')
-        .eq('user_id', this.userId)
-        .eq('series_id', seriesId)
-        .single()
+    await db
+      .update(userSeries)
+      .set(mappedUpdates)
+      .where(
+        and(
+          eq(userSeries.userId, userId),
+          eq(userSeries.seriesId, seriesId)
+        )
+      )
 
-      return !error && !!data
-    } catch (error) {
-      return false
-    }
+    return true
+  } catch (error) {
+    console.error('Error in updateProgress:', error)
+    return false
   }
+}
 
-  // Método auxiliar para quitar de watchlist
-  private async removeFromWatchlistIfExists (seriesId: number): Promise<void> {
-    if (!this.userId) return
+// Verificar si una serie está siendo seguida
+export async function isFollowing (userId: string | null | undefined, seriesId: number): Promise<boolean> {
+  if (!userId) return false
 
-    try {
-      await this.supabase
-        .from('user_watchlist')
-        .delete()
-        .eq('user_id', this.userId)
-        .eq('series_id', seriesId)
-    } catch (error) {
-      // Silencioso, no es crítico si falla
-      console.log('Note: Could not remove from watchlist:', error)
-    }
+  try {
+    const data = await db
+      .select({ id: userSeries.id })
+      .from(userSeries)
+      .where(
+        and(
+          eq(userSeries.userId, userId),
+          eq(userSeries.seriesId, seriesId)
+        )
+      )
+      .limit(1)
+
+    return data.length > 0
+  } catch (error) {
+    return false
   }
 }

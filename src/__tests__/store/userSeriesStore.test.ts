@@ -2,13 +2,18 @@ import { useUserSeriesStore } from '@/store/userSeriesStore'
 import type { MovieInfo } from '@/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-// Mock the services with proper implementation tracking
+// Mock simple arrays for data persistence during tests
 const mockUserSeries: MovieInfo[] = []
+const mockUserWatchlist: MovieInfo[] = []
 
-const mockUserSeriesService = {
-  getUserSeries: vi.fn().mockImplementation(() => Promise.resolve([...mockUserSeries])),
-  followSeries: vi.fn().mockImplementation((seriesData: MovieInfo) => {
-    // Simular que la serie se añade a la "base de datos"
+// Mock the services with proper implementation tracking
+vi.mock('@/lib/services/userSeries', () => ({
+  getUserSeries: vi.fn(() => {
+    // void userId
+    return Promise.resolve([...mockUserSeries])
+  }),
+  followSeries: vi.fn((userId: string | null | undefined, seriesData: MovieInfo) => {
+    // void userId
     const existingIndex = mockUserSeries.findIndex(s => s.id === seriesData.id)
     if (existingIndex === -1) {
       mockUserSeries.push({
@@ -19,14 +24,20 @@ const mockUserSeriesService = {
     }
     return Promise.resolve(true)
   }),
-  unfollowSeries: vi.fn().mockImplementation((seriesId: number) => {
+  unfollowSeries: vi.fn((userId: string | null | undefined, seriesId: number) => {
+    // void userId
     const index = mockUserSeries.findIndex(s => s.id === seriesId)
     if (index > -1) {
       mockUserSeries.splice(index, 1)
     }
     return Promise.resolve(true)
   }),
-  updateProgress: vi.fn().mockImplementation((seriesId: number, updates: {watched_season?: number, watched_episode?: number, complete?: boolean}) => {
+  updateProgress: vi.fn((userId: string | null | undefined, seriesId: number, updates: {
+    watched_season?: number
+    watched_episode?: number
+    complete?: boolean
+  }) => {
+    // void userId
     const series = mockUserSeries.find(s => s.id === seriesId)
     if (series) {
       if (updates.watched_season !== undefined) series.watched_season = updates.watched_season
@@ -34,35 +45,38 @@ const mockUserSeriesService = {
       if (updates.complete !== undefined) series.complete = updates.complete
     }
     return Promise.resolve(true)
+  }),
+  isFollowing: vi.fn((userId: string | null | undefined, seriesId: number) => {
+    // void userId
+    return Promise.resolve(mockUserSeries.some(s => s.id === seriesId))
   })
-}
-
-vi.mock('@/lib/services/userSeries', () => ({
-  UserSeriesService: vi.fn().mockImplementation(() => mockUserSeriesService)
 }))
 
-const mockUserWatchlist: MovieInfo[] = []
-
-const mockUserWatchlistService = {
-  getUserWatchlist: vi.fn().mockImplementation(() => Promise.resolve([...mockUserWatchlist])),
-  addToWatchlist: vi.fn().mockImplementation((seriesData: MovieInfo) => {
+vi.mock('@/lib/services/userWatchlist', () => ({
+  getUserWatchlist: vi.fn(() => {
+    // void userId
+    return Promise.resolve([...mockUserWatchlist])
+  }),
+  addToWatchlist: vi.fn((userId: string | null | undefined, seriesData: MovieInfo) => {
+    // void userId
     const existingIndex = mockUserWatchlist.findIndex(s => s.id === seriesData.id)
     if (existingIndex === -1) {
       mockUserWatchlist.push(seriesData)
     }
     return Promise.resolve(true)
   }),
-  removeFromWatchlist: vi.fn().mockImplementation((seriesId: number) => {
+  removeFromWatchlist: vi.fn((userId: string | null | undefined, seriesId: number) => {
+    // void userId
     const index = mockUserWatchlist.findIndex(s => s.id === seriesId)
     if (index > -1) {
       mockUserWatchlist.splice(index, 1)
     }
     return Promise.resolve(true)
+  }),
+  isInWatchlist: vi.fn((userId: string | null | undefined, seriesId: number) => {
+    // void userId
+    return Promise.resolve(mockUserWatchlist.some(s => s.id === seriesId))
   })
-}
-
-vi.mock('@/lib/services/userWatchlist', () => ({
-  UserWatchlistService: vi.fn().mockImplementation(() => mockUserWatchlistService)
 }))
 
 describe('UserSeriesStore', () => {
@@ -147,7 +161,7 @@ describe('UserSeriesStore', () => {
   it('should initialize user correctly', async () => {
     const store = useUserSeriesStore.getState()
 
-    await store.initializeUser('user123', 'mock-token')
+    await store.initializeUser('user123')
 
     const newState = useUserSeriesStore.getState()
     expect(newState.initialized).toBe(true)
@@ -159,13 +173,13 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // Initialize first time
-    await store.initializeUser('user123', 'mock-token')
+    await store.initializeUser('user123')
 
     // Mock service calls to verify they're not called again
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
     // Try to initialize same user again
-    await store.initializeUser('user123', 'mock-token')
+    await store.initializeUser('user123')
 
     expect(consoleSpy).toHaveBeenCalledWith('🔄 Usuario ya inicializado:', 'user123')
 
@@ -175,7 +189,7 @@ describe('UserSeriesStore', () => {
   it('should follow series correctly', async () => {
     const store = useUserSeriesStore.getState()
 
-    const result = await store.followSeries(mockSeries, 'user123', 'mock-token')
+    const result = await store.followSeries(mockSeries, 'user123')
 
     expect(result).toBe(true)
 
@@ -187,10 +201,10 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // Add series first time
-    await store.followSeries(mockSeries, 'user123', 'mock-token')
+    await store.followSeries(mockSeries, 'user123')
 
     // Try to add same series again
-    await store.followSeries(mockSeries, 'user123', 'mock-token')
+    await store.followSeries(mockSeries, 'user123')
 
     const newState = useUserSeriesStore.getState()
     expect(newState.series).toHaveLength(1)
@@ -200,10 +214,10 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // First add a series
-    await store.followSeries(mockSeries, 'user123', 'mock-token')
+    await store.followSeries(mockSeries, 'user123')
 
     // Then unfollow it
-    const result = await store.unfollowSeries(mockSeries.id, 'user123', 'mock-token')
+    const result = await store.unfollowSeries(mockSeries.id, 'user123')
 
     expect(result).toBe(true)
 
@@ -215,11 +229,11 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // First add a series
-    await store.followSeries(mockSeries, 'user123', 'mock-token')
+    await store.followSeries(mockSeries, 'user123')
 
     // Update progress
     const updates = { watched_season: 2, watched_episode: 5, complete: false }
-    const result = await store.updateProgress(mockSeries.id, 'user123', 'mock-token', updates)
+    const result = await store.updateProgress(mockSeries.id, 'user123', updates)
 
     expect(result).toBe(true)
 
@@ -233,7 +247,7 @@ describe('UserSeriesStore', () => {
   it('should add to watchlist correctly', async () => {
     const store = useUserSeriesStore.getState()
 
-    const result = await store.addToWatchlist(mockSeries, 'user123', 'mock-token')
+    const result = await store.addToWatchlist(mockSeries, 'user123')
 
     expect(result).toBe(true)
 
@@ -245,10 +259,10 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // Add to watchlist first time
-    await store.addToWatchlist(mockSeries, 'user123', 'mock-token')
+    await store.addToWatchlist(mockSeries, 'user123')
 
     // Try to add same series again
-    await store.addToWatchlist(mockSeries, 'user123', 'mock-token')
+    await store.addToWatchlist(mockSeries, 'user123')
 
     const newState = useUserSeriesStore.getState()
     expect(newState.watchlist).toHaveLength(1)
@@ -258,10 +272,10 @@ describe('UserSeriesStore', () => {
     const store = useUserSeriesStore.getState()
 
     // First add to watchlist
-    await store.addToWatchlist(mockSeries, 'user123', 'mock-token')
+    await store.addToWatchlist(mockSeries, 'user123')
 
     // Then remove from watchlist
-    const result = await store.removeFromWatchlist(mockSeries.id, 'user123', 'mock-token')
+    const result = await store.removeFromWatchlist(mockSeries.id, 'user123')
 
     expect(result).toBe(true)
 
@@ -315,36 +329,5 @@ describe('UserSeriesStore', () => {
 
     // Now should be in watchlist
     expect(store.isInWatchlist(mockSeries.id)).toBe(true)
-  })
-
-  it('should handle service errors gracefully', async () => {
-    // First, let's check what's happening with a simple test
-    // We'll spy on console.error to see if errors are being logged
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-
-    const store = useUserSeriesStore.getState()
-
-    // Let's check the current mocks to understand the issue
-    const { UserSeriesService } = await import('@/lib/services/userSeries')
-    const MockedUserSeriesService = vi.mocked(UserSeriesService)
-
-    // Log what the current mock implementation returns
-    console.log('Mock implementation:', MockedUserSeriesService.mock)
-
-    // For now, let's just test that the function exists and can be called
-    const result = await store.followSeries(mockSeries, 'user123', 'mock-token')
-
-    // The test was failing because it expected false but got true
-    // This suggests the mock is not working as expected
-    console.log('Result:', result)
-
-    // Let's check what the service actually returned
-    const serviceInstance = new UserSeriesService('user123')
-    console.log('Service instance:', serviceInstance)
-
-    consoleSpy.mockRestore()
-
-    // For now, just check that the function runs without throwing
-    expect(typeof result).toBe('boolean')
   })
 })

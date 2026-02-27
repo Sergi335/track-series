@@ -1,7 +1,7 @@
 'use client'
 import { useUserSeriesStore } from '@/store/userSeriesStore'
 import { type MovieInfo } from '@/types'
-import { useAuth, useUser } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import React, { useEffect, useState } from 'react'
 import { ChevronDown, ChevronUp } from './icons/icons'
 import { Button } from './ui/button'
@@ -9,7 +9,6 @@ import { Button } from './ui/button'
 export default function SetChapterControl ({ data, isInList }: { data: MovieInfo, isInList?: boolean }) {
   console.log('🚀 ~ SetChapterControl ~ data:', data)
   const { user } = useUser()
-  const { getToken } = useAuth()
   const { series, updateProgress } = useUserSeriesStore()
   console.log('🚀 ~ SetChapterControl ~ series:', series)
   const [totalEpisodes, setTotalEpisodes] = useState<number>(0)
@@ -30,12 +29,6 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
 
   // Lógica para el botón de completar
   const handleComplete = async () => {
-    const token = await getToken({ template: 'supabase' })
-    if (!token) {
-      console.error('No se pudo obtener el token')
-      return
-    }
-
     const newComplete = !storedComplete
 
     // Buscar la última temporada real (ignorando especiales)
@@ -56,7 +49,7 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
     }
 
     if (user?.id) {
-      await updateProgress(data.id, user.id, token, {
+      await updateProgress(data.id, user.id, {
         watched_season: newstoredSeason,
         watched_episode: newstoredEpisode,
         complete: newComplete
@@ -66,14 +59,8 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
 
   // Guardar progreso manualmente desde los selects
   const saveProgress = async (newstoredSeason: number, newstoredEpisode: number) => {
-    const token = await getToken({ template: 'supabase' })
-    if (!token) {
-      console.error('No se pudo obtener el token')
-      return
-    }
-
     if (user?.id) {
-      await updateProgress(data.id, user.id, token, {
+      await updateProgress(data.id, user.id, {
         watched_season: newstoredSeason,
         watched_episode: newstoredEpisode,
         complete: storedComplete
@@ -194,10 +181,10 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
                     <p className="text-white text-sm">Capítulo: {storedEpisode}</p>
                     <div className="flex gap-1">
                       <button type="button" onClick={increaseEpisode} className="p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white">
-                        <ChevronUp className="w-4 h-4"/>
+                        <ChevronUp className="w-4 h-4" />
                       </button>
                       <button type="button" onClick={decreaseEpisode} className="p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white">
-                        <ChevronDown className="w-4 h-4"/>
+                        <ChevronDown className="w-4 h-4" />
                       </button>
                     </div>
                   </div>

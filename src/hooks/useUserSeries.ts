@@ -1,25 +1,14 @@
-import { UserSeriesService } from '@/lib/services/userSeries'
-import { UserWatchlistService } from '@/lib/services/userWatchlist'
+import * as seriesService from '@/lib/services/userSeries'
+import * as watchlistService from '@/lib/services/userWatchlist'
 import { MovieInfo } from '@/types'
 import { useUser } from '@clerk/nextjs'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export function useUserSeries () {
   const { user } = useUser()
   const [series, setSeries] = useState<MovieInfo[]>([])
   console.log('🚀 ~ useUserSeries ~ series:', series)
   const [loading, setLoading] = useState(true)
-
-  // Memoizar servicios para evitar recreación
-  const seriesService = useMemo(() =>
-    user?.id ? new UserSeriesService(user.id) : null,
-  [user?.id]
-  )
-
-  const watchlistService = useMemo(() =>
-    user?.id ? new UserWatchlistService(user.id) : null,
-  [user?.id]
-  )
 
   const loadSeries = useCallback(async () => {
     if (!user?.id) {
@@ -28,10 +17,9 @@ export function useUserSeries () {
       return
     }
 
-    const service = new UserSeriesService(user.id)
     setLoading(true)
     try {
-      const data = await service.getUserSeries()
+      const data = await seriesService.getUserSeries(user.id)
       setSeries(data)
     } catch (error) {
       console.error('Error loading series:', error)
@@ -44,11 +32,10 @@ export function useUserSeries () {
   // Cargar datos solo cuando cambie user?.id
   useEffect(() => {
     if (user?.id) {
-      const service = new UserSeriesService(user.id)
       const loadData = async () => {
         setLoading(true)
         try {
-          const data = await service.getUserSeries()
+          const data = await seriesService.getUserSeries(user.id)
           setSeries(data)
         } catch (error) {
           console.error('Error loading series:', error)
@@ -65,14 +52,14 @@ export function useUserSeries () {
   }, [user?.id]) // SOLO depende de user?.id
 
   const followSeries = async (seriesData: MovieInfo) => {
-    if (!seriesService || !watchlistService || !user?.id) return false
+    if (!user?.id) return false
 
     try {
       // Quitar de watchlist si está ahí
-      await watchlistService.removeFromWatchlist(seriesData.id)
+      await watchlistService.removeFromWatchlist(user.id, seriesData.id)
 
       // Añadir a series seguidas
-      const success = await seriesService.followSeries(seriesData)
+      const success = await seriesService.followSeries(user.id, seriesData)
       if (success) {
         // Actualizar estado local en lugar de recargar desde servidor
         setSeries(prev => {
@@ -94,10 +81,10 @@ export function useUserSeries () {
   }
 
   const unfollowSeries = async (seriesId: number) => {
-    if (!seriesService || !user?.id) return false
+    if (!user?.id) return false
 
     try {
-      const success = await seriesService.unfollowSeries(seriesId)
+      const success = await seriesService.unfollowSeries(user.id, seriesId)
       if (success) {
         // Actualizar estado local
         console.log('exito unfollow')
@@ -116,10 +103,10 @@ export function useUserSeries () {
     watched_episode?: number
     complete?: boolean
   }) => {
-    if (!seriesService || !user?.id) return false
+    if (!user?.id) return false
 
     try {
-      const success = await seriesService.updateProgress(seriesId, updates)
+      const success = await seriesService.updateProgress(user.id, seriesId, updates)
       if (success) {
         // Actualizar estado local
         setSeries(prev => prev.map(s =>

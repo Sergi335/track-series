@@ -1,24 +1,13 @@
-import { UserSeriesService } from '@/lib/services/userSeries'
-import { UserWatchlistService } from '@/lib/services/userWatchlist'
+import * as seriesService from '@/lib/services/userSeries'
+import * as watchlistService from '@/lib/services/userWatchlist'
 import { MovieInfo } from '@/types'
 import { useUser } from '@clerk/nextjs'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export function useUserWatchlist () {
   const { user } = useUser()
   const [watchlist, setWatchlist] = useState<MovieInfo[]>([])
   const [loading, setLoading] = useState(true)
-
-  // Memoizar servicios para evitar recreación
-  const watchlistService = useMemo(() =>
-    user?.id ? new UserWatchlistService(user.id) : null,
-  [user?.id]
-  )
-
-  const seriesService = useMemo(() =>
-    user?.id ? new UserSeriesService(user.id) : null,
-  [user?.id]
-  )
 
   const loadWatchlist = useCallback(async () => {
     if (!user?.id) {
@@ -27,10 +16,9 @@ export function useUserWatchlist () {
       return
     }
 
-    const service = new UserWatchlistService(user.id)
     setLoading(true)
     try {
-      const data = await service.getUserWatchlist()
+      const data = await watchlistService.getUserWatchlist(user.id)
       setWatchlist(data)
     } catch (error) {
       console.error('Error loading watchlist:', error)
@@ -43,11 +31,10 @@ export function useUserWatchlist () {
   // Cargar datos solo cuando cambie user?.id
   useEffect(() => {
     if (user?.id) {
-      const service = new UserWatchlistService(user.id)
       const loadData = async () => {
         setLoading(true)
         try {
-          const data = await service.getUserWatchlist()
+          const data = await watchlistService.getUserWatchlist(user.id)
           setWatchlist(data)
         } catch (error) {
           console.error('Error loading watchlist:', error)
@@ -64,14 +51,14 @@ export function useUserWatchlist () {
   }, [user?.id]) // SOLO depende de user?.id
 
   const addToWatchlist = async (seriesData: MovieInfo) => {
-    if (!watchlistService || !seriesService || !user?.id) return false
+    if (!user?.id) return false
 
     try {
       // Quitar de series seguidas si está ahí
-      await seriesService.unfollowSeries(seriesData.id)
+      await seriesService.unfollowSeries(user.id, seriesData.id)
 
       // Añadir a watchlist
-      const success = await watchlistService.addToWatchlist(seriesData)
+      const success = await watchlistService.addToWatchlist(user.id, seriesData)
       if (success) {
         // Actualizar estado local
         setWatchlist(prev => {
@@ -87,10 +74,10 @@ export function useUserWatchlist () {
   }
 
   const removeFromWatchlist = async (seriesId: number) => {
-    if (!watchlistService || !user?.id) return false
+    if (!user?.id) return false
 
     try {
-      const success = await watchlistService.removeFromWatchlist(seriesId)
+      const success = await watchlistService.removeFromWatchlist(user.id, seriesId)
       if (success) {
         // Actualizar estado local
         setWatchlist(prev => prev.filter(s => s.id !== seriesId))

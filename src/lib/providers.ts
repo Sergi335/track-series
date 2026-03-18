@@ -1,6 +1,6 @@
 import { cache } from 'react'
 
-interface Provider {
+export interface Provider {
   display_priority: number
   logo_path: string
   provider_name: string
@@ -8,7 +8,7 @@ interface Provider {
   display_priorities: Record<string, number>
 }
 
-interface ProvidersResponse {
+export interface ProvidersResponse {
   results: Provider[]
 }
 

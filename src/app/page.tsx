@@ -1,13 +1,14 @@
+import AllProvidersSlider from '@/components/AllProvidersSlider'
 import FeaturesSection from '@/components/FeaturesSection'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
 import LatestByProvider from '@/components/LatestByProvider'
-import ProvidersGrid from '@/components/ProvidersGrid'
 import Search from '@/components/Search'
 import SearchResults from '@/components/SearchResults'
+import { getProviders } from '@/lib/providers'
 
-export default function Home ({
+export default async function Home ({
   searchParams
 }: {
   searchParams?: {
@@ -16,6 +17,8 @@ export default function Home ({
   } }) {
   const query = searchParams?.query ?? ''
   const page = searchParams?.page ?? '1'
+
+  const providers = await getProviders()
 
   return (
     <>
@@ -34,7 +37,7 @@ export default function Home ({
               <LatestByProvider providerId="337" providerName="Disney+" />
               <LatestByProvider providerId="8" providerName="Netflix" />
               {/* <GenresCarousel /> */}
-              <ProvidersGrid />
+              <AllProvidersSlider providers={providers} providerName="Todos los proveedores" />
             </>
             )
         }

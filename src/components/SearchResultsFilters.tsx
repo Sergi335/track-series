@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/select'
 import { COUNTRY_MAP, COUNTRY_MAP_REVERSE, GENRE_MAP, GENRE_MAP_REVERSE } from '@/lib/constants'
 import { Movies } from '@/types'
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 export default function SearchResultsFilters ({
   results = [],
@@ -56,6 +56,16 @@ export default function SearchResultsFilters ({
     country: '',
     year: ''
   })
+
+  useEffect(() => {
+    originalResultsRef.current = results
+    setSelected({
+      genre: '',
+      country: '',
+      year: ''
+    })
+    setResults(results)
+  }, [results, setResults])
 
   // ✅ NUEVA FUNCIÓN: Renderizar Select con estilo condicional
   const renderSelect = (

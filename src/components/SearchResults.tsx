@@ -2,7 +2,8 @@ import type { SearchResultsType } from '@/types'
 import ClientSearchResults from './ClientSearchResults'
 
 export default async function SearchResults ({ query, page }: { query?: string, page?: string }) {
-  const url = `https://api.themoviedb.org/3/search/tv?query=${query}&include_adult=false&language=es-ES&page=${page}`
+  const encodedQuery = encodeURIComponent(query ?? '')
+  const url = `https://api.themoviedb.org/3/search/tv?query=${encodedQuery}&include_adult=false&language=es-ES&page=${page}`
   const options = {
     method: 'GET',
     headers: {

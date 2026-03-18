@@ -1,6 +1,6 @@
 'use client'
 import { Movies } from '@/types'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import MovieGrid from './MovieGrid'
 import Pagination from './Pagination'
 import SearchResultsFilters from './SearchResultsFilters'
@@ -9,6 +9,10 @@ export default function ClientSearchResults ({ results, totalPages, error }: {re
   console.log('🚀 ~ ClientSearchResults ~ filteredResults:', filteredResults.length)
   const moviesPerPage = 20
 
+  useEffect(() => {
+    setFilteredResults(results)
+  }, [results])
+
   return (
     <>
       {results.length > 0
@@ -16,7 +20,7 @@ export default function ClientSearchResults ({ results, totalPages, error }: {re
           <>
             <section className="flex w-3/4 gap-8 mt-16">
               <div className="">
-                <SearchResultsFilters results={filteredResults} setResults={setFilteredResults} />
+                <SearchResultsFilters results={results} setResults={setFilteredResults} />
               </div>
               <div className="flex-1">
                 <MovieGrid series={filteredResults} />

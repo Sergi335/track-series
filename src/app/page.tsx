@@ -6,6 +6,7 @@ import Hero from '@/components/Hero'
 import LatestByProvider from '@/components/LatestByProvider'
 import Search from '@/components/Search'
 import SearchResults from '@/components/SearchResults'
+import TopRatedSeries2024 from '@/components/TopRatedSeries2024'
 import { getProviders } from '@/lib/providers'
 
 export default async function Home ({
@@ -38,6 +39,7 @@ export default async function Home ({
               <LatestByProvider providerId="8" providerName="Netflix" />
               {/* <GenresCarousel /> */}
               <AllProvidersSlider providers={providers} providerName="Todos los proveedores" />
+              <TopRatedSeries2024 />
             </>
             )
         }

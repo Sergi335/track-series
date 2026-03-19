@@ -4,8 +4,8 @@ import { fetchMovieInfo } from '@/lib/data'
 import { useUserSeriesStore } from '@/store/userSeriesStore'
 import { type MovieInfo, type Movies } from '@/types'
 import { useUser } from '@clerk/nextjs'
-import { ChevronRight } from 'lucide-react'
-import Link from 'next/link'
+// import { ChevronRight } from 'lucide-react'
+// import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import SetChapterControl from './SetChapterControl'
 import { CheckIcon, WatchingIcon } from './icons/icons'
@@ -122,7 +122,7 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
   }
 
   return (
-    <div className={`flex items-center gap-3 flex-wrap ${buttonContainerListClass}`}>
+    <div className={`flex items-center gap-3 flex-wrap ${buttonContainerListClass} p-5`}>
       {isFollowing && seriesData !== null && (
         <SetChapterControl data={seriesData as MovieInfo} isInList={isInList} />
       )}
@@ -146,7 +146,7 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
             : 'Watchlist'
           }
         </Button>
-        {
+        {/* {
           isInList && (
             <Link
               href={`/movies/${data.id}`}
@@ -155,7 +155,7 @@ export default function Controls ({ data, isInList }: { data: Movies | MovieInfo
               <ChevronRight className="w-6 h-6 text-white" />
             </Link>
           )
-        }
+        } */}
       </div>
     </div>
   )

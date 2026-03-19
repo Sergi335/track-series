@@ -106,8 +106,11 @@ h1.section_header {
   line-height: 1;
   font-weight: bold;
   width: -webkit-fill-available;
-  padding-left: 34px;
+  /* padding-left: 34px; */
   margin-bottom: -115px;
+  writing-mode: sideways-lr;
+  position: absolute;
+  z-index: -1;
 }
 
 .movieItem {
@@ -214,4 +217,38 @@ select:-webkit-autofill:focus {
   /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
+}
+
+.movie_grid_overflow {
+  --scrollbar-border-thickness: 0px;
+  --scrollbar-track-color: #000000;
+}
+
+.movie_grid_overflow::-webkit-scrollbar {
+  width: var(--scrollbar-width, 10px);
+  height: var(--scrollbar-height, 10px);
+}
+
+.movie_grid_overflow::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-color, #0a1d4d7a);
+  border: var(--scrollbar-border-thickness, 3px) solid var(--scrollbar-border-color, rgb(255, 255, 255));
+  border-radius: var(--scrollbar-border-radius, 0px);
+  box-shadow: var(--scrollbar-thumb-box-shadow, none);
+}
+
+.movie_grid_overflow::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-color, #A1A1AA);
+}
+
+.movie_grid_overflow::-webkit-scrollbar-corner {
+  background: var(--scrollbar-corner-color, #FFFFFF);
+  border: var(--scrollbar-border-thickness, 3px) solid var(--scrollbar-border-color, rgb(255, 255, 255));
+  border-radius: var(--scrollbar-border-radius, 4px);
+}
+
+.movie_grid_overflow::-webkit-scrollbar-button:vertical:start:increment,
+#preview::-webkit-scrollbar-button:vertical:end:decrement,
+#preview::-webkit-scrollbar-button:horizontal:start:increment,
+#preview::-webkit-scrollbar-button:horizontal:end:decrement {
+  display: var(--show-double-buttons, none);
 }

@@ -127,10 +127,13 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
   }
 
   let formListClass
+  let buttonListClass
   if (isInList !== undefined && isInList) {
     formListClass = 'flex flex-col items-start gap-2'
+    buttonListClass = 'h-auto px-2 py-2 text-xs'
   } else {
     formListClass = 'flex items-center gap-2'
+    buttonListClass = ''
   }
 
   return (
@@ -140,7 +143,7 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
           <Button
             type="button"
             onClick={handleComplete}
-            className={storedComplete ? 'bg-red-700 hover:bg-red-800 text-white transition-colors duration-500' : 'bg-blue-700 hover:bg-blue-800 transition-colors duration-500 text-white'}
+            className={`${storedComplete ? 'bg-red-700 hover:bg-red-800' : 'bg-blue-700 hover:bg-blue-800'} text-white transition-colors duration-500 ${buttonListClass}`}
           >
             {storedComplete ? 'Completada' : 'Completar'}
           </Button>
@@ -179,7 +182,7 @@ export default function SetChapterControl ({ data, isInList }: { data: MovieInfo
                   <div className="flex gap-2 flex-wrap text-base items-center">
                     <p className="text-white text-sm">{seasons.find(s => s.season_number === storedSeason)?.name}</p>
                     <p className="text-white text-sm">Capítulo: {storedEpisode}</p>
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 ml-2">
                       <button type="button" onClick={increaseEpisode} className="p-1 bg-blue-700 hover:bg-blue-800 transition-colors duration-500 rounded-[3px] text-white">
                         <ChevronUp className="w-4 h-4" />
                       </button>

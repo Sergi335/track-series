@@ -37,6 +37,7 @@ export default async function Home ({
               <FeaturesSection />
               <LatestByProvider providerId="337" providerName="Disney+" />
               <LatestByProvider providerId="8" providerName="Netflix" />
+              <LatestByProvider providerId="1899" providerName="HBO Max" />
               {/* <GenresCarousel /> */}
               <AllProvidersSlider providers={providers} providerName="Todos los proveedores" />
               <TopRatedSeries2024 />

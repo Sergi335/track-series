@@ -37,11 +37,11 @@ export default function FeaturesSection () {
         </MagicCard>
       </div>
       <div className="flex flex-col items-start justify-center">
-        <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-balance">
+        <p className="text-lg text-gray-700 dark:text-gray-400 leading-relaxed text-balance">
           Descubre series increíbles, mantén un registro de tus favoritas y encuentra tu próxima obsesión televisiva. Explora por géneros y nunca pierdas el hilo de lo que estás viendo.
         </p>
         <BrandsHome />
-        <div className="flex gap-4 p-4 justify-center mt-16">
+        <div className="flex gap-4 justify-center mt-8">
           <Link href="/sign-up" className="bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 mt-8 md:mt-0">
             Regístrate Gratis
           </Link>

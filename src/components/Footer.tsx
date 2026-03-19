@@ -1,33 +1,38 @@
+import Link from 'next/link'
+
 export default function Footer () {
   return (
-    <footer className="w-full bg-gradient-to-t from-black/50 to-transparent border-t border-gray-800/50 mt-16">
-      <div className="max-w-7xl mx-auto px-4 py-12">
+    <footer className="mt-16 w-full border-gray-800/50 bg-gradient-to-t from-black/50 to-transparent">
+      <div className="mx-auto max-w-7xl px-4 py-12">
         <div className="text-center">
-          <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400 mb-4">
+          <h3 className="mb-4 bg-gradient-to-r from-emerald-400 to-sky-400 bg-clip-text text-2xl font-bold text-transparent">
             Track My Series
           </h3>
-          <p className="text-gray-400 mb-8 max-w-md mx-auto">
-            Tu compañero perfecto para descubrir, seguir y disfrutar de las mejores series de televisión.
+          <p className="mx-auto mb-8 max-w-md text-gray-400">
+            Tu companero perfecto para descubrir, seguir y disfrutar de las mejores series de television.
           </p>
 
-          <div className="flex justify-center items-center gap-8 mb-8">
+          <div className="mb-8 flex items-center justify-center gap-8">
             <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-400">1000+</div>
-              <div className="text-sm text-gray-500">Series disponibles</div>
+              <Link href="/aviso-legal" className="text-sm text-gray-500 transition-colors hover:text-white">
+                Aviso legal
+              </Link>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-sky-400">3</div>
-              <div className="text-sm text-gray-500">Géneros principales</div>
+              <Link href="/politica-de-privacidad" className="text-sm text-gray-500 transition-colors hover:text-white">
+                Politica de privacidad
+              </Link>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-400">∞</div>
-              <div className="text-sm text-gray-500">Entretenimiento</div>
+              <Link href="/politica-de-cookies" className="text-sm text-gray-500 transition-colors hover:text-white">
+                Politica de cookies
+              </Link>
             </div>
           </div>
 
-          <div className="pt-8 border-t border-gray-800/50">
+          <div className="border-gray-800/50 pt-8">
             <p className="text-sm text-gray-500">
-              © 2024 Track My Series. Hecho con ❤️ para los amantes de las series.
+              © 2024 Track My Series. Hecho con cariño para los amantes de las series.
             </p>
           </div>
         </div>

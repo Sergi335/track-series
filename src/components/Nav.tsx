@@ -2,7 +2,7 @@
 import { UserButton, useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import ThemeToggle from './ThemeToggle'
+// import ThemeToggle from './ThemeToggle'
 import { Skeleton } from './ui/skeleton'
 
 export default function Nav () {
@@ -50,7 +50,7 @@ export default function Nav () {
             : null
             }
 
-        <ThemeToggle />
+        {/* <ThemeToggle /> */}
         {isLoaded
           ? (
               user ? <UserButton /> : null

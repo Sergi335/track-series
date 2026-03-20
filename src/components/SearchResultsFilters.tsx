@@ -175,7 +175,7 @@ export default function SearchResultsFilters ({
           </Button>
         )}
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex gap-3">
         {renderSelect('genre', 'Género', genres)}
         {renderSelect('country', 'País', countries)}
         {renderSelect('year', 'Año', years)}

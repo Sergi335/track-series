@@ -121,6 +121,7 @@ const FilterComponent = () => {
 
   return (
     <div className="">
+      <h2 className="mb-4">Filtrar por:</h2>
       <div className="grid grid-cols-1 gap-6 rounded-lg">
         {renderSelect('genre', 'Género', genres)}
         {renderSelect('language', 'Idioma', [

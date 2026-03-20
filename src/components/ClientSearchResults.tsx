@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import MovieGrid from './MovieGrid'
 import Pagination from './Pagination'
 import SearchResultsFilters from './SearchResultsFilters'
-export default function ClientSearchResults ({ results, totalPages, error }: {results: Movies[], totalPages: number, error?: boolean}) {
+export default function ClientSearchResults ({ results, totalPages, error, className }: {results: Movies[], totalPages: number, error?: boolean, className?: string}) {
   const [filteredResults, setFilteredResults] = useState<Movies[]>(results)
   console.log('🚀 ~ ClientSearchResults ~ filteredResults:', filteredResults.length)
   const moviesPerPage = 20
@@ -18,7 +18,7 @@ export default function ClientSearchResults ({ results, totalPages, error }: {re
       {results.length > 0
         ? (
           <>
-            <section className="flex w-3/4 gap-8 mt-16">
+            <section className={`flex flex-col gap-8 ${className}`}>
               <div className="">
                 <SearchResultsFilters results={results} setResults={setFilteredResults} />
               </div>

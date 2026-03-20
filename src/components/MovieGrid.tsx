@@ -62,7 +62,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
   // }
 
   return (
-    <section className={'grid grid-cols-[repeat(auto-fill,minmax(262px,1fr))] gap-4 mx-auto'}>
+    <section className={'grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4 mx-auto'}>
       {series === undefined && <h1 className="text-white">No series in watchlist</h1>}
       {series?.map((movie) => {
         const isExpanded = expandedItem === movie.id
@@ -107,7 +107,7 @@ export default function MovieGrid ({ series }: { series: Movies[] | MovieInfo[] 
                     <p className="text-gray-400 text-sm mt-0">{String(movie.first_air_date).slice(0, 4)}</p>
                     <p className="text-gray-400 text-sm">Rating: {movie.vote_average?.toFixed(1)}</p>
                   </div>
-                  <p className="text-gray-400 text-sm mt-3 line-clamp-3 min-[1921px]:line-clamp-none w-[89%] text-pretty">{movie.overview}</p>
+                  <p className="text-gray-400 text-sm mt-3 line-clamp-3 min-[1921px]:line-clamp-5 w-[89%] text-pretty">{movie.overview}</p>
                 </div>
                 <Controls data={movie} isInList={true} />
               </div>

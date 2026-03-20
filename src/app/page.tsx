@@ -31,7 +31,7 @@ export default async function Home ({
           {/* <BrandsHome /> */}
         </section>
         {query.length > 0
-          ? (<SearchResults query={query} page={page} />)
+          ? (<SearchResults query={query} page={page} className="w-2/4"/>)
           : (
             <>
               <FeaturesSection />

@@ -38,7 +38,7 @@ export default function Search () {
   }, 500)
 
   return (
-    <section className="flex flex-wrap justify-center w-full flex-grow items-center">
+    <section className="flex flex-wrap justify-center w-full flex-grow items-center mt-16 mb-16">
       <form className="flex w-[560px]" onSubmit={handleSubmit}>
         <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
         <div className="relative w-full">

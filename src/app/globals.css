@@ -101,16 +101,15 @@ body {
 h1.section_header {
   text-transform: uppercase;
   font-size: 250px;
-  opacity: .06;
+  opacity: .03;
   letter-spacing: -15.5px;
   line-height: 1;
   font-weight: bold;
   width: -webkit-fill-available;
-  /* padding-left: 34px; */
-  margin-bottom: -115px;
   writing-mode: sideways-lr;
   position: absolute;
-  z-index: -1;
+  height: 100dvh;
+  text-align: center;
 }
 
 .movieItem {

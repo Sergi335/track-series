@@ -3,12 +3,13 @@ import Controls from '@/components/Controls'
 import HistoryBackButton from '@/components/HistoryBackButton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import type { Credits, MovieInfo } from '@/types'
+import type { Credits, MovieInfo, VideoResult, VideosResponse } from '@/types'
 
 export default async function MoviePage ({ params }: { params: { id: string } }) {
   const { id } = params
   const dataurl = `https://api.themoviedb.org/3/tv/${id}?language=es-ES`
   const creditsurl = `https://api.themoviedb.org/3/tv/${id}/credits?language=es-ES`
+  const videosurl = `https://api.themoviedb.org/3/tv/${id}/videos?language=es-ES`
   const options = {
     method: 'GET',
     headers: {
@@ -29,8 +30,38 @@ export default async function MoviePage ({ params }: { params: { id: string } })
     console.log(json)
     return json
   }
-  const credits: Credits = await fetchCastInfo()
-  const data: MovieInfo = await fetchMovieInfo()
+  const fetchVideos = async () => {
+    try {
+      const res = await fetch(videosurl, options)
+      if (!res.ok) {
+        return { id: Number(id), results: [] }
+      }
+      const json = await res.json()
+      console.log(json)
+      return json
+    } catch (error) {
+      console.error('Error fetching videos for series', id, error)
+      return { id: Number(id), results: [] }
+    }
+  }
+  const [credits, data, videosResponse]: [Credits, MovieInfo, VideosResponse] = await Promise.all([
+    fetchCastInfo(),
+    fetchMovieInfo(),
+    fetchVideos()
+  ])
+  const videos = videosResponse.results
+    .filter(video => video.site === 'YouTube')
+    .sort((a: VideoResult, b: VideoResult) => {
+      const score = (video: VideoResult) => {
+        let total = 0
+        if (video.official) total += 3
+        if (video.type === 'Trailer') total += 2
+        if (video.type === 'Teaser') total += 1
+        return total
+      }
+
+      return score(b) - score(a)
+    })
   console.log(data.first_air_date.split('-')[0])
   return (
     <>
@@ -122,6 +153,35 @@ export default async function MoviePage ({ params }: { params: { id: string } })
                     })}
                   </div>
                 </div>
+                {videos.length > 0 && (
+                  <div className="flex flex-col gap-4 p-5">
+                    <h5 className="text-sm font-medium text-white dark:text-white">Videos</h5>
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4">
+                      {videos.map(video => (
+                        <article key={video.id} className="overflow-hidden rounded-3xl border border-white/10 bg-black/50">
+                          <div className="aspect-video">
+                            <iframe
+                              className="h-full w-full"
+                              src={`https://www.youtube.com/embed/${video.key}`}
+                              title={video.name}
+                              loading="lazy"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              referrerPolicy="strict-origin-when-cross-origin"
+                              allowFullScreen
+                            />
+                          </div>
+                          <div className="flex flex-col gap-2 p-4">
+                            <p className="text-sm font-semibold text-white">{video.name}</p>
+                            <div className="flex flex-wrap gap-2 text-xs text-slate-300">
+                              <span className="rounded-full bg-white/10 px-2 py-1">{video.type}</span>
+                              {video.official && <span className="rounded-full bg-blue-500/20 px-2 py-1 text-blue-200">Oficial</span>}
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </section>
           </section>

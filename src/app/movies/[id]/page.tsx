@@ -1,6 +1,7 @@
 import { ActorInfo } from '@/components/ActorInfo'
 import Controls from '@/components/Controls'
 import HistoryBackButton from '@/components/HistoryBackButton'
+import SeasonsSection from '@/components/SeasonsSection'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { Credits, MovieInfo, VideoResult, VideosResponse } from '@/types'
@@ -140,19 +141,7 @@ export default async function MoviePage ({ params }: { params: { id: string } })
                     })}
                   </div>
                 </div>
-                <div className="flex flex-col p-5">
-                  <h5 className="mb-2 text-sm font-medium text-white dark:text-white">Temporadas</h5>
-                  <div className="flex gap-2 flex-wrap">
-                    {data.seasons.map(season => {
-                      return (
-                        <div className="" key={season.id}>
-                          <img className="w-[125px] h-[175px]" src={`https://image.tmdb.org/t/p/w500/${season.poster_path}`} width={186} height={260} alt="" />
-                          <p className="text-sm leading-normal text-white dark:text-gray-200">{season.name}</p>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
+                <SeasonsSection seasons={data.seasons} />
                 {videos.length > 0 && (
                   <div className="flex flex-col gap-4 p-5">
                     <h5 className="text-sm font-medium text-white dark:text-white">Videos</h5>
